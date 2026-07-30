@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Sun,
   Monitor,
@@ -13,13 +13,13 @@ import {
 import { BsVolumeDownFill } from "react-icons/bs";
 import { BsFillVolumeUpFill } from "react-icons/bs";
 
-export default function MechanicalKeyboard({ isAudioEnabled }) {
+export default function MechanicalKeyboard({ soundEnabled, soundVolume }) {
   const [activeKeys, setActiveKeys] = useState(new Set());
   const audioCtxRef = useRef(null);
 
   // Play a mechanical click sound using Web Audio API
   const playKeySound = () => {
-    if (!isAudioEnabled) return;
+    if (!soundEnabled) return;
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (
@@ -30,7 +30,10 @@ export default function MechanicalKeyboard({ isAudioEnabled }) {
       const gainNode = audioCtxRef.current.createGain();
       oscillator.type = "sawtooth";
       oscillator.frequency.setValueAtTime(800, audioCtxRef.current.currentTime);
-      gainNode.gain.setValueAtTime(0.08, audioCtxRef.current.currentTime);
+      gainNode.gain.setValueAtTime(
+        soundVolume,
+        audioCtxRef.current.currentTime,
+      );
       gainNode.gain.exponentialRampToValueAtTime(
         0.001,
         audioCtxRef.current.currentTime + 0.04,
@@ -63,7 +66,7 @@ export default function MechanicalKeyboard({ isAudioEnabled }) {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [isAudioEnabled]); // re-run if audio toggle changes
+  }, [soundEnabled, soundVolume]);
 
   const isPressed = (code) => activeKeys.has(code);
 

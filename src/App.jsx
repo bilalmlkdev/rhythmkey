@@ -46,8 +46,30 @@ export default function App() {
   const [storyLength, setStoryLength] = useState("medium");
   const [selectedTime, setSelectedTime] = useState(30);
 
-  // Audio state
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  // --- Settings Panel States ---
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [theme, setTheme] = useState("dark"); // "dark" | "light" | "system"
+  const [resolvedTheme, setResolvedTheme] = useState("dark");
+  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundVolume, setSoundVolume] = useState(0.08);
+  const [showLiveStats, setShowLiveStats] = useState(true);
+  const [showNextWord, setShowNextWord] = useState(true);
+
+  // Theme resolver for system preference
+  useEffect(() => {
+    if (theme === "system") {
+      const media = window.matchMedia("(prefers-color-scheme: light)");
+      setResolvedTheme(media.matches ? "light" : "dark");
+      const listener = (e) => setResolvedTheme(e.matches ? "light" : "dark");
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    } else {
+      setResolvedTheme(theme);
+    }
+  }, [theme]);
+
+  const isLight = resolvedTheme === "light";
 
   // App States: 'unfocused', 'idle', 'typing', 'finished'
   const [appState, setAppState] = useState("unfocused");
@@ -68,7 +90,6 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const statsRef = useRef({ userInputLength: 0, mistakes: 0, startTime: null });
 
-  // Update stats ref so the interval can grab the latest values without re-triggering
   useEffect(() => {
     statsRef.current = { userInputLength: userInput.length, mistakes, startTime };
   }, [userInput, mistakes, startTime]);
@@ -90,10 +111,21 @@ export default function App() {
     localStorage.setItem("totalKeystrokes", totalKeystrokes.toString());
   }, [totalKeystrokes]);
 
+  // Global Keyboard Shortcut for Settings (⌘K / Ctrl+K)
+  useEffect(() => {
+    const handleGlobalShortcuts = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setShowSettingsModal((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalShortcuts);
+    return () => window.removeEventListener("keydown", handleGlobalShortcuts);
+  }, []);
+
   // Generate text based on current test type and configurations
   const generateNewText = useCallback(
     (countOverride = null) => {
-      // --- Stories Mode ---
       if (testType === "stories") {
         let bank = [];
         if (storyLength === "small") bank = STORY_SMALL;
@@ -102,15 +134,11 @@ export default function App() {
         return bank[Math.floor(Math.random() * bank.length)];
       }
 
-      // --- Quotes Mode ---
       if (testType === "quotes") {
         return QUOTES[Math.floor(Math.random() * QUOTES.length)];
       }
 
-      // --- Words / Time / Infinite Mode Logic ---
       let pool = [];
-
-      // Filter Words based on difficulty
       let wordPool = WORDS;
       if (difficulty === "easy") {
         wordPool = WORDS.filter((w) => w.length <= 5);
@@ -129,7 +157,6 @@ export default function App() {
       if (pool.length === 0) pool = WORDS;
 
       let totalWords = countOverride !== null ? countOverride : 35;
-
       if (testType === "words") totalWords = wordCount;
       else if (testType === "infinite") totalWords = 250;
 
@@ -147,7 +174,6 @@ export default function App() {
     [testType, wordCount, storyLength, difficulty, hasNumbers, hasSymbols, hasPunctuation]
   );
 
-  // Central reset effect: runs whenever test configuration changes
   useEffect(() => {
     setUserInput("");
     setMistakes(0);
@@ -188,7 +214,6 @@ export default function App() {
     generateNewText,
   ]);
 
-  // Main Timer Countdown (only for time mode)
   useEffect(() => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
@@ -218,7 +243,6 @@ export default function App() {
     };
   }, [appState, testType]);
 
-  // History / Stats Graph tracking (Logs every second)
   useEffect(() => {
     let graphInterval;
     if (appState === "typing") {
@@ -244,7 +268,6 @@ export default function App() {
     return () => clearInterval(graphInterval);
   }, [appState]);
 
-  // Infinite mode: append more text when user gets close to the end
   useEffect(() => {
     if (testType === "infinite" && appState === "typing") {
       if (userInput.length > currentText.length - 100) {
@@ -254,11 +277,10 @@ export default function App() {
     }
   }, [userInput, testType, appState, currentText.length, generateNewText]);
 
-  // Update line offset dynamically when active word changes lines
   useEffect(() => {
     if (activeWordRef.current && innerContainerRef.current) {
       const top = activeWordRef.current.offsetTop;
-      const lineHeight = 40; // matches leading-relaxed line height (40px)
+      const lineHeight = 40;
       const currentLine = Math.floor(top / lineHeight);
       if (currentLine >= 2) {
         setLineOffset((currentLine - 1) * lineHeight);
@@ -268,7 +290,6 @@ export default function App() {
     }
   }, [userInput]);
 
-  // Reset idle timer
   const resetIdleTimer = useCallback(() => {
     clearTimeout(idleTimeoutRef.current);
     if (appState !== "finished" && appState !== "unfocused") {
@@ -287,7 +308,6 @@ export default function App() {
     return () => clearTimeout(idleTimeoutRef.current);
   }, [appState, resetIdleTimer]);
 
-  // Global click to focus
   useEffect(() => {
     const handleGlobalClick = (e) => {
       if (containerRef.current && containerRef.current.contains(e.target)) {
@@ -302,10 +322,9 @@ export default function App() {
     return () => window.removeEventListener("mousedown", handleGlobalClick);
   }, [appState, resetIdleTimer]);
 
-  // Keyboard handler
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (appState === "finished") return;
+      if (appState === "finished" || showSettingsModal) return;
 
       if (appState === "unfocused") {
         setAppState("idle");
@@ -383,9 +402,8 @@ export default function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [appState, userInput, currentText, testType, wordCount, resetIdleTimer]);
+  }, [appState, userInput, currentText, testType, wordCount, resetIdleTimer, showSettingsModal]);
 
-  // Restart Handler
   const restartTest = useCallback(
     (keepPreviousText = false) => {
       clearTimeout(typingTimeoutRef.current);
@@ -416,7 +434,6 @@ export default function App() {
     [testType, selectedTime, generateNewText]
   );
 
-  // Stats calculation (using endTime safely if finished to lock in accurate final results)
   const activeEndTime = endTime || Date.now();
   const timeElapsed = startTime ? (activeEndTime - startTime) / 60000 : 1 / 60;
   const wpm = Math.round(userInput.length / 5 / (timeElapsed || 0.001));
@@ -431,7 +448,6 @@ export default function App() {
   const incorrectChars = mistakes;
   const totalChars = currentText.length;
 
-  // Build structured words array for precise 3-line view and error underlining
   const wordsList = [];
   let charIdxCounter = 0;
   currentText.split(" ").forEach((w, i, arr) => {
@@ -444,9 +460,16 @@ export default function App() {
     charIdxCounter += wordStr.length;
   });
 
+  const activeWordIdx = wordsList.findIndex(
+    (w) => userInput.length >= w.start && userInput.length <= w.end
+  );
+  const currentIdx = activeWordIdx !== -1 ? activeWordIdx : userInput.length === 0 ? 0 : wordsList.length - 1;
+
   return (
     <div
-      className="min-h-screen bg-[#111113] text-[#5e5e5e] font-sans flex flex-col selection:bg-orange-500/30"
+      className={`min-h-screen ${
+        isLight ? "bg-white text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
+      } font-sans flex flex-col selection:bg-orange-500/30 transition-colors duration-200`}
       ref={containerRef}
     >
       {/* Header */}
@@ -471,17 +494,40 @@ export default function App() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsAudioEnabled(!isAudioEnabled)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1c1c1f] hover:bg-[#252529] transition-colors text-xs font-medium text-zinc-300"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+              isLight
+                ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
+                : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
+            }`}
           >
-            {isAudioEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            {isAudioEnabled ? "Audio On" : "Audio Off"}
+            {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+            {soundEnabled ? "Audio On" : "Audio Off"}
           </button>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1c1c1f] hover:bg-[#252529] transition-colors text-xs font-medium text-zinc-300">
+          <button
+            onClick={() => setShowSettingsModal(true)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+              isLight
+                ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
+                : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
+            }`}
+          >
             <Settings size={14} /> Settings{" "}
-            <span className="bg-[#2b2b2f] px-1 rounded text-[10px]">⌘K</span>
+            <span
+              className={`px-1 rounded text-[10px] ${
+                isLight ? "bg-zinc-200 text-zinc-600" : "bg-[#2b2b2f] text-zinc-300"
+              }`}
+            >
+              ⌘K
+            </span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-200 hover:bg-white text-zinc-900 transition-colors text-xs font-medium">
+          <button
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+              isLight
+                ? "bg-zinc-900 hover:bg-black text-white"
+                : "bg-zinc-200 hover:bg-white text-zinc-900"
+            }`}
+          >
             <Github size={14} /> GitHub
           </button>
         </div>
@@ -493,54 +539,86 @@ export default function App() {
           <>
             {/* Top Settings Bar */}
             <div
-              className={`flex flex-wrap items-center justify-center gap-6 bg-[#18181b] rounded-full px-6 py-2 text-xs font-medium mb-16 shadow-lg border border-zinc-800/50 transition-opacity duration-300 ${
+              className={`flex flex-wrap items-center justify-center gap-6 rounded-full px-6 py-2 text-xs font-medium mb-16 transition-opacity duration-300 ${
+                isLight
+                  ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
+                  : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
+              } ${
                 appState === "typing" && isTypingActive
                   ? "opacity-0 pointer-events-none"
                   : "opacity-100"
               }`}
             >
               {/* --- Section 1: Modifiers --- */}
-              <div className="flex gap-4 items-center border-r border-zinc-800 pr-4">
+              <div
+                className={`flex gap-4 items-center border-r pr-4 ${
+                  isLight ? "border-zinc-200" : "border-zinc-800"
+                }`}
+              >
                 <button
                   onClick={() => setHasPunctuation(!hasPunctuation)}
                   className={`${
-                    hasPunctuation ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    hasPunctuation
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   @ punctuation
                 </button>
                 <button
                   onClick={() => setHasNumbers(!hasNumbers)}
                   className={`${
-                    hasNumbers ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    hasNumbers
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   # numbers
                 </button>
                 <button
                   onClick={() => setHasSymbols(!hasSymbols)}
                   className={`${
-                    hasSymbols ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    hasSymbols
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   & symbols
                 </button>
 
-                <div className="w-px h-4 bg-zinc-800 mx-1"></div>
+                <div
+                  className={`w-px h-4 mx-1 ${
+                    isLight ? "bg-zinc-200" : "bg-zinc-800"
+                  }`}
+                ></div>
 
                 <button
                   onClick={() => setDifficulty("easy")}
                   className={`${
-                    difficulty === "easy" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    difficulty === "easy"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   easy
                 </button>
                 <button
                   onClick={() => setDifficulty("hard")}
                   className={`${
-                    difficulty === "hard" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    difficulty === "hard"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   hard
                 </button>
@@ -549,52 +627,78 @@ export default function App() {
                   className={`${
                     difficulty === "extra_hard"
                       ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
                       : "hover:text-zinc-300"
-                  } transition-colors`}
+                  } transition-colors cursor-pointer`}
                 >
                   extra hard
                 </button>
               </div>
 
               {/* --- Section 2: Mode Selectors --- */}
-              <div className="flex gap-4 items-center border-r border-zinc-800 pr-4">
+              <div
+                className={`flex gap-4 items-center border-r pr-4 ${
+                  isLight ? "border-zinc-200" : "border-zinc-800"
+                }`}
+              >
                 <button
                   onClick={() => setTestType("time")}
                   className={`${
-                    testType === "time" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    testType === "time"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   ⏱️ time
                 </button>
                 <button
                   onClick={() => setTestType("words")}
                   className={`${
-                    testType === "words" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    testType === "words"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   Aa words
                 </button>
                 <button
                   onClick={() => setTestType("stories")}
                   className={`${
-                    testType === "stories" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    testType === "stories"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   📖 stories
                 </button>
                 <button
                   onClick={() => setTestType("quotes")}
                   className={`${
-                    testType === "quotes" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    testType === "quotes"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   💬 quotes
                 </button>
                 <button
                   onClick={() => setTestType("infinite")}
                   className={`${
-                    testType === "infinite" ? "text-[#e26928]" : "hover:text-zinc-300"
-                  } transition-colors`}
+                    testType === "infinite"
+                      ? "text-[#e26928]"
+                      : isLight
+                      ? "hover:text-zinc-900"
+                      : "hover:text-zinc-300"
+                  } transition-colors cursor-pointer`}
                 >
                   ♾️ infinite
                 </button>
@@ -608,8 +712,12 @@ export default function App() {
                       key={t}
                       onClick={() => setSelectedTime(t)}
                       className={`${
-                        selectedTime === t ? "text-[#e26928]" : "hover:text-zinc-300"
-                      } transition-colors`}
+                        selectedTime === t
+                          ? "text-[#e26928]"
+                          : isLight
+                          ? "hover:text-zinc-900"
+                          : "hover:text-zinc-300"
+                      } transition-colors cursor-pointer`}
                     >
                       {t}s
                     </button>
@@ -620,8 +728,12 @@ export default function App() {
                       key={w}
                       onClick={() => setWordCount(w)}
                       className={`${
-                        wordCount === w ? "text-[#e26928]" : "hover:text-zinc-300"
-                      } transition-colors`}
+                        wordCount === w
+                          ? "text-[#e26928]"
+                          : isLight
+                          ? "hover:text-zinc-900"
+                          : "hover:text-zinc-300"
+                      } transition-colors cursor-pointer`}
                     >
                       {w}
                     </button>
@@ -634,8 +746,10 @@ export default function App() {
                       className={`${
                         storyLength === s.toLowerCase()
                           ? "text-[#e26928]"
+                          : isLight
+                          ? "hover:text-zinc-900"
                           : "hover:text-zinc-300"
-                      } transition-colors`}
+                      } transition-colors cursor-pointer`}
                     >
                       {s}
                     </button>
@@ -647,51 +761,80 @@ export default function App() {
             </div>
 
             {/* Live Stats Bar */}
-            <div
-              className={`w-full max-w-5xl flex justify-between items-center text-2xl font-bold mb-4 px-4 transition-opacity duration-300 ${
-                appState === "typing" ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <div className="text-zinc-400 text-lg">
-                {testType === "time" && (
-                  <span>
-                    Time: <span className="text-[#e26928]">{timeLeft}s</span>
-                  </span>
-                )}
-                {testType === "words" && (
-                  <span className="text-[#e26928]">
-                    {userInput.trim() === ""
-                      ? 0
-                      : userInput.trim().split(/\s+/).length}{" "}
-                    / {wordCount}
-                  </span>
-                )}
-                {(testType === "stories" || testType === "quotes") && (
-                  <span className="text-[#e26928]">
-                    {userInput.length} / {currentText.length}
-                  </span>
-                )}
-                {testType === "infinite" && <span className="text-zinc-400">♾️</span>}
-              </div>
-              <div className="flex gap-6">
-                <div className="text-[#d4d4d8]">
-                  {wpm} <span className="text-sm font-medium text-[#5e5e5e]">wpm</span>
+            {showLiveStats && (
+              <div
+                className={`w-full max-w-5xl flex justify-between items-center text-2xl font-bold mb-4 px-4 transition-opacity duration-300 ${
+                  appState === "typing" ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <div
+                  className={`text-lg ${
+                    isLight ? "text-zinc-500" : "text-zinc-400"
+                  }`}
+                >
+                  {testType === "time" && (
+                    <span>
+                      Time: <span className="text-[#e26928]">{timeLeft}s</span>
+                    </span>
+                  )}
+                  {testType === "words" && (
+                    <span className="text-[#e26928]">
+                      {userInput.trim() === ""
+                        ? 0
+                        : userInput.trim().split(/\s+/).length}{" "}
+                      / {wordCount}
+                    </span>
+                  )}
+                  {(testType === "stories" || testType === "quotes") && (
+                    <span className="text-[#e26928]">
+                      {userInput.length} / {currentText.length}
+                    </span>
+                  )}
+                  {testType === "infinite" && <span className="text-zinc-400">♾️</span>}
                 </div>
-                <div className="text-[#d4d4d8]">
-                  {accuracy}{" "}
-                  <span className="text-sm font-medium text-[#5e5e5e]">% acc</span>
+                <div className="flex gap-6">
+                  <div className={isLight ? "text-zinc-800" : "text-[#d4d4d8]"}>
+                    {wpm}{" "}
+                    <span
+                      className={`text-sm font-medium ${
+                        isLight ? "text-zinc-400" : "text-[#5e5e5e]"
+                      }`}
+                    >
+                      wpm
+                    </span>
+                  </div>
+                  <div className={isLight ? "text-zinc-800" : "text-[#d4d4d8]"}>
+                    {accuracy}{" "}
+                    <span
+                      className={`text-sm font-medium ${
+                        isLight ? "text-zinc-400" : "text-[#5e5e5e]"
+                      }`}
+                    >
+                      % acc
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Typing Area (Fixed 3-Line View with Smooth Line Shifting & Error Underline) */}
+            {/* Typing Area (Fixed 3-Line View with Smooth Line Shifting & Dimmed Next Words) */}
             <div
               key={textKey}
               className="relative w-full max-w-5xl h-[120px] overflow-hidden font-mono text-[26px] leading-[40px] mb-12 select-none"
             >
               {appState === "unfocused" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#111113]/60 z-10 backdrop-blur-[2px] rounded-lg">
-                  <div className="flex items-center gap-2 text-sm font-medium text-zinc-300 cursor-pointer px-4 py-2 bg-zinc-900/80 rounded-full border border-zinc-700/50">
+                <div
+                  className={`absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg ${
+                    isLight ? "bg-white/70" : "bg-[#111113]/60"
+                  }`}
+                >
+                  <div
+                    className={`flex items-center gap-2 text-sm font-medium cursor-pointer px-4 py-2 rounded-full border shadow-sm ${
+                      isLight
+                        ? "bg-white border-zinc-300 text-zinc-700"
+                        : "bg-zinc-900/80 border-zinc-700/50 text-zinc-300"
+                    }`}
+                  >
                     <MousePointer2 size={16} /> Click or press any key to focus
                   </div>
                 </div>
@@ -707,6 +850,14 @@ export default function App() {
                 {wordsList.map((wObj, wordIdx) => {
                   const { word, start, end } = wObj;
                   const isCurrentWord = userInput.length >= start && userInput.length <= end;
+                  const isFutureWord = wordIdx > currentIdx;
+
+                  // If Show Next Words is disabled, dim future words instead of hiding them completely
+                  const wordOpacityClass =
+                    !showNextWord && isFutureWord
+                      ? "opacity-15 transition-opacity duration-150"
+                      : "opacity-100";
+
                   const typedPart = userInput.slice(start, end);
                   const isWordError =
                     typedPart.split("").some((char, idx) => char !== word[idx]) ||
@@ -716,7 +867,7 @@ export default function App() {
                     <span
                       key={wordIdx}
                       ref={isCurrentWord ? activeWordRef : null}
-                      className={`inline-block whitespace-nowrap mr-[0.5em] ${
+                      className={`inline-block whitespace-nowrap mr-[0.5em] ${wordOpacityClass} ${
                         isWordError ? "border-b-2 border-[#e26928]" : ""
                       }`}
                     >
@@ -727,11 +878,13 @@ export default function App() {
                         const isCursor =
                           globalIdx === userInput.length && appState !== "unfocused";
 
-                        let colorClass = "text-[#5e5e5e]";
+                        let colorClass = isLight ? "text-zinc-400" : "text-[#5e5e5e]";
                         if (isTyped) {
                           colorClass =
                             typedChar === char
-                              ? "text-[#d4d4d8]"
+                              ? isLight
+                                ? "text-zinc-900 font-medium"
+                                : "text-[#d4d4d8]"
                               : "text-[#e26928] border-b-2 border-[#e26928]";
                         }
 
@@ -769,16 +922,32 @@ export default function App() {
             >
               <button
                 onClick={() => restartTest(false)}
-                className="text-[#5e5e5e] hover:text-zinc-300 transition-colors p-2 rounded-full hover:bg-zinc-800/50"
+                className={`transition-colors p-2 rounded-full cursor-pointer ${
+                  isLight
+                    ? "text-zinc-400 hover:text-zinc-800 hover:bg-zinc-200/50"
+                    : "text-[#5e5e5e] hover:text-zinc-300 hover:bg-zinc-800/50"
+                }`}
               >
                 <RotateCcw size={20} />
               </button>
               <div className="flex items-center gap-2 text-xs font-medium">
-                <span className="bg-[#2b2b2f] px-2 py-0.5 rounded text-zinc-400">
+                <span
+                  className={`px-2 py-0.5 rounded ${
+                    isLight
+                      ? "bg-zinc-200 text-zinc-700"
+                      : "bg-[#2b2b2f] text-zinc-400"
+                  }`}
+                >
                   tab
                 </span>
                 <span>+</span>
-                <span className="bg-[#2b2b2f] px-2 py-0.5 rounded text-zinc-400">
+                <span
+                  className={`px-2 py-0.5 rounded ${
+                    isLight
+                      ? "bg-zinc-200 text-zinc-700"
+                      : "bg-[#2b2b2f] text-zinc-400"
+                  }`}
+                >
                   enter
                 </span>
                 <span>restart</span>
@@ -786,15 +955,20 @@ export default function App() {
             </div>
 
             {/* Mechanical Keyboard */}
-            <div
-              className={`transition-opacity duration-300 ${
-                appState === "typing" && isTypingActive
-                  ? "opacity-40"
-                  : "opacity-100"
-              }`}
-            >
-              <MechanicalKeyboard isAudioEnabled={isAudioEnabled} />
-            </div>
+            {showKeyboard && (
+              <div
+                className={`transition-opacity duration-300 ${
+                  appState === "typing" && isTypingActive
+                    ? "opacity-40"
+                    : "opacity-100"
+                }`}
+              >
+                <MechanicalKeyboard
+                  soundEnabled={soundEnabled}
+                  soundVolume={soundVolume}
+                />
+              </div>
+            )}
           </>
         ) : (
           <ResultScreen
@@ -815,10 +989,244 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-6 text-xs text-[#5e5e5e]">
-        Built by <span className="text-zinc-400">Aayush Bharti</span>. The source code is
-        available on <span className="text-zinc-400">GitHub</span>.
+      <footer
+        className={`text-center py-6 text-xs ${
+          isLight ? "text-zinc-400" : "text-[#5e5e5e]"
+        }`}
+      >
+        Built by <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>Aayush Bharti</span>. The source code is available on <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>GitHub</span>.
       </footer>
+
+      {/* --- Settings Panel Popup (inset-0) --- */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div
+            className={`border rounded-2xl w-full max-w-md p-6 shadow-2xl relative transition-colors ${
+              isLight
+                ? "bg-white border-zinc-200 text-zinc-800"
+                : "bg-[#18181b] border-zinc-800 text-zinc-200"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between pb-4 border-b mb-6 ${
+                isLight ? "border-zinc-200" : "border-zinc-800"
+              }`}
+            >
+              <h2 className="text-base font-bold flex items-center gap-2">
+                <Settings size={18} className="text-[#e26928]" /> Settings
+              </h2>
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className={`text-xs px-2.5 py-1.5 rounded-lg border cursor-pointer ${
+                  isLight
+                    ? "bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-700"
+                    : "bg-zinc-900 hover:bg-zinc-800 border-zinc-800 text-zinc-400"
+                }`}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-6 text-xs">
+              {/* 1. Theme Select */}
+              <div className="flex items-center justify-between">
+                <span
+                  className={`font-medium ${
+                    isLight ? "text-zinc-700" : "text-zinc-300"
+                  }`}
+                >
+                  Theme
+                </span>
+                <div
+                  className={`p-1 rounded-lg border gap-1 flex ${
+                    isLight
+                      ? "bg-zinc-100 border-zinc-200"
+                      : "bg-zinc-900 border-zinc-800"
+                  }`}
+                >
+                  {["dark", "light", "system"].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setTheme(t)}
+                      className={`px-3 py-1 rounded-md capitalize transition-colors cursor-pointer ${
+                        theme === t
+                          ? "bg-[#e26928] text-white font-semibold"
+                          : isLight
+                          ? "text-zinc-500 hover:text-zinc-800"
+                          : "text-zinc-400 hover:text-zinc-200"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Show Keyboard Toggle */}
+              <div className="flex items-center justify-between">
+                <span
+                  className={`font-medium ${
+                    isLight ? "text-zinc-700" : "text-zinc-300"
+                  }`}
+                >
+                  Show Keyboard
+                </span>
+                <button
+                  onClick={() => setShowKeyboard(!showKeyboard)}
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    showKeyboard
+                      ? "bg-[#e26928]"
+                      : isLight
+                      ? "bg-zinc-300"
+                      : "bg-zinc-800"
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                      showKeyboard ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* 3. Sound Toggle & Volume Range */}
+              <div
+                className={`space-y-3 pt-2 border-t ${
+                  isLight ? "border-zinc-200" : "border-zinc-800/80"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`font-medium ${
+                      isLight ? "text-zinc-700" : "text-zinc-300"
+                    }`}
+                  >
+                    Sound Effects
+                  </span>
+                  <button
+                    onClick={() => setSoundEnabled(!soundEnabled)}
+                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                      soundEnabled
+                        ? "bg-[#e26928]"
+                        : isLight
+                        ? "bg-zinc-300"
+                        : "bg-zinc-800"
+                    }`}
+                  >
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                        soundEnabled ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
+                {soundEnabled && (
+                  <div className="flex items-center gap-4 pl-2">
+                    <span
+                      className={isLight ? "text-zinc-500" : "text-zinc-400"}
+                    >
+                      Volume
+                    </span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={soundVolume}
+                      onChange={(e) => setSoundVolume(parseFloat(e.target.value))}
+                      className={`flex-1 accent-[#e26928] h-1 rounded-lg cursor-pointer ${
+                        isLight ? "bg-zinc-300" : "bg-zinc-800"
+                      }`}
+                    />
+                    <span
+                      className={`w-8 text-right ${
+                        isLight ? "text-zinc-500" : "text-zinc-400"
+                      }`}
+                    >
+                      {Math.round(soundVolume * 100)}%
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* 4. Show Live Stats Toggle */}
+              <div
+                className={`flex items-center justify-between pt-2 border-t ${
+                  isLight ? "border-zinc-200" : "border-zinc-800/80"
+                }`}
+              >
+                <span
+                  className={`font-medium ${
+                    isLight ? "text-zinc-700" : "text-zinc-300"
+                  }`}
+                >
+                  Show Live Stats (WPM/Acc)
+                </span>
+                <button
+                  onClick={() => setShowLiveStats(!showLiveStats)}
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    showLiveStats
+                      ? "bg-[#e26928]"
+                      : isLight
+                      ? "bg-zinc-300"
+                      : "bg-zinc-800"
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                      showLiveStats ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* 5. Hide Next Word Toggle */}
+              <div
+                className={`flex items-center justify-between pt-2 border-t ${
+                  isLight ? "border-zinc-200" : "border-zinc-800/80"
+                }`}
+              >
+                <span
+                  className={`font-medium ${
+                    isLight ? "text-zinc-700" : "text-zinc-300"
+                  }`}
+                >
+                  Show Next Words
+                </span>
+                <button
+                  onClick={() => setShowNextWord(!showNextWord)}
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    showNextWord
+                      ? "bg-[#e26928]"
+                      : isLight
+                      ? "bg-zinc-300"
+                      : "bg-zinc-800"
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                      showNextWord ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            <div
+              className={`mt-8 pt-4 border-t flex justify-end ${
+                isLight ? "border-zinc-200" : "border-zinc-800"
+              }`}
+            >
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="px-4 py-2 bg-[#e26928] hover:bg-[#cf5d22] text-white font-medium rounded-xl transition-colors text-xs cursor-pointer"
+              >
+                Save & Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
