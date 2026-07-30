@@ -6,7 +6,7 @@ import {
   Github,
   MousePointer2,
 } from "lucide-react";
-import MechanicalKeyboard from "./components/ui/MechanicalKeyboard";
+import Keyboard from "./components/ui/Keyboard";
 import ResultScreen from "./components/Result/ResultScreen";
 import { WORDS } from "./data/words";
 import { NUMBERS } from "./data/numbers";
@@ -1026,7 +1026,7 @@ export default function App() {
                     : "opacity-100"
                 }`}
               >
-                <MechanicalKeyboard
+                <Keyboard
                   soundEnabled={soundEnabled}
                   soundVolume={soundVolume}
                 />
