@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import clickSound from '../../sounds/click.wav';
 import {
   SunDim,
   Sun,
@@ -22,36 +23,61 @@ import {
 
 export default function MechanicalKeyboard({
   soundEnabled = true,
-  soundVolume = 0.5,
+  soundVolume = 1,
+  audioSrc = clickSound,
 }) {
   const [activeKeys, setActiveKeys] = useState(new Set());
   const audioCtxRef = useRef(null);
+  const audioBufferRef = useRef(null);
 
-  const playKeySound = () => {
-    if (!soundEnabled) return;
+  // Load and decode the audio file once on mount
+  useEffect(() => {
+    if (!soundEnabled || !audioSrc) return;
+
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (
           window.AudioContext || window.webkitAudioContext
         )();
       }
-      const oscillator = audioCtxRef.current.createOscillator();
+
+      fetch(audioSrc)
+        .then((response) => response.arrayBuffer())
+        .then((arrayBuffer) => audioCtxRef.current.decodeAudioData(arrayBuffer))
+        .then((decodedBuffer) => {
+          audioBufferRef.current = decodedBuffer;
+        })
+        .catch((error) => {
+          console.error("Error loading keyboard audio file:", error);
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [audioSrc, soundEnabled]);
+
+  const playKeySound = () => {
+    if (!soundEnabled || !audioCtxRef.current || !audioBufferRef.current) return;
+
+    try {
+      if (audioCtxRef.current.state === "suspended") {
+        audioCtxRef.current.resume();
+      }
+
+      // Create a buffer source for the key click
+      const source = audioCtxRef.current.createBufferSource();
+      source.buffer = audioBufferRef.current;
+
       const gainNode = audioCtxRef.current.createGain();
-      oscillator.type = "sawtooth";
-      oscillator.frequency.setValueAtTime(800, audioCtxRef.current.currentTime);
-      gainNode.gain.setValueAtTime(
-        soundVolume,
-        audioCtxRef.current.currentTime,
-      );
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioCtxRef.current.currentTime + 0.04,
-      );
-      oscillator.connect(gainNode);
+      gainNode.gain.setValueAtTime(soundVolume, audioCtxRef.current.currentTime);
+
+      source.connect(gainNode);
       gainNode.connect(audioCtxRef.current.destination);
-      oscillator.start();
-      oscillator.stop(audioCtxRef.current.currentTime + 0.04);
-    } catch (e) {}
+
+      // Play the full single-click sound from the beginning (0)
+      source.start(0);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -295,7 +321,7 @@ export default function MechanicalKeyboard({
       `}</style>
 
       {/* Inner Plate with reduced gap */}
-      <div className="bg-[#383439] p-2 rounded-[14px] shadow-inner border border-[#484449] flex flex-col gap-[1.5px]">
+      <div className="bg-[#383439] p-2 rounded-[14px] shadow-inner  border-[#484449] border flex flex-col gap-[1.5px] relative top-2">
         {keyRows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex gap-[1.5px] justify-center w-full">
             {row.map((key) => {
