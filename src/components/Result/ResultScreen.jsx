@@ -176,31 +176,36 @@ export default function ResultScreen({
   return (
     <div className="w-full flex flex-col items-center animate-in fade-in zoom-in duration-500 mt-10">
       {/* Top Main Stats */}
-      <div className="flex gap-16 text-center mb-10">
-        <div className="flex flex-col items-center">
-          <div className="text-[100px] font-bold text-[#e26928] leading-none tracking-tighter">
+      <div className="flex items-center justify-center gap-20 mb-2">
+        {/* main stata */}
+        <div className="flex flex-col items-center gap-5">
+          <div className="text-[150px] font-bold text-[#e26928] leading-none tracking-tighter">
             {wpm}
           </div>
-          <div className="text-xs font-medium tracking-widest text-[#5e5e5e] mt-2">
+          <span className="text-xs font-medium tracking-widest text-zinc-300">
             WPM
-          </div>
+          </span>
         </div>
-        <div className="flex flex-col items-center">
-          <div className="text-[100px] font-bold text-[#d4d4d8] leading-none tracking-tighter">
-            {accuracy}
-            <span className="text-[60px] text-[#5e5e5e]">%</span>
+
+        {/* wpm and acc title */}
+        <div className="flex items-center flex-col gap-5">
+          <div className="text-[150px] font-bold text-[#d4d4d8] leading-none tracking-tighter relative">
+            {accuracy}{" "}
+            <span className="opacity-50 absolute text-[50px] top-0 -right-10">
+              %
+            </span>
           </div>
-          <div className="text-xs font-medium tracking-widest text-[#5e5e5e] mt-2">
+          <span className="text-xs font-medium tracking-widest text-zinc-300">
             ACCURACY
-          </div>
+          </span>
         </div>
       </div>
 
-      <div className="bg-[#e26928]/10 text-[#e26928] px-4 py-1 rounded-full text-xs font-medium mb-10 flex items-center gap-2 border border-[#e26928]/20">
+      <div className="bg-[#e26928]/10 text-[#e26928] px-4 py-1 rounded-full text-xs font-medium mb-5 mt-2 relative  flex items-center gap-2 border border-[#e26928]/20">
         🏆 new personal best
       </div>
 
-      <div className="flex gap-12 text-center mb-10">
+      <div className="flex gap-12 text-center mb-7">
         <div className="flex flex-col items-center">
           <div className="text-3xl font-bold text-[#d4d4d8]">
             {Math.round(wpm * 1.05)}
@@ -221,7 +226,7 @@ export default function ResultScreen({
       </div>
 
       {/* --- Detailed Dynamic SVG Chart --- */}
-      <div className="w-full max-w-5xl h-[240px] relative mb-12 flex px-4">
+      <div className="w-full max-w-5xl h-[240px] relative flex px-4">
         {/* Y Axis Labels */}
         <div className="flex flex-col justify-between text-[10px] text-zinc-600 pb-6 pr-4 h-[180px] w-12 text-right">
           <span>{maxWpm}</span>
@@ -308,7 +313,7 @@ export default function ResultScreen({
       </div>
 
       {/* Info Details Footer */}
-      <div className="flex gap-6 text-[11px] font-medium text-[#5e5e5e] mb-12">
+      <div className="flex gap-6 text-[11px] font-medium text-[#5e5e5e] mb-5">
         <div>
           CHARACTERS{" "}
           <span className="text-[#d4d4d8]">
@@ -327,7 +332,7 @@ export default function ResultScreen({
       </div>
 
       {/* Action Buttons with Dropdowns */}
-      <div className="flex flex-wrap items-center justify-center gap-8 text-xs font-medium text-[#5e5e5e] relative pb-20">
+      <div className="flex flex-wrap items-center justify-center gap-8 text-xs font-medium text-[#5e5e5e] relative">
         <button
           onClick={onNextTest}
           className="flex items-center gap-2 hover:text-zinc-300 transition-colors"
@@ -419,7 +424,7 @@ export default function ResultScreen({
           </button>
 
           {showFormulaMenu && (
-            <div className="absolute bottom-full mb-3 right-0 md:left-1/2 md:-translate-x-1/2 w-80 bg-[#18181b] border border-zinc-800 rounded-xl shadow-2xl p-4 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute bottom-full mb-4 right-0 md:left-1/2 md:-translate-x-1/2 w-80 bg-[#18181b] border border-zinc-800 rounded-xl shadow-2xl p-4 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
               <div className="font-semibold text-zinc-200 text-xs mb-3 pb-2 border-b border-zinc-800 flex items-center justify-between">
                 <span>Calculation Formulas</span>
                 <span className="text-[10px] text-[#e26928]">

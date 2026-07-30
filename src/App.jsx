@@ -4,7 +4,6 @@ import {
   VolumeX,
   Settings,
   Github,
-  RotateCcw,
   MousePointer2,
 } from "lucide-react";
 import MechanicalKeyboard from "./components/ui/MechanicalKeyboard";
@@ -12,6 +11,10 @@ import ResultScreen from "./components/Result/ResultScreen";
 import { WORDS } from "./data/words";
 import { NUMBERS } from "./data/numbers";
 import { SYMBOLS } from "./data/symbols";
+
+ import { BsArrowCounterclockwise } from "react-icons/bs";
+ import SettingsModal from "./components/SettingsModal";
+import { Clock, Quote } from "lucide-react";
 
 // Story and Quote banks
 const STORY_SMALL = [
@@ -91,7 +94,11 @@ export default function App() {
   const statsRef = useRef({ userInputLength: 0, mistakes: 0, startTime: null });
 
   useEffect(() => {
-    statsRef.current = { userInputLength: userInput.length, mistakes, startTime };
+    statsRef.current = {
+      userInputLength: userInput.length,
+      mistakes,
+      startTime,
+    };
   }, [userInput, mistakes, startTime]);
 
   const [totalKeystrokes, setTotalKeystrokes] = useState(() => {
@@ -106,6 +113,7 @@ export default function App() {
   const timerIntervalRef = useRef(null);
 
   const containerRef = useRef(null);
+
 
   useEffect(() => {
     localStorage.setItem("totalKeystrokes", totalKeystrokes.toString());
@@ -167,11 +175,20 @@ export default function App() {
 
       let textString = generated.join(" ");
       if (hasPunctuation) {
-        textString = textString.charAt(0).toUpperCase() + textString.slice(1) + ".";
+        textString =
+          textString.charAt(0).toUpperCase() + textString.slice(1) + ".";
       }
       return textString;
     },
-    [testType, wordCount, storyLength, difficulty, hasNumbers, hasSymbols, hasPunctuation]
+    [
+      testType,
+      wordCount,
+      storyLength,
+      difficulty,
+      hasNumbers,
+      hasSymbols,
+      hasPunctuation,
+    ],
   );
 
   useEffect(() => {
@@ -260,8 +277,12 @@ export default function App() {
 
         setHistory((prev) => {
           const newTime = Math.round((now - startTime) / 1000);
-          if (prev.length > 0 && prev[prev.length - 1].time === newTime) return prev;
-          return [...prev, { time: newTime, wpm: currentWpm, accuracy: currentAcc }];
+          if (prev.length > 0 && prev[prev.length - 1].time === newTime)
+            return prev;
+          return [
+            ...prev,
+            { time: newTime, wpm: currentWpm, accuracy: currentAcc },
+          ];
         });
       }, 1000);
     }
@@ -373,7 +394,11 @@ export default function App() {
                 timerIntervalRef.current = null;
               }
             }
-          } else if (testType === "stories" || testType === "quotes" || testType === "time") {
+          } else if (
+            testType === "stories" ||
+            testType === "quotes" ||
+            testType === "time"
+          ) {
             if (newVal.length === currentText.length) {
               setEndTime(Date.now());
               setAppState("finished");
@@ -402,7 +427,15 @@ export default function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [appState, userInput, currentText, testType, wordCount, resetIdleTimer, showSettingsModal]);
+  }, [
+    appState,
+    userInput,
+    currentText,
+    testType,
+    wordCount,
+    resetIdleTimer,
+    showSettingsModal,
+  ]);
 
   const restartTest = useCallback(
     (keepPreviousText = false) => {
@@ -431,7 +464,7 @@ export default function App() {
       }
       setTextKey((prev) => prev + 1);
     },
-    [testType, selectedTime, generateNewText]
+    [testType, selectedTime, generateNewText],
   );
 
   const activeEndTime = endTime || Date.now();
@@ -461,24 +494,31 @@ export default function App() {
   });
 
   const activeWordIdx = wordsList.findIndex(
-    (w) => userInput.length >= w.start && userInput.length <= w.end
+    (w) => userInput.length >= w.start && userInput.length <= w.end,
   );
-  const currentIdx = activeWordIdx !== -1 ? activeWordIdx : userInput.length === 0 ? 0 : wordsList.length - 1;
+  const currentIdx =
+    activeWordIdx !== -1
+      ? activeWordIdx
+      : userInput.length === 0
+        ? 0
+        : wordsList.length - 1;
+
+  // for indicator
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`min-h-screen  ${
         isLight ? "bg-white text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
-      } font-sans flex flex-col selection:bg-orange-500/30 transition-colors duration-200`}
+      } font-grotesk flex flex-col selection:bg-orange-500/30 transition-colors duration-200`}
       ref={containerRef}
     >
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-6 max-w-7xl w-full mx-auto">
+      <header className="flex items-center justify-between px-8 py-5 max-w-[1084px] w-full mx-auto">
         <div
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => restartTest(false)}
         >
-          <span className="text-[#e26928] text-2xl font-bold tracking-tighter">
+          <span className="text-[#e26928] text-xl font-bold tracking-tighter">
             keythm
           </span>
           <div className="grid grid-cols-2 gap-0.5">
@@ -488,25 +528,25 @@ export default function App() {
             <div className="w-1.5 h-1.5 bg-[#e26928] rounded-sm opacity-50"></div>
           </div>
         </div>
-        <div className="hidden md:block text-xs font-medium text-zinc-500">
+        <div className="hidden md:block relative left-30 text-xs text-white">
           {totalKeystrokes.toLocaleString()}{" "}
-          <span className="opacity-70">thocks and counting</span>
+          <span className="opacity-50 tracking-wide">thocks and counting</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
               isLight
                 ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
                 : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
-            }`}
+            } ${soundEnabled ? "opacity-100" : "opacity-30"}`}
           >
             {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
             {soundEnabled ? "Audio On" : "Audio Off"}
           </button>
           <button
             onClick={() => setShowSettingsModal(true)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
               isLight
                 ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
                 : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
@@ -514,45 +554,44 @@ export default function App() {
           >
             <Settings size={14} /> Settings{" "}
             <span
-              className={`px-1 rounded text-[10px] ${
-                isLight ? "bg-zinc-200 text-zinc-600" : "bg-[#2b2b2f] text-zinc-300"
+              className={`py-0.5 px-1.5 rounded-[5px] text-[10px] ${
+                isLight
+                  ? "bg-zinc-200 text-zinc-600"
+                  : "bg-[#2b2b2f] text-zinc-300"
               }`}
             >
               ⌘K
             </span>
           </button>
           <button
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-colors text-xs font-medium cursor-pointer ${
+            className={`flex items-center gap-2 px-4.5 py-[6px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
               isLight
                 ? "bg-zinc-900 hover:bg-black text-white"
-                : "bg-zinc-200 hover:bg-white text-zinc-900"
+                : "bg-white hover:bg-white/90 text-zinc-900"
             }`}
           >
             <Github size={14} /> GitHub
           </button>
         </div>
       </header>
-
       {/* Main Area */}
-      <main className="flex-1 flex flex-col items-center w-full max-w-[1200px] mx-auto px-8 pt-4">
+      <main className="flex-1 flex flex-col items-center w-full max-w-[1200px] mx-auto px-8 pt-1">
         {appState !== "finished" ? (
           <>
             {/* Top Settings Bar */}
             <div
-              className={`flex flex-wrap items-center justify-center gap-6 rounded-full px-6 py-2 text-xs font-medium mb-16 transition-opacity duration-300 ${
-                isLight
-                  ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
-                  : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
-              } ${
+              className={`flex flex-wrap items-center justify-center gap-3 mb-10  transition-opacity duration-300 ${
                 appState === "typing" && isTypingActive
                   ? "opacity-0 pointer-events-none"
                   : "opacity-100"
               }`}
             >
-              {/* --- Section 1: Modifiers --- */}
+              {/* --- Pill 1: Modifiers --- */}
               <div
-                className={`flex gap-4 items-center border-r pr-4 ${
-                  isLight ? "border-zinc-200" : "border-zinc-800"
+                className={`flex gap-4 items-center rounded-[15px] px-5 py-2.5 text-[10px] ${
+                  isLight
+                    ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
+                    : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
                 }`}
               >
                 <button
@@ -561,8 +600,8 @@ export default function App() {
                     hasPunctuation
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   @ punctuation
@@ -573,8 +612,8 @@ export default function App() {
                     hasNumbers
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   # numbers
@@ -585,13 +624,14 @@ export default function App() {
                     hasSymbols
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   & symbols
                 </button>
 
+                {/* Internal divider */}
                 <div
                   className={`w-px h-4 mx-1 ${
                     isLight ? "bg-zinc-200" : "bg-zinc-800"
@@ -604,8 +644,8 @@ export default function App() {
                     difficulty === "easy"
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   easy
@@ -616,8 +656,8 @@ export default function App() {
                     difficulty === "hard"
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   hard
@@ -628,132 +668,149 @@ export default function App() {
                     difficulty === "extra_hard"
                       ? "text-[#e26928]"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
+                        ? "hover:text-zinc-900"
+                        : "hover:text-zinc-300"
                   } transition-colors cursor-pointer`}
                 >
                   extra hard
                 </button>
               </div>
 
-              {/* --- Section 2: Mode Selectors --- */}
+              {/* --- Pill 2: Mode Selectors --- */}
               <div
-                className={`flex gap-4 items-center border-r pr-4 ${
-                  isLight ? "border-zinc-200" : "border-zinc-800"
+                className={`flex gap-1 items-center rounded-[15px] px-1.5 py-1 text-[10px] ${
+                  isLight
+                    ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
+                    : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
                 }`}
               >
                 <button
                   onClick={() => setTestType("time")}
-                  className={`${
+                  className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px] transition-all duration-200 ${
                     testType === "time"
-                      ? "text-[#e26928]"
+                      ? "bg-[#e26928] text-white shadow-sm"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
-                  } transition-colors cursor-pointer`}
+                        ? "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-300"
+                  } cursor-pointer`}
                 >
-                  ⏱️ time
+                  <Clock size={12} />
+                  time
                 </button>
+
                 <button
                   onClick={() => setTestType("words")}
-                  className={`${
+                  className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px]  transition-all duration-200 ${
                     testType === "words"
-                      ? "text-[#e26928]"
+                      ? "bg-[#e26928] text-white shadow-sm"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
-                  } transition-colors cursor-pointer`}
+                        ? "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-300"
+                  } cursor-pointer`}
                 >
                   Aa words
                 </button>
+
                 <button
                   onClick={() => setTestType("stories")}
-                  className={`${
+                  className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px]  transition-all duration-200 ${
                     testType === "stories"
-                      ? "text-[#e26928]"
+                      ? "bg-[#e26928] text-white shadow-sm"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
-                  } transition-colors cursor-pointer`}
+                        ? "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-300"
+                  } cursor-pointer`}
                 >
-                  📖 stories
+                  stories
                 </button>
+
                 <button
                   onClick={() => setTestType("quotes")}
-                  className={`${
+                  className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px]  transition-all duration-200 ${
                     testType === "quotes"
-                      ? "text-[#e26928]"
+                      ? "bg-[#e26928] text-white shadow-sm"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
-                  } transition-colors cursor-pointer`}
+                        ? "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-300"
+                  } cursor-pointer`}
                 >
-                  💬 quotes
+                  <Quote size={12} />
+                  quotes
                 </button>
+
                 <button
                   onClick={() => setTestType("infinite")}
-                  className={`${
+                  className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px]  transition-all duration-200 ${
                     testType === "infinite"
-                      ? "text-[#e26928]"
+                      ? "bg-[#e26928] text-white shadow-sm"
                       : isLight
-                      ? "hover:text-zinc-900"
-                      : "hover:text-zinc-300"
-                  } transition-colors cursor-pointer`}
+                        ? "text-zinc-600 hover:text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-300"
+                  } cursor-pointer`}
                 >
-                  ♾️ infinite
+                  infinite
                 </button>
               </div>
 
-              {/* --- Section 3: Dynamic Config Limits --- */}
-              <div className="flex gap-3 items-center">
+              {/* --- Pill 3: Dynamic Config Limits --- */}
+              <div
+                className={`flex gap-2 items-center rounded-[15px]  px-1.5 py-1 text-[10px]  ${
+                  isLight
+                    ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
+                    : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
+                }`}
+              >
                 {testType === "time" &&
                   [5, 10, 15, 30, 60, 120].map((t) => (
                     <button
                       key={t}
                       onClick={() => setSelectedTime(t)}
-                      className={`${
+                      className={`inline-flex items-center gap-3 px-2 py-[6px] rounded-[8px] transition-all duration-200 ${
                         selectedTime === t
-                          ? "text-[#e26928]"
+                          ? "bg-[#e26928] text-white shadow-sm"
                           : isLight
-                          ? "hover:text-zinc-900"
-                          : "hover:text-zinc-300"
-                      } transition-colors cursor-pointer`}
+                            ? "text-zinc-600 hover:text-zinc-900"
+                            : "text-zinc-400 hover:text-zinc-300"
+                      } cursor-pointer`}
                     >
                       {t}s
                     </button>
                   ))}
+
                 {testType === "words" &&
                   [10, 25, 50, 100].map((w) => (
                     <button
                       key={w}
                       onClick={() => setWordCount(w)}
-                      className={`${
+                      className={`inline-flex items-center gap-3 px-2 py-[6px] rounded-[8px] transition-all duration-200 ${
                         wordCount === w
-                          ? "text-[#e26928]"
+                          ? "bg-[#e26928] text-white shadow-sm"
                           : isLight
-                          ? "hover:text-zinc-900"
-                          : "hover:text-zinc-300"
-                      } transition-colors cursor-pointer`}
+                            ? "text-zinc-600 hover:text-zinc-900"
+                            : "text-zinc-400 hover:text-zinc-300"
+                      } cursor-pointer`}
                     >
                       {w}
                     </button>
                   ))}
+
                 {testType === "stories" &&
                   ["Small", "Medium", "Large"].map((s) => (
                     <button
                       key={s}
                       onClick={() => setStoryLength(s.toLowerCase())}
-                      className={`${
+                      className={`inline-flex items-center gap-3 px-4 py-[6px] rounded-[8px] transition-all duration-200 ${
                         storyLength === s.toLowerCase()
-                          ? "text-[#e26928]"
+                          ? "bg-[#e26928] text-white shadow-sm"
                           : isLight
-                          ? "hover:text-zinc-900"
-                          : "hover:text-zinc-300"
-                      } transition-colors cursor-pointer`}
+                            ? "text-zinc-600 hover:text-zinc-900"
+                            : "text-zinc-400 hover:text-zinc-300"
+                      } cursor-pointer`}
                     >
                       {s}
                     </button>
                   ))}
+
                 {(testType === "infinite" || testType === "quotes") && (
                   <span className="text-zinc-400 px-2">—</span>
                 )}
@@ -763,36 +820,38 @@ export default function App() {
             {/* Live Stats Bar */}
             {showLiveStats && (
               <div
-                className={`w-full max-w-5xl flex justify-between items-center text-2xl font-bold mb-4 px-4 transition-opacity duration-300 ${
+                className={`w-full max-w-5xl flex justify-end items-center text-[18px] font-bold tracking-tight px-4 transition-opacity duration-300 ${
                   appState === "typing" ? "opacity-100" : "opacity-0"
                 }`}
               >
-                <div
-                  className={`text-lg ${
-                    isLight ? "text-zinc-500" : "text-zinc-400"
-                  }`}
-                >
-                  {testType === "time" && (
-                    <span>
-                      Time: <span className="text-[#e26928]">{timeLeft}s</span>
-                    </span>
-                  )}
-                  {testType === "words" && (
-                    <span className="text-[#e26928]">
-                      {userInput.trim() === ""
-                        ? 0
-                        : userInput.trim().split(/\s+/).length}{" "}
-                      / {wordCount}
-                    </span>
-                  )}
-                  {(testType === "stories" || testType === "quotes") && (
-                    <span className="text-[#e26928]">
-                      {userInput.length} / {currentText.length}
-                    </span>
-                  )}
-                  {testType === "infinite" && <span className="text-zinc-400">♾️</span>}
-                </div>
-                <div className="flex gap-6">
+                <div className="flex gap-3">
+                  <div
+                    className={`text-lg ${
+                      isLight ? "text-zinc-500" : "text-zinc-400"
+                    }`}
+                  >
+                    {testType === "time" && (
+                      <span>
+                        <span className="text-[#e26928]">{timeLeft}s</span>
+                      </span>
+                    )}
+                    {testType === "words" && (
+                      <span className="text-[#e26928]">
+                        {userInput.trim() === ""
+                          ? 0
+                          : userInput.trim().split(/\s+/).length}{" "}
+                        / {wordCount}
+                      </span>
+                    )}
+                    {(testType === "stories" || testType === "quotes") && (
+                      <span className="text-[#e26928]">
+                        {userInput.length} / {currentText.length}
+                      </span>
+                    )}
+                    {testType === "infinite" && (
+                      <span className="text-zinc-400">♾️</span>
+                    )}
+                  </div>
                   <div className={isLight ? "text-zinc-800" : "text-[#d4d4d8]"}>
                     {wpm}{" "}
                     <span
@@ -820,7 +879,7 @@ export default function App() {
             {/* Typing Area (Fixed 3-Line View with Smooth Line Shifting & Dimmed Next Words) */}
             <div
               key={textKey}
-              className="relative w-full max-w-5xl h-[120px] overflow-hidden font-mono text-[26px] leading-[40px] mb-12 select-none"
+              className="relative w-full max-w-5xl h-[120px] overflow-hidden text-[23px] tracking-wide mb-2 leading-[40px] select-none"
             >
               {appState === "unfocused" && (
                 <div
@@ -829,10 +888,8 @@ export default function App() {
                   }`}
                 >
                   <div
-                    className={`flex items-center gap-2 text-sm font-medium cursor-pointer px-4 py-2 rounded-full border shadow-sm ${
-                      isLight
-                        ? "bg-white border-zinc-300 text-zinc-700"
-                        : "bg-zinc-900/80 border-zinc-700/50 text-zinc-300"
+                    className={`flex items-center gap-1.5 text-sm tracking-wide font-normal cursor-pointer ${
+                      isLight ? "text-zinc-700" : "text-zinc-300"
                     }`}
                   >
                     <MousePointer2 size={16} /> Click or press any key to focus
@@ -844,12 +901,13 @@ export default function App() {
                 ref={innerContainerRef}
                 className={`${
                   appState === "unfocused" ? "blur-[3px] opacity-40" : ""
-                } transition-transform duration-200 ease-out flex flex-wrap`}
+                } transition-transform duration-200 ease-out font-mono flex flex-wrap`}
                 style={{ transform: `translateY(-${lineOffset}px)` }}
               >
                 {wordsList.map((wObj, wordIdx) => {
                   const { word, start, end } = wObj;
-                  const isCurrentWord = userInput.length >= start && userInput.length <= end;
+                  const isCurrentWord =
+                    userInput.length >= start && userInput.length <= end;
                   const isFutureWord = wordIdx > currentIdx;
 
                   // If Show Next Words is disabled, dim future words instead of hiding them completely
@@ -860,7 +918,9 @@ export default function App() {
 
                   const typedPart = userInput.slice(start, end);
                   const isWordError =
-                    typedPart.split("").some((char, idx) => char !== word[idx]) ||
+                    typedPart
+                      .split("")
+                      .some((char, idx) => char !== word[idx]) ||
                     typedPart.length > word.length;
 
                   return (
@@ -876,9 +936,12 @@ export default function App() {
                         const typedChar = userInput[globalIdx];
                         const isTyped = globalIdx < userInput.length;
                         const isCursor =
-                          globalIdx === userInput.length && appState !== "unfocused";
+                          globalIdx === userInput.length &&
+                          appState !== "unfocused";
 
-                        let colorClass = isLight ? "text-zinc-400" : "text-[#5e5e5e]";
+                        let colorClass = isLight
+                          ? "text-zinc-400"
+                          : "text-[#5e5e5e]";
                         if (isTyped) {
                           colorClass =
                             typedChar === char
@@ -924,18 +987,18 @@ export default function App() {
                 onClick={() => restartTest(false)}
                 className={`transition-colors p-2 rounded-full cursor-pointer ${
                   isLight
-                    ? "text-zinc-400 hover:text-zinc-800 hover:bg-zinc-200/50"
-                    : "text-[#5e5e5e] hover:text-zinc-300 hover:bg-zinc-800/50"
+                    ? "text-[#5e5e5e] hover-text-black"
+                    : "text-zinc-400 hover:text-white hover:brightness-150 "
                 }`}
               >
-                <RotateCcw size={20} />
+                <BsArrowCounterclockwise size={20} className="-rotate-45" />
               </button>
-              <div className="flex items-center gap-2 text-xs font-medium">
+              <div className="flex items-center gap-1.5 mt-1 text-[10px] tracking-wide font-normal">
                 <span
                   className={`px-2 py-0.5 rounded ${
                     isLight
                       ? "bg-zinc-200 text-zinc-700"
-                      : "bg-[#2b2b2f] text-zinc-400"
+                      : "bg-[#2b2b2f8d] text-zinc-400"
                   }`}
                 >
                   tab
@@ -945,7 +1008,7 @@ export default function App() {
                   className={`px-2 py-0.5 rounded ${
                     isLight
                       ? "bg-zinc-200 text-zinc-700"
-                      : "bg-[#2b2b2f] text-zinc-400"
+                      : "bg-[#2b2b2f8d] text-zinc-400"
                   }`}
                 >
                   enter
@@ -987,246 +1050,40 @@ export default function App() {
           />
         )}
       </main>
-
       {/* Footer */}
       <footer
-        className={`text-center py-6 text-xs ${
+        className={`text-center py-6 text-xs tracking-wide relative bottom-0.5 ${
           isLight ? "text-zinc-400" : "text-[#5e5e5e]"
         }`}
       >
-        Built by <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>Aayush Bharti</span>. The source code is available on <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>GitHub</span>.
+        Built by{" "}
+        <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>
+          Bilal Malik
+        </span>
+        . The source code is available on{" "}
+        <span className={isLight ? "text-zinc-700" : "text-zinc-400"}>
+          GitHub
+        </span>
+        .
       </footer>
-
       {/* --- Settings Panel Popup (inset-0) --- */}
-      {showSettingsModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div
-            className={`border rounded-2xl w-full max-w-md p-6 shadow-2xl relative transition-colors ${
-              isLight
-                ? "bg-white border-zinc-200 text-zinc-800"
-                : "bg-[#18181b] border-zinc-800 text-zinc-200"
-            }`}
-          >
-            <div
-              className={`flex items-center justify-between pb-4 border-b mb-6 ${
-                isLight ? "border-zinc-200" : "border-zinc-800"
-              }`}
-            >
-              <h2 className="text-base font-bold flex items-center gap-2">
-                <Settings size={18} className="text-[#e26928]" /> Settings
-              </h2>
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className={`text-xs px-2.5 py-1.5 rounded-lg border cursor-pointer ${
-                  isLight
-                    ? "bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-700"
-                    : "bg-zinc-900 hover:bg-zinc-800 border-zinc-800 text-zinc-400"
-                }`}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-6 text-xs">
-              {/* 1. Theme Select */}
-              <div className="flex items-center justify-between">
-                <span
-                  className={`font-medium ${
-                    isLight ? "text-zinc-700" : "text-zinc-300"
-                  }`}
-                >
-                  Theme
-                </span>
-                <div
-                  className={`p-1 rounded-lg border gap-1 flex ${
-                    isLight
-                      ? "bg-zinc-100 border-zinc-200"
-                      : "bg-zinc-900 border-zinc-800"
-                  }`}
-                >
-                  {["dark", "light", "system"].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTheme(t)}
-                      className={`px-3 py-1 rounded-md capitalize transition-colors cursor-pointer ${
-                        theme === t
-                          ? "bg-[#e26928] text-white font-semibold"
-                          : isLight
-                          ? "text-zinc-500 hover:text-zinc-800"
-                          : "text-zinc-400 hover:text-zinc-200"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 2. Show Keyboard Toggle */}
-              <div className="flex items-center justify-between">
-                <span
-                  className={`font-medium ${
-                    isLight ? "text-zinc-700" : "text-zinc-300"
-                  }`}
-                >
-                  Show Keyboard
-                </span>
-                <button
-                  onClick={() => setShowKeyboard(!showKeyboard)}
-                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
-                    showKeyboard
-                      ? "bg-[#e26928]"
-                      : isLight
-                      ? "bg-zinc-300"
-                      : "bg-zinc-800"
-                  }`}
-                >
-                  <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                      showKeyboard ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* 3. Sound Toggle & Volume Range */}
-              <div
-                className={`space-y-3 pt-2 border-t ${
-                  isLight ? "border-zinc-200" : "border-zinc-800/80"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`font-medium ${
-                      isLight ? "text-zinc-700" : "text-zinc-300"
-                    }`}
-                  >
-                    Sound Effects
-                  </span>
-                  <button
-                    onClick={() => setSoundEnabled(!soundEnabled)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
-                      soundEnabled
-                        ? "bg-[#e26928]"
-                        : isLight
-                        ? "bg-zinc-300"
-                        : "bg-zinc-800"
-                    }`}
-                  >
-                    <div
-                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                        soundEnabled ? "translate-x-5" : "translate-x-0"
-                      }`}
-                    />
-                  </button>
-                </div>
-                {soundEnabled && (
-                  <div className="flex items-center gap-4 pl-2">
-                    <span
-                      className={isLight ? "text-zinc-500" : "text-zinc-400"}
-                    >
-                      Volume
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={soundVolume}
-                      onChange={(e) => setSoundVolume(parseFloat(e.target.value))}
-                      className={`flex-1 accent-[#e26928] h-1 rounded-lg cursor-pointer ${
-                        isLight ? "bg-zinc-300" : "bg-zinc-800"
-                      }`}
-                    />
-                    <span
-                      className={`w-8 text-right ${
-                        isLight ? "text-zinc-500" : "text-zinc-400"
-                      }`}
-                    >
-                      {Math.round(soundVolume * 100)}%
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* 4. Show Live Stats Toggle */}
-              <div
-                className={`flex items-center justify-between pt-2 border-t ${
-                  isLight ? "border-zinc-200" : "border-zinc-800/80"
-                }`}
-              >
-                <span
-                  className={`font-medium ${
-                    isLight ? "text-zinc-700" : "text-zinc-300"
-                  }`}
-                >
-                  Show Live Stats (WPM/Acc)
-                </span>
-                <button
-                  onClick={() => setShowLiveStats(!showLiveStats)}
-                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
-                    showLiveStats
-                      ? "bg-[#e26928]"
-                      : isLight
-                      ? "bg-zinc-300"
-                      : "bg-zinc-800"
-                  }`}
-                >
-                  <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                      showLiveStats ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* 5. Hide Next Word Toggle */}
-              <div
-                className={`flex items-center justify-between pt-2 border-t ${
-                  isLight ? "border-zinc-200" : "border-zinc-800/80"
-                }`}
-              >
-                <span
-                  className={`font-medium ${
-                    isLight ? "text-zinc-700" : "text-zinc-300"
-                  }`}
-                >
-                  Show Next Words
-                </span>
-                <button
-                  onClick={() => setShowNextWord(!showNextWord)}
-                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
-                    showNextWord
-                      ? "bg-[#e26928]"
-                      : isLight
-                      ? "bg-zinc-300"
-                      : "bg-zinc-800"
-                  }`}
-                >
-                  <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                      showNextWord ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-
-            <div
-              className={`mt-8 pt-4 border-t flex justify-end ${
-                isLight ? "border-zinc-200" : "border-zinc-800"
-              }`}
-            >
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className="px-4 py-2 bg-[#e26928] hover:bg-[#cf5d22] text-white font-medium rounded-xl transition-colors text-xs cursor-pointer"
-              >
-                Save & Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        isLight={isLight}
+        theme={theme}
+        setTheme={setTheme}
+        showKeyboard={showKeyboard}
+        setShowKeyboard={setShowKeyboard}
+        soundEnabled={soundEnabled}
+        setSoundEnabled={setSoundEnabled}
+        soundVolume={soundVolume}
+        setSoundVolume={setSoundVolume}
+        showLiveStats={showLiveStats}
+        setShowLiveStats={setShowLiveStats}
+        showNextWord={showNextWord}
+        setShowNextWord={setShowNextWord}
+      />
     </div>
   );
 }
