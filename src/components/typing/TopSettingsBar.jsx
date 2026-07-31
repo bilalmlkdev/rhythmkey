@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, Quote } from "lucide-react";
+import { Clock, Quote, FileText } from "lucide-react";
 
 export default function TopSettingsBar({
   appState,
@@ -27,7 +27,8 @@ export default function TopSettingsBar({
     callback();
   };
 
-  const isRightPillHidden = testType === "infinite" || testType === "quotes";
+  const isRightPillHidden =
+    testType === "infinite" || testType === "quotes" || testType === "custom";
 
   return (
     <div
@@ -88,7 +89,6 @@ export default function TopSettingsBar({
           className={`w-px h-4 ${isLight ? "bg-zinc-200" : "bg-zinc-800"}`}
         />
 
-        {/* Grouped difficulty buttons to decrease their gap */}
         <div className="flex gap-1 items-center">
           <button
             onClick={(e) => handleBlurClick(e, () => setDifficulty("easy"))}
@@ -145,10 +145,13 @@ export default function TopSettingsBar({
           { type: "stories", label: "stories", icon: null },
           { type: "quotes", label: "quotes", icon: <Quote size={12} /> },
           { type: "infinite", label: "infinite", icon: null },
+          { type: "custom", label: "custom", icon: <FileText size={12} /> },
         ].map((m) => (
           <button
             key={m.type}
-            onClick={(e) => handleBlurClick(e, () => setTestType(m.type))}
+            onClick={(e) => {
+              handleBlurClick(e, () => setTestType(m.type));
+            }}
             className={`inline-flex items-center gap-1 px-2.5 py-[6px] relative bottom-[0.5px] rounded-[12px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
               testType === m.type
                 ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
@@ -164,7 +167,6 @@ export default function TopSettingsBar({
       </div>
 
       {/* pill - 03 - right */}
-      {/* Removed w-[170px] to allow natural content width */}
       <div
         className={`flex items-center justify-center gap-1.5 rounded-[15px] px-1 py-1 text-[11px] font-medium h-[36px] transition-all duration-200 ${
           isRightPillHidden

@@ -12,18 +12,55 @@ export default function TypingArea({
   showNextWord,
   activeWordRef,
   currentIdx,
+  mistakeHighlight,
+  cursorStyle,
+  fontSize,
 }) {
+  const getCursorStyle = () => {
+    switch (cursorStyle) {
+      case "block":
+        return "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]";
+      case "line":
+        return "border-b-2 border-[#9b72ff] animate-pulse";
+      case "underline":
+        return "border-b-2 border-[#9b72ff] animate-pulse";
+      default:
+        return "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]";
+    }
+  };
+
+  const getMistakeClass = (isTyped, typedChar, char, isLight) => {
+    if (!isTyped) return isLight ? "text-zinc-400" : "text-[#5e5e5e]";
+    if (typedChar === char) {
+      return isLight ? "text-zinc-900 font-medium" : "text-[#d4d4d8]";
+    } else {
+      // Mistake
+      switch (mistakeHighlight) {
+        case "underline":
+          return "text-[#9b72ff] border-b-2 border-[#9b72ff]";
+        case "background":
+          return "bg-red-500/20 text-[#9b72ff]";
+        case "off":
+          return "text-[#9b72ff]";
+        default:
+          return "text-[#9b72ff] border-b-2 border-[#9b72ff]";
+      }
+    }
+  };
+
   return (
     <div
       key={textKey}
-      className="relative w-full max-w-5xl h-[120px] overflow-hidden text-[23px] tracking-wide mb-2 leading-[40px] select-none left-5"
+      className="relative w-full max-w-5xl h-[120px] overflow-hidden mb-2 select-none left-5"
+      style={{
+        fontSize: `${fontSize}px`,
+        lineHeight: "40px",
+        letterSpacing: "0.05em",
+      }}
     >
+      {/* Overlay for unfocused state - covers only the text area */}
       {appState === "unfocused" && (
-        <div
-          className={`absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg transition-opacity duration-300 ${
-            isLight ? "bg-white/20" : "bg-[#111113]/60"
-          }`}
-        >
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-[#111113]/80 backdrop-blur-[2px] rounded-lg transition-opacity duration-300">
           <div
             className={`flex items-center gap-1.5 text-sm tracking-wide font-normal cursor-pointer ${
               isLight ? "text-zinc-700" : "text-zinc-300"
@@ -34,11 +71,10 @@ export default function TypingArea({
         </div>
       )}
 
-      {/* Smooth container translation for line shifting */}
       <div
         ref={innerContainerRef}
         className={`${
-          appState === "unfocused" ? "blur-[3px] opacity-40" : ""
+          appState === "unfocused" ? "opacity-30" : ""
         } transition-transform duration-300 ease-out font-mono flex flex-wrap`}
         style={{ transform: `translateY(-${lineOffset}px)` }}
       >
@@ -73,21 +109,19 @@ export default function TypingArea({
 
                 let colorClass = isLight ? "text-zinc-400" : "text-[#5e5e5e]";
                 if (isTyped) {
-                  colorClass =
-                    typedChar === char
-                      ? isLight
-                        ? "text-zinc-900 font-medium"
-                        : "text-[#d4d4d8]"
-                      : "text-[#9b72ff] border-b-2 border-[#9b72ff]";
+                  colorClass = getMistakeClass(
+                    isTyped,
+                    typedChar,
+                    char,
+                    isLight,
+                  );
                 }
 
                 return (
                   <span
                     key={charIdx}
                     className={`${colorClass} ${
-                      isCursor
-                        ? "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]"
-                        : ""
+                      isCursor ? getCursorStyle() : ""
                     }`}
                   >
                     {char}

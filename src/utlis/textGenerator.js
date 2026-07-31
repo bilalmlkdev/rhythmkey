@@ -1,25 +1,18 @@
-import { WORDS } from "../data/words";
+import { WORDS as WORDS_EN } from "../data/words";
+import { WORDS_ES } from "../data/words_es";
+import { WORDS_FR } from "../data/words_fr";
+import { WORDS_DE } from "../data/words_de";
 import { NUMBERS } from "../data/numbers";
 import { SYMBOLS } from "../data/symbols";
+import { STORY_SMALL, STORY_MEDIUM, STORY_LARGE } from "../data/stories"; // NEW
+import { QUOTES } from "../data/quotes"; // NEW
 
-export const STORY_SMALL = [
-  "The quick brown fox jumps over the lazy dog near the river bank.",
-  "Pack my box with five dozen liquor jugs.",
-];
-export const STORY_MEDIUM = [
-  "Success is not final, failure is not fatal: it is the courage to continue that counts. Life is what happens when you're busy making other plans.",
-];
-export const STORY_LARGE = [
-  "The future belongs to those who believe in the beauty of their dreams. Entrepreneurship is living a few years of your life like most people won't, so that you can spend the rest of your life like most people can't. The only way to do great work is to love what you do. In the middle of difficulty lies opportunity.",
-];
-
-export const QUOTES = [
-  "I think, therefore I am.",
-  "To be, or not to be, that is the question.",
-  "That which does not kill us makes us stronger.",
-  "The only thing we have to fear is fear itself.",
-  "In three words I can sum up everything I've learned about life: it goes on.",
-];
+const WORD_BANKS = {
+  en: WORDS_EN,
+  es: WORDS_ES,
+  fr: WORDS_FR,
+  de: WORDS_DE,
+};
 
 export function generateText({
   testType,
@@ -30,7 +23,13 @@ export function generateText({
   hasSymbols,
   hasPunctuation,
   countOverride = null,
+  language = "en",
 }) {
+  // For custom test type, we don't generate; the caller provides the text.
+  if (testType === "custom") {
+    return ""; // Should be handled by the parent component
+  }
+
   if (testType === "stories") {
     let bank = STORY_MEDIUM;
     if (storyLength === "small") bank = STORY_SMALL;
@@ -43,23 +42,25 @@ export function generateText({
     return QUOTES[Math.floor(Math.random() * QUOTES.length)];
   }
 
+  // Get word pool based on language
+  let wordPool = WORD_BANKS[language] || WORD_BANKS.en;
   let pool = [];
-  let wordPool = WORDS;
+
   if (difficulty === "easy") {
-    wordPool = WORDS.filter((w) => w.length <= 5);
-    if (wordPool.length === 0) wordPool = WORDS;
+    wordPool = wordPool.filter((w) => w.length <= 5);
+    if (wordPool.length === 0) wordPool = WORD_BANKS.en;
   } else if (difficulty === "hard") {
-    wordPool = WORDS.filter((w) => w.length > 5 && w.length <= 8);
-    if (wordPool.length === 0) wordPool = WORDS;
+    wordPool = wordPool.filter((w) => w.length > 5 && w.length <= 8);
+    if (wordPool.length === 0) wordPool = WORD_BANKS.en;
   } else if (difficulty === "extra_hard") {
-    wordPool = WORDS.filter((w) => w.length > 8);
-    if (wordPool.length === 0) wordPool = WORDS;
+    wordPool = wordPool.filter((w) => w.length > 8);
+    if (wordPool.length === 0) wordPool = WORD_BANKS.en;
   }
 
   pool.push(...wordPool);
   if (hasNumbers) pool.push(...NUMBERS);
   if (hasSymbols) pool.push(...SYMBOLS);
-  if (pool.length === 0) pool = WORDS;
+  if (pool.length === 0) pool = WORD_BANKS.en;
 
   let totalWords = countOverride !== null ? countOverride : 35;
   if (testType === "words") totalWords = wordCount;

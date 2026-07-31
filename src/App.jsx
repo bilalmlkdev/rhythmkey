@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import Keyboard from "./components/ui/Keyboard";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import Keyboard from "./components/ui/keyboard/Keyboard";
 import ResultScreen from "./components/Result/ResultScreen";
 
 import Header from "./components/layout/Header";
@@ -8,44 +9,207 @@ import TopSettingsBar from "./components/typing/TopSettingsBar";
 import LiveStats from "./components/typing/LiveStats";
 import TypingArea from "./components/typing/TypingArea";
 import RestartPrompt from "./components/typing/RestartPrompt";
+import KeyDisplay from "./components/typing/KeyDisplay"; // NEW
+import CustomTextModal from "./components/modals/CustomTextModal";
 
 import { useTheme } from "./hooks/useTheme";
 import { useTypingTest } from "./hooks/useTypingTest";
+import { useSettings } from "./hooks/useSettings";
+import { useStats } from "./hooks/useStats";
+import StatsPage from "./pages/StatsPage";
 
 export default function App() {
+  const location = useLocation();
+  const isStatsPage = location.pathname === "/stats";
+
   const { theme, setTheme, isLight } = useTheme();
-  const { config, state, refs, actions } = useTypingTest();
+  const {
+    settings,
+    updateSetting,
+    soundEnabled,
+    setSoundEnabled,
+    soundVolume,
+    setSoundVolume,
+    showKeyboard,
+    setShowKeyboard,
+    showLiveStats,
+    setShowLiveStats,
+    showNextWord,
+    setShowNextWord,
+  } = useSettings();
 
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
-  const [showKeyboard, setShowKeyboard] = React.useState(true);
-  const [soundEnabled, setSoundEnabled] = React.useState(true); // Default sound on
-  const [soundVolume, setSoundVolume] = React.useState(0.8); // Default 80% volume
-  const [showLiveStats, setShowLiveStats] = React.useState(true);
-  const [showNextWord, setShowNextWord] = React.useState(true);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [showCustomTextModal, setShowCustomTextModal] = React.useState(false);
+  const [lastKeyPressed, setLastKeyPressed] = React.useState(""); // NEW
 
-  // Global Keyboard Shortcut for Settings (⌘K / Ctrl+K)
+  const { config, state, refs, actions } = useTypingTest({
+    idleTimeout: settings.idleTimeout,
+    practiceMode: settings.practiceMode,
+    cursorStyle: settings.cursorStyle,
+    fontSize: settings.fontSize,
+    mistakeHighlight: settings.mistakeHighlight,
+    soundPack: settings.soundPack,
+    language: settings.language,
+    autoFocus: settings.autoFocus,
+    isPaused,
+  });
+
+  const { saveResult } = useStats();
+
+  // Tab key state for shortcuts
+  const tabPressedRef = useRef(false);
+
+  // Store previous test type for revert logic
+  const previousTestTypeRef = useRef("time");
+
+  // Compute WPM and Accuracy
+  const activeEndTime = state.endTime || Date.now();
+  const timeElapsed = state.startTime
+    ? (activeEndTime - state.startTime) / 60000
+    : 1 / 60;
+  const wpm = Math.round(state.userInput.length / 5 / (timeElapsed || 0.001));
+  const accuracy =
+    state.userInput.length > 0
+      ? Math.round(
+          ((state.userInput.length - state.mistakes) / state.userInput.length) *
+            100,
+        )
+      : 100;
+
+  const correctChars = state.userInput
+    .split("")
+    .filter((char, i) => char === state.currentText[i]).length;
+  const incorrectChars = state.mistakes;
+  const totalChars = state.currentText.length;
+
+  // Memoize words list
+  const wordsList = useMemo(() => {
+    const list = [];
+    let charIdxCounter = 0;
+    state.currentText.split(" ").forEach((w, i, arr) => {
+      const wordStr = i < arr.length - 1 ? w + " " : w;
+      list.push({
+        word: wordStr,
+        start: charIdxCounter,
+        end: charIdxCounter + wordStr.length,
+      });
+      charIdxCounter += wordStr.length;
+    });
+    return list;
+  }, [state.currentText]);
+
+  // Save stats when test finishes
+  useEffect(() => {
+    if (state.appState === "finished") {
+      const timeTaken =
+        config.testType === "time"
+          ? config.selectedTime - state.timeLeft
+          : (state.endTime - state.startTime) / 1000;
+      saveResult({
+        wpm,
+        accuracy,
+        testType: config.testType,
+        timeTaken: Math.round(timeTaken),
+        date: new Date().toISOString(),
+      });
+    }
+  }, [
+    state.appState,
+    saveResult,
+    wpm,
+    accuracy,
+    config.testType,
+    config.selectedTime,
+    state.timeLeft,
+    state.endTime,
+    state.startTime,
+  ]);
+
+  // Global Keyboard Shortcuts (Settings, Stats)
   useEffect(() => {
     const handleGlobalShortcuts = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setShowSettingsModal((prev) => !prev);
       }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        window.location.href = "/stats";
+      }
     };
     window.addEventListener("keydown", handleGlobalShortcuts);
     return () => window.removeEventListener("keydown", handleGlobalShortcuts);
   }, []);
 
-  // Main keydown listener for typing
+  // Track previous test type when switching to custom
+  useEffect(() => {
+    if (config.testType !== "custom") {
+      previousTestTypeRef.current = config.testType;
+    }
+  }, [config.testType]);
+
+  // When testType becomes "custom", open modal if no custom text is set
+  useEffect(() => {
+    if (config.testType === "custom") {
+      if (!state.customText) {
+        setShowCustomTextModal(true);
+      }
+    } else {
+      setShowCustomTextModal(false);
+    }
+  }, [config.testType, state.customText]);
+
+  // Main keydown listener
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (state.appState === "finished" || showSettingsModal) return;
 
+      // ---- Tab handling (modifier for shortcuts) ----
+      if (e.key === "Tab") {
+        e.preventDefault(); // prevent focus change
+        tabPressedRef.current = true;
+        return;
+      }
+
+      // ---- Pause toggle (Tab + Space) ----
+      if (tabPressedRef.current && e.key === " ") {
+        e.preventDefault();
+        setIsPaused((prev) => !prev);
+        return;
+      }
+
+      // ---- Restart (Tab + Enter, or Enter alone when input empty) ----
+      if (e.key === "Enter") {
+        if (tabPressedRef.current) {
+          e.preventDefault();
+          if (settings.restartConfirmation) {
+            if (!window.confirm("Restart the test?")) return;
+          }
+          actions.restartTest(false);
+          return;
+        } else if (state.userInput.length === 0) {
+          e.preventDefault();
+          if (settings.restartConfirmation) {
+            if (!window.confirm("Restart the test?")) return;
+          }
+          actions.restartTest(false);
+          return;
+        }
+        // Otherwise, Enter does nothing (no newline in typing)
+      }
+
+      // ---- If paused, ignore all typing keys ----
+      if (isPaused) return;
+
+      // ---- Unfocus handling ----
       if (state.appState === "unfocused") {
         state.setAppState("idle");
         actions.resetIdleTimer();
         return;
       }
 
+      // ---- Normal typing ----
       actions.resetIdleTimer();
 
       actions.setIsTypingActive(true);
@@ -54,14 +218,8 @@ export default function App() {
         actions.setIsTypingActive(false);
       }, 1000);
 
-      if (
-        e.key === "Tab" ||
-        (e.key === "Enter" && state.userInput.length === 0)
-      ) {
-        e.preventDefault();
-        actions.restartTest(false);
-        return;
-      }
+      // ---- Update last pressed key ----
+      setLastKeyPressed(e.key);
 
       if (e.key.length === 1) {
         actions.setTotalKeystrokes((prev) => prev + 1);
@@ -72,6 +230,11 @@ export default function App() {
         }
 
         const expectedChar = state.currentText[state.userInput.length];
+        if (settings.practiceMode && e.key !== expectedChar) {
+          // In practice mode, incorrect key is ignored
+          return;
+        }
+
         if (e.key !== expectedChar) actions.setMistakes((m) => m + 1);
 
         actions.setUserInput((prev) => {
@@ -92,8 +255,7 @@ export default function App() {
             }
           } else if (
             config.testType === "stories" ||
-            config.testType === "quotes" ||
-            config.testType === "time"
+            config.testType === "quotes"
           ) {
             if (newVal.length === state.currentText.length) {
               actions.setEndTime(Date.now());
@@ -107,7 +269,7 @@ export default function App() {
               }
             }
           }
-
+          // For time mode, the test ends when timer hits 0, not here.
           return newVal;
         });
       } else if (e.key === "Backspace") {
@@ -121,8 +283,18 @@ export default function App() {
       }
     };
 
+    const handleKeyUp = (e) => {
+      if (e.key === "Tab") {
+        tabPressedRef.current = false;
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
   }, [
     state.appState,
     state.userInput,
@@ -131,39 +303,12 @@ export default function App() {
     config.wordCount,
     actions,
     showSettingsModal,
+    isPaused,
+    settings.practiceMode,
+    settings.restartConfirmation,
   ]);
 
-  const activeEndTime = state.endTime || Date.now();
-  const timeElapsed = state.startTime
-    ? (activeEndTime - state.startTime) / 60000
-    : 1 / 60;
-  const wpm = Math.round(state.userInput.length / 5 / (timeElapsed || 0.001));
-  const accuracy =
-    state.userInput.length > 0
-      ? Math.round(
-          ((state.userInput.length - state.mistakes) / state.userInput.length) *
-            100,
-        )
-      : 100;
-
-  const correctChars = state.userInput
-    .split("")
-    .filter((char, i) => char === state.currentText[i]).length;
-  const incorrectChars = state.mistakes;
-  const totalChars = state.currentText.length;
-
-  const wordsList = [];
-  let charIdxCounter = 0;
-  state.currentText.split(" ").forEach((w, i, arr) => {
-    const wordStr = i < arr.length - 1 ? w + " " : w;
-    wordsList.push({
-      word: wordStr,
-      start: charIdxCounter,
-      end: charIdxCounter + wordStr.length,
-    });
-    charIdxCounter += wordStr.length;
-  });
-
+  // Active word index
   const activeWordIdx = wordsList.findIndex(
     (w) => state.userInput.length >= w.start && state.userInput.length <= w.end,
   );
@@ -173,6 +318,22 @@ export default function App() {
       : state.userInput.length === 0
         ? 0
         : wordsList.length - 1;
+
+  const handlePauseToggle = () => {
+    setIsPaused((prev) => !prev);
+  };
+
+  const handleCustomTextStart = (text) => {
+    actions.setCustomText(text);
+    actions.setIsCustomTextReady(true);
+    // Restart test to load the new text
+    actions.restartTest(false);
+  };
+
+  // If on stats page, render StatsPage
+  if (isStatsPage) {
+    return <StatsPage />;
+  }
 
   return (
     <div
@@ -199,6 +360,8 @@ export default function App() {
         setShowLiveStats={setShowLiveStats}
         showNextWord={showNextWord}
         setShowNextWord={setShowNextWord}
+        settings={settings}
+        updateSetting={updateSetting}
       />
 
       <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
@@ -237,6 +400,7 @@ export default function App() {
               currentText={state.currentText}
               wpm={wpm}
               accuracy={accuracy}
+              isPaused={isPaused}
             />
 
             <TypingArea
@@ -250,6 +414,19 @@ export default function App() {
               showNextWord={showNextWord}
               activeWordRef={refs.activeWordRef}
               currentIdx={currentIdx}
+              mistakeHighlight={settings.mistakeHighlight}
+              cursorStyle={settings.cursorStyle}
+              fontSize={settings.fontSize}
+            />
+
+            {/* KeyDisplay – shows last pressed key when typing is active */}
+            <KeyDisplay
+              lastKey={
+                state.appState === "typing" && state.isTypingActive && !isPaused
+                  ? lastKeyPressed
+                  : ""
+              }
+              isLight={isLight}
             />
 
             <RestartPrompt
@@ -257,6 +434,8 @@ export default function App() {
               isTypingActive={state.isTypingActive}
               restartTest={actions.restartTest}
               isLight={isLight}
+              isPaused={isPaused}
+              onPauseToggle={handlePauseToggle}
             />
 
             {showKeyboard && (
@@ -271,6 +450,7 @@ export default function App() {
                   soundEnabled={soundEnabled}
                   soundVolume={soundVolume}
                   isLight={isLight}
+                  layout={settings.keyboardLayout}
                 />
               </div>
             )}
@@ -299,6 +479,20 @@ export default function App() {
       </main>
 
       {state.appState !== "finished" && <Footer isLight={isLight} />}
+
+      {/* Custom Text Modal */}
+      <CustomTextModal
+        isOpen={showCustomTextModal}
+        onClose={() => {
+          setShowCustomTextModal(false);
+          // If user closes without setting text, revert to previous test type
+          if (config.testType === "custom" && !state.customText) {
+            config.setTestType(previousTestTypeRef.current);
+          }
+        }}
+        onStart={handleCustomTextStart}
+        isLight={isLight}
+      />
     </div>
   );
 }

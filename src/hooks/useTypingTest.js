@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { generateText } from "../utlis/textGenerator";
 
-export function useTypingTest() {
+export function useTypingTest({
+  idleTimeout = 5,
+  practiceMode = false,
+  autoFocus = true,
+  isPaused = false, // NEW: pause state
+} = {}) {
   const [hasPunctuation, setHasPunctuation] = useState(false);
   const [hasNumbers, setHasNumbers] = useState(false);
   const [hasSymbols, setHasSymbols] = useState(false);
@@ -12,7 +17,7 @@ export function useTypingTest() {
   const [storyLength, setStoryLength] = useState("medium");
   const [selectedTime, setSelectedTime] = useState(30);
 
-  const [appState, setAppState] = useState("unfocused");
+  const [appState, setAppState] = useState(autoFocus ? "idle" : "unfocused");
   const [currentText, setCurrentText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [startTime, setStartTime] = useState(null);
@@ -48,12 +53,19 @@ export function useTypingTest() {
   const idleTimeoutRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
+  // Custom text support
+  const [customText, setCustomText] = useState("");
+  const [isCustomTextReady, setIsCustomTextReady] = useState(false);
+
   useEffect(() => {
     localStorage.setItem("totalKeystrokes", totalKeystrokes.toString());
   }, [totalKeystrokes]);
 
   const getNewText = useCallback(
     (countOverride = null) => {
+      if (testType === "custom") {
+        return customText || "Please paste your custom text.";
+      }
       return generateText({
         testType,
         wordCount,
@@ -63,6 +75,7 @@ export function useTypingTest() {
         hasSymbols,
         hasPunctuation,
         countOverride,
+        language: "en", // we could pass language from settings
       });
     },
     [
@@ -73,6 +86,7 @@ export function useTypingTest() {
       hasNumbers,
       hasSymbols,
       hasPunctuation,
+      customText,
     ],
   );
 
@@ -86,7 +100,6 @@ export function useTypingTest() {
       }
 
       setIsTypingActive(false);
-      // Preserve "unfocused" state on initial load, otherwise default to "idle"
       setAppState((prev) => (prev === "unfocused" ? "unfocused" : "idle"));
       setUserInput("");
       setStartTime(null);
@@ -121,13 +134,22 @@ export function useTypingTest() {
     restartTest,
   ]);
 
+  // Custom text: when testType changes to custom, we need to set the text
+  useEffect(() => {
+    if (testType === "custom" && customText) {
+      setCurrentText(customText);
+      setTextKey((prev) => prev + 1);
+    }
+  }, [testType, customText]);
+
+  // Timer for time mode – respects pause
   useEffect(() => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
 
-    if (appState === "typing" && testType === "time") {
+    if (appState === "typing" && testType === "time" && !isPaused) {
       timerIntervalRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -148,11 +170,12 @@ export function useTypingTest() {
         timerIntervalRef.current = null;
       }
     };
-  }, [appState, testType]);
+  }, [appState, testType, isPaused]); // Added isPaused dependency
 
+  // Graph history – respects pause
   useEffect(() => {
     let graphInterval;
-    if (appState === "typing") {
+    if (appState === "typing" && !isPaused) {
       graphInterval = setInterval(() => {
         const { userInputLength, mistakes, startTime } = statsRef.current;
         if (!startTime) return;
@@ -177,17 +200,20 @@ export function useTypingTest() {
       }, 1000);
     }
     return () => clearInterval(graphInterval);
-  }, [appState]);
+  }, [appState, isPaused]); // Added isPaused
 
+  // Infinite mode text generation
   useEffect(() => {
     if (testType === "infinite" && appState === "typing") {
       if (userInput.length > currentText.length - 100) {
         const chunk = getNewText(50);
         setCurrentText((prev) => prev + " " + chunk);
+        setTextKey((prev) => prev + 1);
       }
     }
   }, [userInput, testType, appState, currentText.length, getNewText]);
 
+  // Line offset calculation
   useEffect(() => {
     if (activeWordRef.current && innerContainerRef.current) {
       const top = activeWordRef.current.offsetTop;
@@ -201,14 +227,15 @@ export function useTypingTest() {
     }
   }, [userInput]);
 
+  // Idle timer
   const resetIdleTimer = useCallback(() => {
     clearTimeout(idleTimeoutRef.current);
     if (appState !== "finished" && appState !== "unfocused") {
       idleTimeoutRef.current = setTimeout(() => {
         setAppState("unfocused");
-      }, 5000);
+      }, idleTimeout * 1000);
     }
-  }, [appState]);
+  }, [appState, idleTimeout]);
 
   useEffect(() => {
     if (appState === "idle" || appState === "typing") {
@@ -219,6 +246,7 @@ export function useTypingTest() {
     return () => clearTimeout(idleTimeoutRef.current);
   }, [appState, resetIdleTimer]);
 
+  // Click to focus
   useEffect(() => {
     const handleGlobalClick = (e) => {
       if (containerRef.current && containerRef.current.contains(e.target)) {
@@ -267,6 +295,8 @@ export function useTypingTest() {
       isTypingActive,
       totalKeystrokes,
       lineOffset,
+      customText,
+      isCustomTextReady,
     },
     refs: {
       containerRef,
@@ -288,6 +318,8 @@ export function useTypingTest() {
       idleTimeoutRef,
       timerIntervalRef,
       resetIdleTimer,
+      setCustomText,
+      setIsCustomTextReady,
     },
   };
 }

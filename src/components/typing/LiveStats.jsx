@@ -11,6 +11,7 @@ export default function LiveStats({
   currentText,
   wpm,
   accuracy,
+  isPaused,
 }) {
   if (!showLiveStats) return null;
 
@@ -21,6 +22,7 @@ export default function LiveStats({
       }`}
     >
       <div className="flex gap-3">
+        {isPaused && <div className="text-[#9b72ff] animate-pulse">PAUSED</div>}
         <div
           className={`text-lg ${isLight ? "text-zinc-500" : "text-zinc-400"}`}
         >
@@ -37,7 +39,9 @@ export default function LiveStats({
               / {wordCount}
             </span>
           )}
-          {(testType === "stories" || testType === "quotes") && (
+          {(testType === "stories" ||
+            testType === "quotes" ||
+            testType === "custom") && (
             <span className="text-[#9b72ff]">
               {userInput.length} / {currentText.length}
             </span>
