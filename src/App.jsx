@@ -17,6 +17,7 @@ import { useTypingTest } from "./hooks/useTypingTest";
 import { useSettings } from "./hooks/useSettings";
 import { useStats } from "./hooks/useStats";
 import StatsPage from "./pages/StatsPage";
+import AboutPage from "./pages/AboutPage"; // NEW
 
 export default function App() {
   const location = useLocation();
@@ -334,7 +335,11 @@ export default function App() {
   if (isStatsPage) {
     return <StatsPage />;
   }
-
+  // If on about page, render AboutPage
+  if (location.pathname === "/about") {
+    return <AboutPage />;
+  }
+  
   return (
     <div
       className={`min-h-screen ${

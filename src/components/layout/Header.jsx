@@ -1,6 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Volume2, VolumeX, Settings, Github, BarChart2 } from "lucide-react";
+import {
+  Volume2,
+  VolumeX,
+  Settings,
+  Github,
+  BarChart2,
+  Info,
+} from "lucide-react";
 import SettingsModal from "../modals/SettingsModal";
 
 export default function Header({
@@ -40,7 +47,7 @@ export default function Header({
           <div className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm opacity-50"></div>
         </div>
       </div>
-      <div className="hidden md:block relative left-30 text-xs text-[#9b72ff]">
+      <div className="hidden md:block relative  text-xs text-[#9b72ff]">
         {totalKeystrokes.toLocaleString()}{" "}
         <span
           className={`opacity-50 tracking-wide ${isLight ? "text-black" : "text-white"}`}
@@ -52,11 +59,7 @@ export default function Header({
         {/* Link to Stats Page */}
         <Link
           to="/stats"
-          className={`flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
-            isLight
-              ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
-              : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
-          }`}
+          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
           <BarChart2 size={14} /> Stats{" "}
           <span
@@ -70,13 +73,21 @@ export default function Header({
           </span>
         </Link>
 
+        {/* About Button */}
+        <Link
+          to="/about"
+          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+        >
+          <Info size={14} /> About
+        </Link>
+
         {/* Audio Button */}
         <button
           onClick={(e) => {
             e.currentTarget.blur();
             setSoundEnabled(!soundEnabled);
           }}
-          className={`relative overflow-hidden flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
+          className={`relative overflow-hidden flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${
             isLight
               ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
               : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
@@ -95,7 +106,7 @@ export default function Header({
             e.currentTarget.blur();
             setShowSettingsModal(!showSettingsModal);
           }}
-          className={`flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
+          className={`flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${
             isLight
               ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
               : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
@@ -113,7 +124,7 @@ export default function Header({
           </span>
         </button>
 
-        {/* Settings Modal - rendered outside any wrapper */}
+        {/* Settings Modal */}
         <SettingsModal
           isOpen={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}
@@ -139,7 +150,7 @@ export default function Header({
           href="https://github.com/byllzz/keythm"
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center gap-2 px-4.5 py-[6px] rounded-full transition-colors text-[13px] tracking-tight font-medium cursor-pointer ${
+          className={`flex items-center gap-2 px-4.5 py-[6px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${
             isLight
               ? "bg-zinc-900 hover:bg-black text-white"
               : "bg-[#FFFFFF] hover:bg-white/90 text-black"

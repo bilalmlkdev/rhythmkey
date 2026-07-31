@@ -60,10 +60,10 @@ export default function TypingArea({
     >
       {/* Overlay for unfocused state - covers only the text area */}
       {appState === "unfocused" && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-[#111113]/80 backdrop-blur-[2px] rounded-lg transition-opacity duration-300">
+        <div className="absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg transition-opacity duration-300">
           <div
             className={`flex items-center gap-1.5 text-sm tracking-wide font-normal cursor-pointer ${
-              isLight ? "text-zinc-700" : "text-zinc-300"
+              isLight ? "bg0white/50 text-zinc-700" : "bg-zinc-900/80 text-zinc-300"
             }`}
           >
             <MousePointer2 size={16} /> Click or press any key to focus
