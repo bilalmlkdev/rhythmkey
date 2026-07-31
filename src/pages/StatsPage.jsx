@@ -3,7 +3,7 @@ import { useStats } from "../hooks/useStats";
 import { Link } from "react-router-dom";
 import { ArrowLeft, BarChart2, Trash2 } from "lucide-react";
 
-export default function StatsPage() {
+export default function StatsPage({ isLight }) {
   const { stats, clearStats } = useStats();
 
   const averageWpm =
@@ -19,13 +19,19 @@ export default function StatsPage() {
     stats.length > 0 ? Math.max(...stats.map((s) => s.accuracy)) : 0;
 
   return (
-    <div className="min-h-screen bg-[#111113] text-zinc-200 font-grotesk px-6 py-8">
+    <div
+      className={`min-h-screen ${
+        isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-zinc-200"
+      } font-grotesk px-6 py-8`}
+    >
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link
               to="/"
-              className="p-2 rounded-lg hover:bg-zinc-800 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                isLight ? "hover:bg-zinc-100" : "hover:bg-zinc-800"
+              }`}
             >
               <ArrowLeft size={20} />
             </Link>
@@ -44,14 +50,30 @@ export default function StatsPage() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+        <div
+          className={`grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 ${
+            isLight ? "text-zinc-800" : "text-zinc-200"
+          }`}
+        >
+          <div
+            className={`p-4 rounded-xl border ${
+              isLight
+                ? "border-zinc-200 bg-zinc-50"
+                : "border-zinc-800 bg-zinc-900/50"
+            }`}
+          >
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               Tests
             </div>
             <div className="text-3xl font-bold">{stats.length}</div>
           </div>
-          <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+          <div
+            className={`p-4 rounded-xl border ${
+              isLight
+                ? "border-zinc-200 bg-zinc-50"
+                : "border-zinc-800 bg-zinc-900/50"
+            }`}
+          >
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               Avg WPM
             </div>
@@ -59,13 +81,25 @@ export default function StatsPage() {
               {averageWpm}
             </div>
           </div>
-          <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+          <div
+            className={`p-4 rounded-xl border ${
+              isLight
+                ? "border-zinc-200 bg-zinc-50"
+                : "border-zinc-800 bg-zinc-900/50"
+            }`}
+          >
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               Best WPM
             </div>
             <div className="text-3xl font-bold text-green-500">{bestWpm}</div>
           </div>
-          <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50">
+          <div
+            className={`p-4 rounded-xl border ${
+              isLight
+                ? "border-zinc-200 bg-zinc-50"
+                : "border-zinc-800 bg-zinc-900/50"
+            }`}
+          >
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               Avg Acc
             </div>
@@ -74,9 +108,19 @@ export default function StatsPage() {
         </div>
 
         {/* Table */}
-        <div className="border border-zinc-800 rounded-xl overflow-hidden">
+        <div
+          className={`border rounded-xl overflow-hidden ${
+            isLight ? "border-zinc-200" : "border-zinc-800"
+          }`}
+        >
           <table className="w-full text-left text-sm">
-            <thead className="bg-zinc-900/50 border-b border-zinc-800">
+            <thead
+              className={`border-b ${
+                isLight
+                  ? "bg-zinc-50 border-zinc-200"
+                  : "bg-zinc-900/50 border-zinc-800"
+              }`}
+            >
               <tr>
                 <th className="py-3 px-4 font-medium text-zinc-400">Date</th>
                 <th className="py-3 px-4 font-medium text-zinc-400">Type</th>
@@ -96,7 +140,11 @@ export default function StatsPage() {
                 stats.map((s, i) => (
                   <tr
                     key={i}
-                    className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors"
+                    className={`border-b ${
+                      isLight
+                        ? "border-zinc-200 hover:bg-zinc-50"
+                        : "border-zinc-800/50 hover:bg-zinc-800/30"
+                    } transition-colors`}
                   >
                     <td className="py-3 px-4">
                       {new Date(s.date).toLocaleDateString()}{" "}

@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 
 export function useTheme() {
-  const [theme, setTheme] = useState("dark");
+  // Load theme from localStorage or default to "dark"
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("RhythmKey_theme");
+    return saved || "dark";
+  });
+
   const [resolvedTheme, setResolvedTheme] = useState("dark");
 
   useEffect(() => {
+    // Save to localStorage whenever theme changes
+    localStorage.setItem("RhythmKey_theme", theme);
+
     if (theme === "system") {
       const media = window.matchMedia("(prefers-color-scheme: light)");
       setResolvedTheme(media.matches ? "light" : "dark");

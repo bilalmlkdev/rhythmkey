@@ -114,9 +114,9 @@ export default function Keyboard({
       <div
         className={`${
           isLight
-            ? "bg-[#9a72ff1b] border-[#9a72ff1b]"
-            : "bg-[#383439] border-[#484449] "
-        } p-2 rounded-[14px] shadow-inner border flex flex-col gap-[1.5px] relative top-2`}
+            ? "bg-[#9a72ff1b] border-[#000000]/30"
+            : "bg-[#383439] border-[#FFFFFF]/30"
+        } p-2 rounded-[14px] shadow-inner border-2 flex flex-col gap-[1.5px] relative top-2`}
       >
         {keyRows.map((row, rowIndex) => (
           <KeyRow key={rowIndex} row={row} isPressed={isPressed} />

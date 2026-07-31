@@ -132,7 +132,7 @@ export default function ResultActions({
               className={`font-semibold text-xs mb-2.5 pb-2 border-b ${isLight ? "border-zinc-200 text-zinc-900" : "border-zinc-800 text-zinc-200"} flex items-center justify-between`}
             >
               <span>Calculation Formulas</span>
-              <span className="text-[10px] text-[#9b72ff]">Keythm Metrics</span>
+              <span className="text-[10px] text-[#9b72ff]">RhythmKey Metrics</span>
             </div>
             <div className="space-y-2.5 text-[11px] text-zinc-500">
               <div>

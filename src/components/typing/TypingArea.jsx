@@ -51,7 +51,7 @@ export default function TypingArea({
   return (
     <div
       key={textKey}
-      className="relative w-full max-w-5xl h-[120px] overflow-hidden mb-2 select-none left-5"
+      className="relative w-full max-w-5xl h-[120px] overflow-hidden mb-2 select-none left-5" // Increased height to 160px for 4 lines
       style={{
         fontSize: `${fontSize}px`,
         lineHeight: "40px",
@@ -63,7 +63,9 @@ export default function TypingArea({
         <div className="absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg transition-opacity duration-300">
           <div
             className={`flex items-center gap-1.5 text-sm tracking-wide font-normal cursor-pointer ${
-              isLight ? "bg0white/50 text-zinc-700" : "bg-zinc-900/80 text-zinc-300"
+              isLight
+                ? "bg-white/50 text-zinc-700"
+                : "bg-zinc-900/80 text-zinc-300"
             }`}
           >
             <MousePointer2 size={16} /> Click or press any key to focus

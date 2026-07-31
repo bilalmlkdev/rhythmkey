@@ -50,14 +50,14 @@ export default function App() {
   const initialConfig = useMemo(() => {
     const type = searchParams.get("type") || "time";
     const time = parseInt(searchParams.get("time")) || 30;
-    const words = parseInt(searchParams.get("words")) || 10;
+    const words = parseInt(searchParams.get("words")) || 50;
     const story = searchParams.get("story") || "medium";
     const punctuation = searchParams.get("punctuation") === "true";
     const numbers = searchParams.get("numbers") === "true";
     const symbols = searchParams.get("symbols") === "true";
     const difficulty = searchParams.get("difficulty") || "easy";
     return { type, time, words, story, punctuation, numbers, symbols, difficulty };
-  }, []);
+  }, [searchParams]);
 
   const { config, state, refs, actions } = useTypingTest({
     idleTimeout: settings.idleTimeout,
@@ -69,7 +69,7 @@ export default function App() {
     language: settings.language,
     autoFocus: settings.autoFocus,
     isPaused,
-    initialConfig, // pass parsed config
+    initialConfig,
   });
 
   const { saveResult } = useStats();
@@ -79,6 +79,9 @@ export default function App() {
 
   // Store previous test type for revert logic
   const previousTestTypeRef = useRef("time");
+
+  // Track if custom text was just successfully submitted
+  const customTextSubmittedRef = useRef(false);
 
   // Compute WPM and Accuracy
   const activeEndTime = state.endTime || Date.now();
@@ -157,19 +160,22 @@ export default function App() {
     };
     window.addEventListener("keydown", handleGlobalShortcuts);
     return () => window.removeEventListener("keydown", handleGlobalShortcuts);
-  }, []);
+  }, [navigate]);
 
   // Track previous test type when switching to custom
   useEffect(() => {
     if (config.testType !== "custom") {
       previousTestTypeRef.current = config.testType;
+      actions.setCustomText("");
+      actions.setIsCustomTextReady(false);
     }
-  }, [config.testType]);
+  }, [config.testType, actions]);
 
   // When testType becomes "custom", open modal if no custom text is set
   useEffect(() => {
     if (config.testType === "custom") {
       if (!state.customText) {
+        customTextSubmittedRef.current = false; // Reset flag before opening
         setShowCustomTextModal(true);
       }
     } else {
@@ -179,7 +185,7 @@ export default function App() {
 
   // ---- Sync config to URL (except custom) ----
   useEffect(() => {
-    if (config.testType === "custom") return; // skip for custom
+    if (config.testType === "custom") return;
     const params = new URLSearchParams();
     params.set("type", config.testType);
     if (config.testType === "time") params.set("time", config.selectedTime);
@@ -189,7 +195,7 @@ export default function App() {
     params.set("numbers", config.hasNumbers ? "true" : "false");
     params.set("symbols", config.hasSymbols ? "true" : "false");
     params.set("difficulty", config.difficulty);
-    // Only update if the params actually changed to avoid infinite loops
+
     const currentParams = new URLSearchParams(searchParams);
     if (currentParams.toString() !== params.toString()) {
       setSearchParams(params, { replace: true });
@@ -212,21 +218,18 @@ export default function App() {
     const handleKeyDown = (e) => {
       if (state.appState === "finished" || showSettingsModal) return;
 
-      // ---- Tab handling (modifier for shortcuts) ----
       if (e.key === "Tab") {
-        e.preventDefault(); // prevent focus change
+        e.preventDefault();
         tabPressedRef.current = true;
         return;
       }
 
-      // ---- Pause toggle (Tab + Space) ----
       if (tabPressedRef.current && e.key === " ") {
         e.preventDefault();
         setIsPaused((prev) => !prev);
         return;
       }
 
-      // ---- Restart (Tab + Enter, or Enter alone when input empty) ----
       if (e.key === "Enter") {
         if (tabPressedRef.current) {
           e.preventDefault();
@@ -243,29 +246,23 @@ export default function App() {
           actions.restartTest(false);
           return;
         }
-        // Otherwise, Enter does nothing (no newline in typing)
       }
 
-      // ---- If paused, ignore all typing keys ----
       if (isPaused) return;
 
-      // ---- Unfocus handling ----
       if (state.appState === "unfocused") {
         state.setAppState("idle");
         actions.resetIdleTimer();
         return;
       }
 
-      // ---- Normal typing ----
       actions.resetIdleTimer();
-
       actions.setIsTypingActive(true);
       clearTimeout(actions.typingTimeoutRef.current);
       actions.typingTimeoutRef.current = setTimeout(() => {
         actions.setIsTypingActive(false);
       }, 1000);
 
-      // ---- Update last pressed key ----
       setLastKeyPressed(e.key);
 
       if (e.key.length === 1) {
@@ -278,7 +275,6 @@ export default function App() {
 
         const expectedChar = state.currentText[state.userInput.length];
         if (settings.practiceMode && e.key !== expectedChar) {
-          // In practice mode, incorrect key is ignored
           return;
         }
 
@@ -302,7 +298,8 @@ export default function App() {
             }
           } else if (
             config.testType === "stories" ||
-            config.testType === "quotes"
+            config.testType === "quotes" ||
+            config.testType === "custom" // 👈 Added custom to the ending logic here
           ) {
             if (newVal.length === state.currentText.length) {
               actions.setEndTime(Date.now());
@@ -316,7 +313,6 @@ export default function App() {
               }
             }
           }
-          // For time mode, the test ends when timer hits 0, not here.
           return newVal;
         });
       } else if (e.key === "Backspace") {
@@ -355,7 +351,6 @@ export default function App() {
     settings.restartConfirmation,
   ]);
 
-  // Active word index
   const activeWordIdx = wordsList.findIndex(
     (w) => state.userInput.length >= w.start && state.userInput.length <= w.end,
   );
@@ -371,12 +366,13 @@ export default function App() {
   };
 
   const handleCustomTextStart = (text) => {
+    customTextSubmittedRef.current = true; // Mark as successfully submitted
     actions.setCustomText(text);
     actions.setIsCustomTextReady(true);
+    setShowCustomTextModal(false); // Explicitly close modal
     actions.restartTest(false);
   };
 
-  // ---- Share URL ----
   const shareUrl = () => {
     const url = window.location.href;
     if (navigator.clipboard) {
@@ -384,7 +380,6 @@ export default function App() {
         alert("URL copied to clipboard!");
       });
     } else {
-      // fallback
       const textarea = document.createElement("textarea");
       textarea.value = url;
       document.body.appendChild(textarea);
@@ -402,7 +397,9 @@ export default function App() {
         element={
           <div
             className={`min-h-screen ${
-              isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
+              isLight
+                ? "bg-[#FFFFFF] text-zinc-800"
+                : "bg-[#111113] text-[#5e5e5e]"
             } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
             ref={refs.containerRef}
           >
@@ -426,7 +423,7 @@ export default function App() {
               setShowNextWord={setShowNextWord}
               settings={settings}
               updateSetting={updateSetting}
-              onShare={shareUrl} // NEW prop
+              onShare={shareUrl}
             />
 
             <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
@@ -486,7 +483,9 @@ export default function App() {
 
                   <KeyDisplay
                     lastKey={
-                      state.appState === "typing" && state.isTypingActive && !isPaused
+                      state.appState === "typing" &&
+                      state.isTypingActive &&
+                      !isPaused
                         ? lastKeyPressed
                         : ""
                     }
@@ -548,7 +547,12 @@ export default function App() {
               isOpen={showCustomTextModal}
               onClose={() => {
                 setShowCustomTextModal(false);
-                if (config.testType === "custom" && !state.customText) {
+
+                if (
+                  config.testType === "custom" &&
+                  !state.customText &&
+                  !customTextSubmittedRef.current
+                ) {
                   config.setTestType(previousTestTypeRef.current);
                 }
               }}
@@ -559,9 +563,9 @@ export default function App() {
         }
       />
 
-      <Route path="/stats" element={<StatsPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="/stats" element={<StatsPage isLight={isLight} />} />
+      <Route path="/about" element={<AboutPage isLight={isLight} />} />
+      <Route path="*" element={<NotFoundPage isLight={isLight} />} />
     </Routes>
   );
 }

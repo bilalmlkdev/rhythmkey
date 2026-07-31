@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { generateText } from "../utlis/textGenerator";
+import { generateText } from "../utils/textGenerator";
 
 export function useTypingTest({
   idleTimeout = 5,
@@ -50,7 +50,7 @@ export function useTypingTest({
   }, [userInput, mistakes, startTime]);
 
   const [totalKeystrokes, setTotalKeystrokes] = useState(() => {
-    const saved = localStorage.getItem("totalKeystrokes");
+    const saved = localStorage.getItem("RhythmKey_totalKeystrokes"); // CHANGE
     return saved ? parseInt(saved, 10) : 0;
   });
 
@@ -64,8 +64,12 @@ export function useTypingTest({
   const [customText, setCustomText] = useState("");
   const [isCustomTextReady, setIsCustomTextReady] = useState(false);
 
+
   useEffect(() => {
-    localStorage.setItem("totalKeystrokes", totalKeystrokes.toString());
+    localStorage.setItem(
+      "RhythmKey_totalKeystrokes",
+      totalKeystrokes.toString(),
+    );
   }, [totalKeystrokes]);
 
   const getNewText = useCallback(
@@ -226,11 +230,10 @@ export function useTypingTest({
       const top = activeWordRef.current.offsetTop;
       const lineHeight = 40;
       const currentLine = Math.floor(top / lineHeight);
-      if (currentLine >= 2) {
-        setLineOffset((currentLine - 1) * lineHeight);
-      } else {
-        setLineOffset(0);
-      }
+      // Keep active line at the second line (index 1) to show 3 lines above/below
+      const targetLine = 1;
+      const newOffset = Math.max(0, (currentLine - targetLine) * lineHeight);
+      setLineOffset(newOffset);
     }
   }, [userInput]);
 

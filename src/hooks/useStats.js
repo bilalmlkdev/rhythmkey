@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 export function useStats() {
   const [stats, setStats] = useState(() => {
-    const saved = localStorage.getItem("keythm_stats");
+    const saved = localStorage.getItem("RhythmKey_stats");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -14,7 +14,7 @@ export function useStats() {
   });
 
   useEffect(() => {
-    localStorage.setItem("keythm_stats", JSON.stringify(stats));
+    localStorage.setItem("RhythmKey_stats", JSON.stringify(stats));
   }, [stats]);
 
   const saveResult = useCallback((result) => {

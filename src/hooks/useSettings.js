@@ -16,7 +16,7 @@ export function useSettings() {
   };
 
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("keythm_settings");
+    const saved = localStorage.getItem("RhythmKey_settings");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -35,7 +35,7 @@ export function useSettings() {
   const [showNextWord, setShowNextWord] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem("keythm_settings", JSON.stringify(settings));
+    localStorage.setItem("RhythmKey_settings", JSON.stringify(settings));
   }, [settings]);
 
   const updateSetting = (key, value) => {

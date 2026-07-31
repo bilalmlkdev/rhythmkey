@@ -84,7 +84,7 @@ export default function ResultScreen({
         );
       const a = document.createElement("a");
       a.href = dataStr;
-      a.download = "keythm_stats.json";
+      a.download = "RhythmKey_stats.json";
       a.click();
       a.remove();
     } else if (format === "csv") {
@@ -93,17 +93,17 @@ export default function ResultScreen({
         history.map((e) => `${e.time},${e.wpm},${e.accuracy}`).join("\n");
       const a = document.createElement("a");
       a.href = encodeURI(csvContent);
-      a.download = "keythm_stats.csv";
+      a.download = "RhythmKey_stats.csv";
       a.click();
       a.remove();
     } else if (format === "markdown") {
       let mdContent =
-        `# Keythm Typing Test Results\n\n- **WPM**: ${wpm}\n- **Accuracy**: ${accuracy}%\n- **Characters**: ${correctChars}/${incorrectChars}/${totalChars}\n- **Corrections**: ${corrections}\n\n## History Log\n| Time (s) | WPM | Accuracy (%) |\n|---|---|---|\n` +
+        `# RhythmKey Typing Test Results\n\n- **WPM**: ${wpm}\n- **Accuracy**: ${accuracy}%\n- **Characters**: ${correctChars}/${incorrectChars}/${totalChars}\n- **Corrections**: ${corrections}\n\n## History Log\n| Time (s) | WPM | Accuracy (%) |\n|---|---|---|\n` +
         history.map((e) => `| ${e.time} | ${e.wpm} | ${e.accuracy} |`).join("\n");
       const blob = new Blob([mdContent], { type: "text/markdown;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "keythm_stats.md";
+      a.download = "RhythmKey_stats.md";
       a.click();
       a.remove();
     } else if (format === "svg" && svgRef.current) {
@@ -115,7 +115,7 @@ export default function ResultScreen({
       const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "keythm_graph.svg";
+      a.download = "RhythmKey_graph.svg";
       a.click();
       a.remove();
     } else if ((format === "png" || format === "jpg") && svgRef.current) {
@@ -135,7 +135,7 @@ export default function ResultScreen({
 
         const a = document.createElement("a");
         a.href = canvas.toDataURL(format === "png" ? "image/png" : "image/jpeg", 1.0);
-        a.download = `keythm_graph.${format}`;
+        a.download = `RhythmKey_graph.${format}`;
         a.click();
         a.remove();
       };

@@ -9,7 +9,7 @@ import {
   Info,
   Share2, // add this
 } from "lucide-react";
-import SettingsModal from "../modals/SettingsModal";
+import SettingsModal from "../modals/settings/SettingsModal";
 
 export default function Header({
   restartTest,
@@ -40,7 +40,7 @@ export default function Header({
         onClick={() => restartTest(false)}
       >
         <span className="text-[#9b72ff] text-xl font-bold tracking-tighter">
-          keythm
+          RhythmKey
         </span>
         <div className="grid grid-cols-2 gap-0.5">
           <div className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm"></div>
@@ -82,6 +82,16 @@ export default function Header({
         >
           <Info size={14} /> About
         </Link>
+        {/* Share Button (NEW) */}
+        <button
+          onClick={(e) => {
+            e.currentTarget.blur();
+            onShare();
+          }}
+          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+        >
+          <Share2 size={14} /> Share
+        </button>
 
         {/* Audio Button */}
         <button
@@ -126,17 +136,6 @@ export default function Header({
           </span>
         </button>
 
-        {/* Share Button (NEW) */}
-        <button
-          onClick={(e) => {
-            e.currentTarget.blur();
-            onShare();
-          }}
-          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
-        >
-          <Share2 size={14} /> Share
-        </button>
-
         {/* Settings Modal */}
         <SettingsModal
           isOpen={showSettingsModal}
@@ -160,7 +159,7 @@ export default function Header({
 
         {/* GitHub Button */}
         <a
-          href="https://github.com/byllzz/keythm"
+          href="https://github.com/byllzz/rhythmkey.git"
           target="_blank"
           rel="noopener noreferrer"
           className={`flex items-center gap-2 px-4.5 py-[6px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${
