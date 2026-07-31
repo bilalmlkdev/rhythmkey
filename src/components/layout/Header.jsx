@@ -7,6 +7,7 @@ import {
   Github,
   BarChart2,
   Info,
+  Share2, // add this
 } from "lucide-react";
 import SettingsModal from "../modals/SettingsModal";
 
@@ -30,6 +31,7 @@ export default function Header({
   setShowNextWord,
   settings,
   updateSetting,
+  onShare, // new prop
 }) {
   return (
     <header className="flex items-center justify-between px-8 pt-5 max-w-[1084px] w-full mx-auto relative">
@@ -47,7 +49,7 @@ export default function Header({
           <div className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm opacity-50"></div>
         </div>
       </div>
-      <div className="hidden md:block relative  text-xs text-[#9b72ff]">
+      <div className="hidden md:block relative text-xs text-[#9b72ff]">
         {totalKeystrokes.toLocaleString()}{" "}
         <span
           className={`opacity-50 tracking-wide ${isLight ? "text-black" : "text-white"}`}
@@ -122,6 +124,17 @@ export default function Header({
           >
             ⌘K
           </span>
+        </button>
+
+        {/* Share Button (NEW) */}
+        <button
+          onClick={(e) => {
+            e.currentTarget.blur();
+            onShare();
+          }}
+          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+        >
+          <Share2 size={14} /> Share
         </button>
 
         {/* Settings Modal */}

@@ -5,17 +5,24 @@ export function useTypingTest({
   idleTimeout = 5,
   practiceMode = false,
   autoFocus = true,
-  isPaused = false, // NEW: pause state
+  isPaused = false,
+  initialConfig = {}, // new
 } = {}) {
-  const [hasPunctuation, setHasPunctuation] = useState(false);
-  const [hasNumbers, setHasNumbers] = useState(false);
-  const [hasSymbols, setHasSymbols] = useState(false);
-  const [difficulty, setDifficulty] = useState("easy");
+  const [hasPunctuation, setHasPunctuation] = useState(
+    initialConfig.punctuation ?? false,
+  );
+  const [hasNumbers, setHasNumbers] = useState(initialConfig.numbers ?? false);
+  const [hasSymbols, setHasSymbols] = useState(initialConfig.symbols ?? false);
+  const [difficulty, setDifficulty] = useState(
+    initialConfig.difficulty ?? "easy",
+  );
 
-  const [testType, setTestType] = useState("time");
-  const [wordCount, setWordCount] = useState(10);
-  const [storyLength, setStoryLength] = useState("medium");
-  const [selectedTime, setSelectedTime] = useState(30);
+  const [testType, setTestType] = useState(initialConfig.type ?? "time");
+  const [wordCount, setWordCount] = useState(initialConfig.words ?? 10);
+  const [storyLength, setStoryLength] = useState(
+    initialConfig.story ?? "medium",
+  );
+  const [selectedTime, setSelectedTime] = useState(initialConfig.time ?? 30);
 
   const [appState, setAppState] = useState(autoFocus ? "idle" : "unfocused");
   const [currentText, setCurrentText] = useState("");

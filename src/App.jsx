@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import Keyboard from "./components/ui/keyboard/Keyboard";
 import ResultScreen from "./components/Result/ResultScreen";
 
@@ -9,7 +9,7 @@ import TopSettingsBar from "./components/typing/TopSettingsBar";
 import LiveStats from "./components/typing/LiveStats";
 import TypingArea from "./components/typing/TypingArea";
 import RestartPrompt from "./components/typing/RestartPrompt";
-import KeyDisplay from "./components/typing/KeyDisplay"; // NEW
+import KeyDisplay from "./components/typing/KeyDisplay";
 import CustomTextModal from "./components/modals/CustomTextModal";
 
 import { useTheme } from "./hooks/useTheme";
@@ -17,11 +17,13 @@ import { useTypingTest } from "./hooks/useTypingTest";
 import { useSettings } from "./hooks/useSettings";
 import { useStats } from "./hooks/useStats";
 import StatsPage from "./pages/StatsPage";
-import AboutPage from "./pages/AboutPage"; // NEW
+import AboutPage from "./pages/AboutPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export default function App() {
   const location = useLocation();
-  const isStatsPage = location.pathname === "/stats";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const { theme, setTheme, isLight } = useTheme();
   const {
@@ -42,7 +44,20 @@ export default function App() {
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
   const [showCustomTextModal, setShowCustomTextModal] = React.useState(false);
-  const [lastKeyPressed, setLastKeyPressed] = React.useState(""); // NEW
+  const [lastKeyPressed, setLastKeyPressed] = React.useState("");
+
+  // ---- Parse URL params for initial config ----
+  const initialConfig = useMemo(() => {
+    const type = searchParams.get("type") || "time";
+    const time = parseInt(searchParams.get("time")) || 30;
+    const words = parseInt(searchParams.get("words")) || 10;
+    const story = searchParams.get("story") || "medium";
+    const punctuation = searchParams.get("punctuation") === "true";
+    const numbers = searchParams.get("numbers") === "true";
+    const symbols = searchParams.get("symbols") === "true";
+    const difficulty = searchParams.get("difficulty") || "easy";
+    return { type, time, words, story, punctuation, numbers, symbols, difficulty };
+  }, []);
 
   const { config, state, refs, actions } = useTypingTest({
     idleTimeout: settings.idleTimeout,
@@ -54,6 +69,7 @@ export default function App() {
     language: settings.language,
     autoFocus: settings.autoFocus,
     isPaused,
+    initialConfig, // pass parsed config
   });
 
   const { saveResult } = useStats();
@@ -136,7 +152,7 @@ export default function App() {
       }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
-        window.location.href = "/stats";
+        navigate("/stats");
       }
     };
     window.addEventListener("keydown", handleGlobalShortcuts);
@@ -160,6 +176,36 @@ export default function App() {
       setShowCustomTextModal(false);
     }
   }, [config.testType, state.customText]);
+
+  // ---- Sync config to URL (except custom) ----
+  useEffect(() => {
+    if (config.testType === "custom") return; // skip for custom
+    const params = new URLSearchParams();
+    params.set("type", config.testType);
+    if (config.testType === "time") params.set("time", config.selectedTime);
+    if (config.testType === "words") params.set("words", config.wordCount);
+    if (config.testType === "stories") params.set("story", config.storyLength);
+    params.set("punctuation", config.hasPunctuation ? "true" : "false");
+    params.set("numbers", config.hasNumbers ? "true" : "false");
+    params.set("symbols", config.hasSymbols ? "true" : "false");
+    params.set("difficulty", config.difficulty);
+    // Only update if the params actually changed to avoid infinite loops
+    const currentParams = new URLSearchParams(searchParams);
+    if (currentParams.toString() !== params.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [
+    config.testType,
+    config.selectedTime,
+    config.wordCount,
+    config.storyLength,
+    config.hasPunctuation,
+    config.hasNumbers,
+    config.hasSymbols,
+    config.difficulty,
+    searchParams,
+    setSearchParams,
+  ]);
 
   // Main keydown listener
   useEffect(() => {
@@ -327,177 +373,195 @@ export default function App() {
   const handleCustomTextStart = (text) => {
     actions.setCustomText(text);
     actions.setIsCustomTextReady(true);
-    // Restart test to load the new text
     actions.restartTest(false);
   };
 
-  // If on stats page, render StatsPage
-  if (isStatsPage) {
-    return <StatsPage />;
-  }
-  // If on about page, render AboutPage
-  if (location.pathname === "/about") {
-    return <AboutPage />;
-  }
-  
+  // ---- Share URL ----
+  const shareUrl = () => {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        alert("URL copied to clipboard!");
+      });
+    } else {
+      // fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = url;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      alert("URL copied to clipboard!");
+    }
+  };
+
   return (
-    <div
-      className={`min-h-screen ${
-        isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
-      } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
-      ref={refs.containerRef}
-    >
-      <Header
-        restartTest={actions.restartTest}
-        totalKeystrokes={state.totalKeystrokes}
-        soundEnabled={soundEnabled}
-        setSoundEnabled={setSoundEnabled}
-        showSettingsModal={showSettingsModal}
-        setShowSettingsModal={setShowSettingsModal}
-        isLight={isLight}
-        theme={theme}
-        setTheme={setTheme}
-        showKeyboard={showKeyboard}
-        setShowKeyboard={setShowKeyboard}
-        soundVolume={soundVolume}
-        setSoundVolume={setSoundVolume}
-        showLiveStats={showLiveStats}
-        setShowLiveStats={setShowLiveStats}
-        showNextWord={showNextWord}
-        setShowNextWord={setShowNextWord}
-        settings={settings}
-        updateSetting={updateSetting}
-      />
-
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
-        {state.appState !== "finished" ? (
-          <div className="w-full flex flex-col items-center justify-center">
-            <TopSettingsBar
-              appState={state.appState}
-              isTypingActive={state.isTypingActive}
-              isLight={isLight}
-              hasPunctuation={config.hasPunctuation}
-              setHasPunctuation={config.setHasPunctuation}
-              hasNumbers={config.hasNumbers}
-              setHasNumbers={config.setHasNumbers}
-              hasSymbols={config.hasSymbols}
-              setHasSymbols={config.setHasSymbols}
-              difficulty={config.difficulty}
-              setDifficulty={config.setDifficulty}
-              testType={config.testType}
-              setTestType={config.setTestType}
-              selectedTime={config.selectedTime}
-              setSelectedTime={config.setSelectedTime}
-              wordCount={config.wordCount}
-              setWordCount={config.setWordCount}
-              storyLength={config.storyLength}
-              setStoryLength={config.setStoryLength}
-            />
-
-            <LiveStats
-              showLiveStats={showLiveStats}
-              appState={state.appState}
-              isLight={isLight}
-              testType={config.testType}
-              timeLeft={state.timeLeft}
-              userInput={state.userInput}
-              wordCount={config.wordCount}
-              currentText={state.currentText}
-              wpm={wpm}
-              accuracy={accuracy}
-              isPaused={isPaused}
-            />
-
-            <TypingArea
-              textKey={state.textKey}
-              appState={state.appState}
-              isLight={isLight}
-              innerContainerRef={refs.innerContainerRef}
-              lineOffset={state.lineOffset}
-              wordsList={wordsList}
-              userInput={state.userInput}
-              showNextWord={showNextWord}
-              activeWordRef={refs.activeWordRef}
-              currentIdx={currentIdx}
-              mistakeHighlight={settings.mistakeHighlight}
-              cursorStyle={settings.cursorStyle}
-              fontSize={settings.fontSize}
-            />
-
-            {/* KeyDisplay – shows last pressed key when typing is active */}
-            <KeyDisplay
-              lastKey={
-                state.appState === "typing" && state.isTypingActive && !isPaused
-                  ? lastKeyPressed
-                  : ""
-              }
-              isLight={isLight}
-            />
-
-            <RestartPrompt
-              appState={state.appState}
-              isTypingActive={state.isTypingActive}
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div
+            className={`min-h-screen ${
+              isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
+            } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
+            ref={refs.containerRef}
+          >
+            <Header
               restartTest={actions.restartTest}
+              totalKeystrokes={state.totalKeystrokes}
+              soundEnabled={soundEnabled}
+              setSoundEnabled={setSoundEnabled}
+              showSettingsModal={showSettingsModal}
+              setShowSettingsModal={setShowSettingsModal}
               isLight={isLight}
-              isPaused={isPaused}
-              onPauseToggle={handlePauseToggle}
+              theme={theme}
+              setTheme={setTheme}
+              showKeyboard={showKeyboard}
+              setShowKeyboard={setShowKeyboard}
+              soundVolume={soundVolume}
+              setSoundVolume={setSoundVolume}
+              showLiveStats={showLiveStats}
+              setShowLiveStats={setShowLiveStats}
+              showNextWord={showNextWord}
+              setShowNextWord={setShowNextWord}
+              settings={settings}
+              updateSetting={updateSetting}
+              onShare={shareUrl} // NEW prop
             />
 
-            {showKeyboard && (
-              <div
-                className={`transition-opacity duration-300 mt-1 ${
-                  state.appState === "typing" && state.isTypingActive
-                    ? "opacity-40"
-                    : "opacity-100"
-                }`}
-              >
-                <Keyboard
-                  soundEnabled={soundEnabled}
-                  soundVolume={soundVolume}
+            <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
+              {state.appState !== "finished" ? (
+                <div className="w-full flex flex-col items-center justify-center">
+                  <TopSettingsBar
+                    appState={state.appState}
+                    isTypingActive={state.isTypingActive}
+                    isLight={isLight}
+                    hasPunctuation={config.hasPunctuation}
+                    setHasPunctuation={config.setHasPunctuation}
+                    hasNumbers={config.hasNumbers}
+                    setHasNumbers={config.setHasNumbers}
+                    hasSymbols={config.hasSymbols}
+                    setHasSymbols={config.setHasSymbols}
+                    difficulty={config.difficulty}
+                    setDifficulty={config.setDifficulty}
+                    testType={config.testType}
+                    setTestType={config.setTestType}
+                    selectedTime={config.selectedTime}
+                    setSelectedTime={config.setSelectedTime}
+                    wordCount={config.wordCount}
+                    setWordCount={config.setWordCount}
+                    storyLength={config.storyLength}
+                    setStoryLength={config.setStoryLength}
+                  />
+
+                  <LiveStats
+                    showLiveStats={showLiveStats}
+                    appState={state.appState}
+                    isLight={isLight}
+                    testType={config.testType}
+                    timeLeft={state.timeLeft}
+                    userInput={state.userInput}
+                    wordCount={config.wordCount}
+                    currentText={state.currentText}
+                    wpm={wpm}
+                    accuracy={accuracy}
+                    isPaused={isPaused}
+                  />
+
+                  <TypingArea
+                    textKey={state.textKey}
+                    appState={state.appState}
+                    isLight={isLight}
+                    innerContainerRef={refs.innerContainerRef}
+                    lineOffset={state.lineOffset}
+                    wordsList={wordsList}
+                    userInput={state.userInput}
+                    showNextWord={showNextWord}
+                    activeWordRef={refs.activeWordRef}
+                    currentIdx={currentIdx}
+                    mistakeHighlight={settings.mistakeHighlight}
+                    cursorStyle={settings.cursorStyle}
+                    fontSize={settings.fontSize}
+                  />
+
+                  <KeyDisplay
+                    lastKey={
+                      state.appState === "typing" && state.isTypingActive && !isPaused
+                        ? lastKeyPressed
+                        : ""
+                    }
+                    isLight={isLight}
+                  />
+
+                  <RestartPrompt
+                    appState={state.appState}
+                    isTypingActive={state.isTypingActive}
+                    restartTest={actions.restartTest}
+                    isLight={isLight}
+                    isPaused={isPaused}
+                    onPauseToggle={handlePauseToggle}
+                  />
+
+                  {showKeyboard && (
+                    <div
+                      className={`transition-opacity duration-300 mt-1 ${
+                        state.appState === "typing" && state.isTypingActive
+                          ? "opacity-40"
+                          : "opacity-100"
+                      }`}
+                    >
+                      <Keyboard
+                        soundEnabled={soundEnabled}
+                        soundVolume={soundVolume}
+                        isLight={isLight}
+                        layout={settings.keyboardLayout}
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <ResultScreen
+                  wpm={wpm}
+                  accuracy={accuracy}
+                  correctChars={correctChars}
+                  incorrectChars={incorrectChars}
+                  totalChars={totalChars}
+                  corrections={state.backspaceCount}
+                  selectedTime={
+                    config.testType === "time"
+                      ? config.selectedTime
+                      : timeElapsed * 60
+                  }
+                  timeLeft={config.testType === "time" ? state.timeLeft : 0}
+                  testType={config.testType}
+                  history={state.history}
+                  onRestart={() => actions.restartTest(true)}
+                  onNextTest={() => actions.restartTest(false)}
                   isLight={isLight}
-                  layout={settings.keyboardLayout}
                 />
-              </div>
-            )}
+              )}
+            </main>
+
+            {state.appState !== "finished" && <Footer isLight={isLight} />}
+
+            <CustomTextModal
+              isOpen={showCustomTextModal}
+              onClose={() => {
+                setShowCustomTextModal(false);
+                if (config.testType === "custom" && !state.customText) {
+                  config.setTestType(previousTestTypeRef.current);
+                }
+              }}
+              onStart={handleCustomTextStart}
+              isLight={isLight}
+            />
           </div>
-        ) : (
-          <ResultScreen
-            wpm={wpm}
-            accuracy={accuracy}
-            correctChars={correctChars}
-            incorrectChars={incorrectChars}
-            totalChars={totalChars}
-            corrections={state.backspaceCount}
-            selectedTime={
-              config.testType === "time"
-                ? config.selectedTime
-                : timeElapsed * 60
-            }
-            timeLeft={config.testType === "time" ? state.timeLeft : 0}
-            testType={config.testType}
-            history={state.history}
-            onRestart={() => actions.restartTest(true)}
-            onNextTest={() => actions.restartTest(false)}
-            isLight={isLight}
-          />
-        )}
-      </main>
-
-      {state.appState !== "finished" && <Footer isLight={isLight} />}
-
-      {/* Custom Text Modal */}
-      <CustomTextModal
-        isOpen={showCustomTextModal}
-        onClose={() => {
-          setShowCustomTextModal(false);
-          // If user closes without setting text, revert to previous test type
-          if (config.testType === "custom" && !state.customText) {
-            config.setTestType(previousTestTypeRef.current);
-          }
-        }}
-        onStart={handleCustomTextStart}
-        isLight={isLight}
+        }
       />
-    </div>
+
+      <Route path="/stats" element={<StatsPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 }
