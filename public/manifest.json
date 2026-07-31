@@ -1,0 +1,21 @@
+{
+  "name": "RhythmKey",
+  "short_name": "RhythmKey",
+  "description": "A sleek typing test application with live stats and customizable settings.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111113",
+  "theme_color": "#9b72ff",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

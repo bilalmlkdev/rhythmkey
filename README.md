@@ -1,4 +1,4 @@
-![RhythmKey Dashboard](./public/preview.png)
+![RhythmKey Dashboard](./src/assets/preview.png)
 
 <h1 align="center">RhythmKey</h1>
 
