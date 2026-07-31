@@ -3,8 +3,8 @@ import { Volume2 } from "lucide-react";
 import SettingToggle from "./SettingToggle";
 
 export default function SoundSection({
-  settings, // CHANGED – use settings object
-  updateSetting, // CHANGED – use updateSetting
+  settings,
+  updateSetting, 
   isLight,
 }) {
   return (

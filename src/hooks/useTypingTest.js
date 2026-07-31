@@ -8,6 +8,7 @@ export function useTypingTest({
   isPaused = false,
   initialConfig = {},
 } = {}) {
+  // states
   const [hasPunctuation, setHasPunctuation] = useState(
     initialConfig.punctuation ?? false,
   );
@@ -74,7 +75,7 @@ export function useTypingTest({
     );
   }, [totalKeystrokes]);
 
-  // NEW – save customText whenever it changes
+  // save customText whenever it changes
   useEffect(() => {
     localStorage.setItem("RhythmKey_customText", customText);
   }, [customText]);
@@ -160,7 +161,7 @@ export function useTypingTest({
     }
   }, [testType, customText]);
 
-  // Timer for time mode – respects pause
+  // Timer for time mode - now respects pause
   useEffect(() => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
@@ -190,7 +191,7 @@ export function useTypingTest({
     };
   }, [appState, testType, isPaused]);
 
-  // Graph history – respects pause
+  // Graph history - now respects pause
   useEffect(() => {
     let graphInterval;
     if (appState === "typing" && !isPaused) {
@@ -231,7 +232,7 @@ export function useTypingTest({
     }
   }, [userInput, testType, appState, currentText.length, getNewText]);
 
-  // Line offset calculation (unchanged)
+  // Line offset calculation 
   const lineHeight = 40;
   const charWidth = 14;
   const containerWidth = 1024;

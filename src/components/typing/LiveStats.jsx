@@ -1,4 +1,5 @@
 import React from "react";
+import { FaInfinity } from "react-icons/fa";
 
 export default function LiveStats({
   showLiveStats,
@@ -46,7 +47,8 @@ export default function LiveStats({
               {userInput.length} / {currentText.length}
             </span>
           )}
-          {testType === "infinite" && <span className="text-zinc-400">♾️</span>}
+          {testType === "infinite" && <span className="text-zinc-400">
+            <FaInfinity size={15} /></span>}
         </div>
         <div className={isLight ? "text-zinc-800" : "text-[#d4d4d8]"}>
           {wpm}{" "}

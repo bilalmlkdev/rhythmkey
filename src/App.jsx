@@ -8,7 +8,7 @@ import MainPage from "./pages/MainPage";
 
 export default function App() {
   const location = useLocation();
-  const { isLight, theme, setTheme } = useTheme(); // also get setTheme
+  const { isLight, theme, setTheme } = useTheme();
 
   return (
     <Routes>

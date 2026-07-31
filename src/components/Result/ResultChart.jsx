@@ -78,7 +78,7 @@ export default function ResultChart({
             className={`flex items-center gap-1.5 ${isLight ? "text-zinc-500" : "text-zinc-400"}`}
           >
             <span
-              className={`w-2 h-0.5 border-t border-dashed ${isLight ? "border-zinc-500" : "border-zinc-400"}`}
+              className={`w-5 relative top-0.5 right-1 h-0.5 border-t border-dashed ${isLight ? "border-zinc-500" : "border-zinc-400"}`}
             ></span>{" "}
             Accuracy (%)
           </div>

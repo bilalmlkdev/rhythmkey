@@ -11,6 +11,7 @@
 <img src="https://img.shields.io/badge/Language-JavaScript%2096%25-9B72FF?style=flat&logo=javascript&logoColor=white" />
 <img src="https://img.shields.io/badge/License-MIT-9B72FF?style=flat" />
 <img src="https://img.shields.io/badge/Deployed%20on-Vercel-9B72FF?style=flat&logo=vercel&logoColor=white" />
+<img src="https://img.shields.io/badge/Typing%20Engine-Custom-9B72FF?style=flat&logo=keyboard&logoColor=white" />
 </p>
 
 <p align="center">

@@ -15,16 +15,14 @@ import { useSettings } from "../hooks/useSettings";
 import { useStats } from "../hooks/useStats";
 import { useTypingHandlers } from "../hooks/useTypingHandlers";
 
-// NEW – import wrong sound
+// wrong sound import
 import wrongSound from "../sounds/wrong.mp3";
 
 export default function MainPage({ isLight, theme, setTheme }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // CHANGED – use unified settings
+  // unified settings
   const { settings, updateSetting, resetSettings } = useSettings();
-
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showCustomTextModal, setShowCustomTextModal] = useState(false);
@@ -207,7 +205,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
     setSearchParams,
   ]);
 
-  // NEW – wrong sound player
+  // wrong sound player
   const [wrongAudio, setWrongAudio] = useState(null);
   useEffect(() => {
     if (!settings.soundEnabled) return;
@@ -242,7 +240,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
     }
   };
 
-  // Typing handlers (extracted) – now includes playWrongSound
+  // Typing handlers with playWrongSound
   useTypingHandlers({
     state,
     config,
@@ -306,7 +304,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
         isLight={isLight}
         theme={theme}
         setTheme={setTheme}
-        // CHANGED – pass settings and updateSetting
+       // passing settings and updateSetting
         settings={settings}
         updateSetting={updateSetting}
         onShare={shareUrl}
@@ -339,7 +337,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
             />
 
             <LiveStats
-              showLiveStats={settings.showLiveStats} // CHANGED – from settings
+              showLiveStats={settings.showLiveStats} // from settings
               appState={state.appState}
               isLight={isLight}
               testType={config.testType}
@@ -360,7 +358,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
               lineOffset={state.lineOffset}
               wordsList={wordsList}
               userInput={state.userInput}
-              showNextWord={settings.showNextWord} // CHANGED – from settings
+              showNextWord={settings.showNextWord} //  from settings
               activeWordRef={refs.activeWordRef}
               currentIdx={currentIdx}
               mistakeHighlight={settings.mistakeHighlight}
@@ -387,7 +385,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
               onPauseToggle={handlePauseToggle}
             />
 
-            {settings.showKeyboard && ( // CHANGED – from settings
+            {settings.showKeyboard && ( //  from settings
               <div
                 className={`transition-opacity duration-300 mt-1 ${
                   state.appState === "typing" && state.isTypingActive

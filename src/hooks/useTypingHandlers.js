@@ -10,7 +10,7 @@ export function useTypingHandlers({
   setLastKeyPressed,
   setIsPaused,
   showCustomTextModal,
-  playWrongSound, // NEW
+  playWrongSound,
 }) {
   const tabPressedRef = useRef(false);
 
@@ -80,7 +80,7 @@ export function useTypingHandlers({
           return;
         }
 
-        // CHANGED – play wrong sound when mistake occurs
+        //  this plays wrong sound when mistake occurs
         if (e.key !== expectedChar) {
           actions.setMistakes((m) => m + 1);
           if (playWrongSound) playWrongSound();
@@ -158,6 +158,6 @@ export function useTypingHandlers({
     setLastKeyPressed,
     setIsPaused,
     showCustomTextModal,
-    playWrongSound, // NEW dependency
+    playWrongSound, 
   ]);
 }

@@ -26,7 +26,7 @@ export default function RestartPrompt({
     callback();
   };
 
-  // Listen for Tab + Enter to restart (animation)
+  // Listen for Tab + Enter to restart 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Tab") {

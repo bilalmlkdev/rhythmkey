@@ -41,7 +41,7 @@ export function useSettings() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  // NEW: reset all settings to default
+  // adding reset all settings to default
   const resetSettings = () => {
     setSettings(defaultSettings);
   };

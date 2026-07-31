@@ -76,9 +76,9 @@ export const layoutMaps = {
   },
 };
 
-// Base key rows (QWERTY) with the requested layout changes
+// Base key rows (QWERTY)
 export const baseRows = [
-  // Row 0: Esc, F1–F12, Print Screen (replaces Delete), Delete (no icon)
+  // Row 0: Esc, F1–F12, Print Screen , Delete
   [
     {
       label: "esc",
@@ -183,7 +183,7 @@ export const baseRows = [
       color: "white",
       align: "c",
     },
-    // F13 becomes Insert (no icon)
+    //  Insert
     {
       label: "ins",
       code: "Insert",
@@ -191,7 +191,7 @@ export const baseRows = [
       color: "dark-red",
       align: "tl",
     },
-    // Delete becomes Print Screen
+    //  Print Screen
     {
       label: "prt sc",
       code: "PrintScreen",
@@ -199,7 +199,7 @@ export const baseRows = [
       color: "dark-red",
       align: "tl",
     },
-    // Far right: Delete (no icon)
+    // Delete
     {
       label: "del",
       code: "Delete",
@@ -308,7 +308,7 @@ export const baseRows = [
       color: "dark-red",
       align: "tl",
     },
-    // Home (was PageUp) – unchanged
+    // Home
     {
       label: "home",
       code: "Home",
@@ -317,7 +317,7 @@ export const baseRows = [
       align: "tl",
     },
   ],
-  // Row 2: tab, letters, brackets, backslash, and PageUp (was PageDown) – now "pg up"
+  // Row 2: tab, letters, brackets, backslash, and PageUp
   [
     {
       label: "tab",
@@ -357,7 +357,7 @@ export const baseRows = [
       color: "white",
       align: "tl",
     },
-    // PageUp (was PageDown) – now "pg up"
+    // PageUp
     {
       label: "pg up",
       code: "PageUp",
@@ -366,7 +366,7 @@ export const baseRows = [
       align: "tl",
     },
   ],
-  // Row 3: caps, letters, enter, and PageDown (was Home) – now "pg dn"
+  // Row 3: caps, letters, enter, and PageDown
   [
     {
       label: "caps lock",
@@ -405,7 +405,7 @@ export const baseRows = [
       color: "bright-red",
       align: "tl",
     },
-    // PageDown (was Home) – now "pg dn"
+    // PageDown
     {
       label: "pg dn",
       code: "PageDown",
@@ -466,7 +466,6 @@ export const baseRows = [
       color: "white",
       align: "c",
     },
-    // End (unchanged)
     {
       label: "end",
       code: "End",

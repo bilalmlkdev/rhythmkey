@@ -53,7 +53,7 @@ export const WORDS = [
   "owner", "military", "marry", "sound", "natural", "belief", "test", "least", "sight", "fact",
   "range", "prove", "machine", "fail", "hold", "history", "major", "bill", "class", "position",
   "ability", "victory", "manage", "task", "name", "promise", "quality", "project", "piece", "gift",
-  // --- NEW WORDS (length 6-8) ---
+  //  NEW WORDS (length 6-8)
   "action", "active", "actual", "adjust", "admire", "advise", "affect", "afford", "agenda",
   "agreed", "almost", "amount", "animal", "annual", "answer", "anyone", "appeal", "appear",
   "around", "artist", "assume", "attach", "attack", "attempt", "attend", "attract", "august",

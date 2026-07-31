@@ -197,7 +197,7 @@ export default function SettingsModal({
 
         {/* Footer with buttons */}
         <div className="mt-4 flex items-center justify-between">
-          {/* NEW: Reset button */}
+          {/*  Reset button */}
           <button
             onClick={handleReset}
             className="flex items-center gap-2 px-4 py-1.5 rounded-[8px] border border-red-400/50 text-red-400 hover:bg-red-400/10 text-xs font-medium transition-colors cursor-pointer"

@@ -19,10 +19,10 @@ export default function Header({
   isLight,
   theme,
   setTheme,
-  settings, // CHANGED – receive unified settings
-  updateSetting, // CHANGED – receive updateSetting
+  settings, //  receive unified settings
+  updateSetting, //  receive updateSetting
   onShare,
-  resetSettings, // NEW
+  resetSettings,
 }) {
   const [showNotification, setShowNotification] = useState(false);
 
@@ -135,18 +135,9 @@ export default function Header({
           }`}
         >
           <Settings size={14} /> Settings{" "}
-          {/* <span
-            className={`py-0.5 px-1.5 rounded-[5px] text-[10px] ${
-              isLight
-                ? "bg-zinc-200 text-zinc-600"
-                : "bg-[#2b2b2f] text-zinc-300"
-            }`}
-          >
-
-          </span> */}
         </button>
 
-        {/* Settings Modal – pass settings and updateSetting */}
+        {/* Settings Modal */}
         <SettingsModal
           isOpen={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}

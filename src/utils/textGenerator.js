@@ -71,7 +71,7 @@ export function generateText({
   let totalWords = countOverride !== null ? countOverride : 35;
   if (testType === "words") totalWords = wordCount;
   else if (testType === "infinite") totalWords = 250;
-  else if (testType === "time") totalWords = 100; // 👈 ensure enough text
+  else if (testType === "time") totalWords = 100; // ensure enough text
 
   let generated = [];
   for (let i = 0; i < totalWords; i++) {
