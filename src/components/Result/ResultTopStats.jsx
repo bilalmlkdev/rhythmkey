@@ -14,7 +14,7 @@ export default function ResultTopStats({
     <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-3 duration-300">
       <div className="flex items-center justify-center gap-16 mb-2">
         <div className="flex flex-col items-center gap-2">
-          <div className="text-[180px] font-bold text-[#e26928] leading-none tracking-tighter">
+          <div className="text-[180px] font-bold text-[#9b72ff] leading-none tracking-tighter">
             {wpm}
           </div>
           <span
@@ -42,7 +42,7 @@ export default function ResultTopStats({
       </div>
 
       {isPersonalBest ? (
-        <div className="bg-[#e26928]/10 text-[#e26928] px-3 py-0.5 rounded-full text-[11px] font-medium mb-3 border border-[#e26928]/20 flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-200">
+        <div className="bg-[#9b72ff]/10 text-[#9b72ff] px-3 py-0.5 rounded-full text-[11px] font-medium mb-3 border border-[#9b72ff]/20 flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-200">
           🏆 new personal best
         </div>
       ) : (

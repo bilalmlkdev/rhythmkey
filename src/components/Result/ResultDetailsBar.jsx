@@ -38,7 +38,7 @@ export default function ResultDetailsBar({
         </span>
       </div>
       <div>
-        TEST <span className="text-[#e26928]">{testType}</span>
+        TEST <span className="text-[#9b72ff]">{testType}</span>
       </div>
     </div>
   );

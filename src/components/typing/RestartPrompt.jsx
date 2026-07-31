@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BsArrowCounterclockwise } from "react-icons/bs";
 
 export default function RestartPrompt({
@@ -7,14 +7,51 @@ export default function RestartPrompt({
   restartTest,
   isLight,
 }) {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const tabPressedRef = useRef(false);
+
+  const triggerAnimation = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 400); // Matches transition duration
+  };
+
   const handleBlurClick = (e, callback) => {
     e.currentTarget.blur();
+    triggerAnimation();
     callback();
   };
 
+  // Listen for Tab + Enter shortcut to trigger the icon animation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Tab") {
+        tabPressedRef.current = true;
+      } else if (e.key === "Enter" && tabPressedRef.current) {
+        triggerAnimation();
+      } else if (e.key !== "Tab") {
+        tabPressedRef.current = false;
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === "Tab") {
+        tabPressedRef.current = false;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   return (
     <div
-      className={`flex flex-col items-center gap-3 mb-4 transition-opacity duration-300  ${
+      className={`flex flex-col items-center gap-3 mb-4 transition-opacity duration-300 ${
         appState === "typing" && isTypingActive
           ? "opacity-0 pointer-events-none"
           : "opacity-100"
@@ -28,7 +65,12 @@ export default function RestartPrompt({
             : "text-zinc-400 hover:text-white hover:brightness-150"
         }`}
       >
-        <BsArrowCounterclockwise size={20} className="-rotate-45" />
+        <BsArrowCounterclockwise
+          size={20}
+          className={`-rotate-45 transition-transform duration-400 ease-in-out ${
+            isAnimating ? "rotate-[315deg] scale-90" : ""
+          }`}
+        />
       </button>
       <div className="flex items-center gap-1.5 mt-1 text-[10px] tracking-wide font-normal">
         <span

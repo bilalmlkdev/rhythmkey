@@ -21,7 +21,7 @@ export default function TypingArea({
       {appState === "unfocused" && (
         <div
           className={`absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg transition-opacity duration-300 ${
-            isLight ? "bg-white/70" : "bg-[#111113]/60"
+            isLight ? "bg-white/20" : "bg-[#111113]/60"
           }`}
         >
           <div
@@ -61,7 +61,7 @@ export default function TypingArea({
               key={wordIdx}
               ref={isCurrentWord ? activeWordRef : null}
               className={`inline-block whitespace-nowrap mr-[0.5em] ${wordOpacityClass} ${
-                isWordError ? "border-b-2 border-[#e26928]" : ""
+                isWordError ? "border-b-2 border-[#9b72ff]" : ""
               }`}
             >
               {word.split("").map((char, charIdx) => {
@@ -78,7 +78,7 @@ export default function TypingArea({
                       ? isLight
                         ? "text-zinc-900 font-medium"
                         : "text-[#d4d4d8]"
-                      : "text-[#e26928] border-b-2 border-[#e26928]";
+                      : "text-[#9b72ff] border-b-2 border-[#9b72ff]";
                 }
 
                 return (
@@ -86,7 +86,7 @@ export default function TypingArea({
                     key={charIdx}
                     className={`${colorClass} ${
                       isCursor
-                        ? "border-l-2 border-[#e26928] animate-pulse -ml-[2px]"
+                        ? "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]"
                         : ""
                     }`}
                   >
@@ -95,7 +95,7 @@ export default function TypingArea({
                 );
               })}
               {isCurrentWord && userInput.length > end && (
-                <span className="text-[#e26928] bg-red-900/20 underline">
+                <span className="text-[#9b72ff] bg-red-900/20 underline">
                   {userInput.slice(end)}
                 </span>
               )}

@@ -26,11 +26,11 @@ export default function LiveStats({
         >
           {testType === "time" && (
             <span>
-              <span className="text-[#e26928]">{timeLeft}s</span>
+              <span className="text-[#9b72ff]">{timeLeft}s</span>
             </span>
           )}
           {testType === "words" && (
-            <span className="text-[#e26928]">
+            <span className="text-[#9b72ff]">
               {userInput.trim() === ""
                 ? 0
                 : userInput.trim().split(/\s+/).length}{" "}
@@ -38,7 +38,7 @@ export default function LiveStats({
             </span>
           )}
           {(testType === "stories" || testType === "quotes") && (
-            <span className="text-[#e26928]">
+            <span className="text-[#9b72ff]">
               {userInput.length} / {currentText.length}
             </span>
           )}

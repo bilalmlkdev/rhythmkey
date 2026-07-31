@@ -72,7 +72,7 @@ export default function ResultChart({
           <div
             className={`flex items-center gap-1.5 ${isLight ? "text-zinc-700" : "text-zinc-300"}`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#e26928]"></span> WPM
+            <span className="w-2 h-2 rounded-full bg-[#9b72ff]"></span> WPM
           </div>
           <div
             className={`flex items-center gap-1.5 ${isLight ? "text-zinc-500" : "text-zinc-400"}`}
@@ -119,7 +119,7 @@ export default function ResultChart({
               ></div>
               <div>
                 <span className="text-zinc-500 text-[9px] block">WPM</span>
-                <span className="text-[#e26928] font-bold">
+                <span className="text-[#9b72ff] font-bold">
                   {activePoint.wpm}
                 </span>
               </div>
@@ -141,8 +141,8 @@ export default function ResultChart({
           >
             <defs>
               <linearGradient id="wpmGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#e26928" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#e26928" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="#9b72ff" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#9b72ff" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
@@ -179,7 +179,7 @@ export default function ResultChart({
               <path
                 d={wpmPoints}
                 fill="none"
-                stroke="#e26928"
+                stroke="#9b72ff"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -193,7 +193,7 @@ export default function ResultChart({
                 y1="0"
                 x2={(activePoint.time / maxTime) * chartWidth}
                 y2={chartHeight}
-                stroke="#e26928"
+                stroke="#9b72ff"
                 strokeWidth="1.5"
                 strokeDasharray="2 2"
               />
@@ -212,8 +212,8 @@ export default function ResultChart({
                   cx={cx}
                   cy={cy}
                   r={isHovered ? "5" : "3"}
-                  fill={isHovered ? "#e26928" : isLight ? "#ffffff" : "#111113"}
-                  stroke="#e26928"
+                  fill={isHovered ? "#9b72ff" : isLight ? "#ffffff" : "#111113"}
+                  stroke="#9b72ff"
                   strokeWidth="2"
                   className="transition-all duration-75"
                 />

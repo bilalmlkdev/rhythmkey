@@ -21,16 +21,16 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export default function MechanicalKeyboard({
+export default function Keyboard({
   soundEnabled = true,
   soundVolume = 1,
   audioSrc = clickSound,
+  isLight
 }) {
   const [activeKeys, setActiveKeys] = useState(new Set());
   const audioCtxRef = useRef(null);
   const audioBufferRef = useRef(null);
 
-  // Load and decode the audio file once on mount
   useEffect(() => {
     if (!soundEnabled || !audioSrc) return;
 
@@ -63,7 +63,6 @@ export default function MechanicalKeyboard({
         audioCtxRef.current.resume();
       }
 
-      // Create a buffer source for the key click
       const source = audioCtxRef.current.createBufferSource();
       source.buffer = audioBufferRef.current;
 
@@ -73,7 +72,6 @@ export default function MechanicalKeyboard({
       source.connect(gainNode);
       gainNode.connect(audioCtxRef.current.destination);
 
-      // Play the full single-click sound from the beginning (0)
       source.start(0);
     } catch (e) {
       console.error(e);
@@ -105,21 +103,21 @@ export default function MechanicalKeyboard({
   const keyRows = [
     [
       { label: "esc", code: "Escape", width: "45px", color: "bright-red", align: "tl" },
-      { label: "F1", icon: <SunDim size={14} />, code: "F1", width: "40px", color: "white", align: "c" },
-      { label: "F2", icon: <Sun size={14} />, code: "F2", width: "40px", color: "white", align: "c" },
-      { label: "F3", icon: <LayoutGrid size={14} />, code: "F3", width: "40px", color: "white", align: "c" },
-      { label: "F4", icon: <Search size={14} />, code: "F4", width: "40px", color: "white", align: "c" },
-      { label: "F5", icon: <Mic size={14} />, code: "F5", width: "40px", color: "dark-red", align: "c" },
-      { label: "F6", icon: <Moon size={14} />, code: "F6", width: "40px", color: "dark-red", align: "c" },
-      { label: "F7", icon: <Rewind size={14} />, code: "F7", width: "40px", color: "dark-red", align: "c" },
-      { label: "F8", icon: <Play size={14} />, code: "F8", width: "40px", color: "dark-red", align: "c" },
-      { label: "F9", icon: <FastForward size={14} />, code: "F9", width: "40px", color: "dark-red", align: "c" },
-      { label: "F10", icon: <VolumeX size={14} />, code: "F10", width: "40px", color: "white", align: "c" },
-      { label: "F11", icon: <Volume1 size={14} />, code: "F11", width: "40px", color: "white", align: "c" },
-      { label: "F12", icon: <Volume2 size={14} />, code: "F12", width: "40px", color: "white", align: "c" },
-      { label: "", icon: <Hash size={14} />, code: "F13", width: "40px", color: "dark-red", align: "c" },
+      { label: "F1", icon: <SunDim size={12} />, code: "F1", width: "40px", color: "white", align: "c" },
+      { label: "F2", icon: <Sun size={12} />, code: "F2", width: "40px", color: "white", align: "c" },
+      { label: "F3", icon: <LayoutGrid size={12} />, code: "F3", width: "40px", color: "white", align: "c" },
+      { label: "F4", icon: <Search size={11} />, code: "F4", width: "40px", color: "white", align: "c" },
+      { label: "F5", icon: <Mic size={11} />, code: "F5", width: "40px", color: "dark-red", align: "c" },
+      { label: "F6", icon: <Moon size={11} />, code: "F6", width: "40px", color: "dark-red", align: "c" },
+      { label: "F7", icon: <Rewind size={11} />, code: "F7", width: "40px", color: "dark-red", align: "c" },
+      { label: "F8", icon: <Play size={11} />, code: "F8", width: "40px", color: "dark-red", align: "c" },
+      { label: "F9", icon: <FastForward size={11} />, code: "F9", width: "40px", color: "dark-red", align: "c" },
+      { label: "F10", icon: <VolumeX size={11} />, code: "F10", width: "40px", color: "white", align: "c" },
+      { label: "F11", icon: <Volume1 size={11} />, code: "F11", width: "40px", color: "white", align: "c" },
+      { label: "F12", icon: <Volume2 size={11} />, code: "F12", width: "40px", color: "white", align: "c" },
+      { label: "", icon: <Hash size={10} />, code: "F13", width: "40px", color: "dark-red", align: "tl" },
       { label: "del", code: "Delete", width: "45px", color: "dark-red", align: "tl" },
-      { label: "", icon: <Lightbulb size={14} />, code: "Insert", width: "45px", color: "dark-red", align: "c" },
+      { label: "", icon: <Lightbulb size={10} />, code: "Insert", width: "45px", color: "dark-red", align: "tl" },
     ],
     [
       { label: "~\n`", code: "Backquote", width: "40px", color: "white", align: "tl" },
@@ -135,7 +133,7 @@ export default function MechanicalKeyboard({
       { label: ")\n0", code: "Digit0", width: "40px", color: "white", align: "tl" },
       { label: "_\n-", code: "Minus", width: "40px", color: "white", align: "tl" },
       { label: "+\n=", code: "Equal", width: "40px", color: "white", align: "tl" },
-      { label: "←", code: "Backspace", width: "96px", color: "dark-red", align: "tl" },
+      { label: "backspace\n←", code: "Backspace", width: "96px", color: "dark-red", align: "tl" },
       { label: "pgup", code: "PageUp", width: "40px", color: "dark-red", align: "tl" },
     ],
     [
@@ -237,22 +235,21 @@ export default function MechanicalKeyboard({
           transition: all 0.05s ease-in-out;
         }
 
-        /* --- Color Palettes --- */
         .key-white {
-          background: linear-gradient(180deg, #d3d5d8, #b8bbbd);
+          background: #E4D7D7;
         }
         .key-white::before {
-          background: linear-gradient(90deg, #f0f1f3, #e6e8ea);
+          background: #E4D7D7;
         }
         .key-white .keycap-label {
           color: #4a4a4b;
         }
 
         .key-dark-red {
-          background: linear-gradient(180deg, #5b2828, #451b1b);
+          background-color : #9b72ff;
         }
         .key-dark-red::before {
-          background: linear-gradient(90deg, #853737, #722d2d);
+           background-color : #9b72ff;
         }
         .key-dark-red .keycap-label {
           color: #f0f0f0;
@@ -260,17 +257,16 @@ export default function MechanicalKeyboard({
         }
 
         .key-bright-red {
-          background: linear-gradient(180deg, #a6372c, #85261d);
+          background: #9b72ff;
         }
         .key-bright-red::before {
-          background: linear-gradient(90deg, #cd4a3e, #b83d31);
+          background: #9b72ff;
         }
         .key-bright-red .keycap-label {
           color: #ffffff;
           text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
         }
 
-        /* --- Alignments --- */
         .keycap-label {
           position: relative;
           z-index: 1;
@@ -302,7 +298,11 @@ export default function MechanicalKeyboard({
           margin-bottom: 2px;
         }
 
-        /* --- Pressed State --- */
+        /* F-row (F1–F12) label/icon nudged up slightly */
+        .fkey-label {
+          transform: translateY(-2px);
+        }
+
         .keycap.pressed {
           transform: translateY(2px);
           box-shadow:
@@ -318,26 +318,40 @@ export default function MechanicalKeyboard({
         .keycap.pressed .keycap-label {
           transform: translateY(1px);
         }
+        .keycap.pressed .fkey-label {
+          transform: translateY(-1px);
+        }
       `}</style>
 
-      {/* Inner Plate with reduced gap */}
-      <div className="bg-[#383439] p-2 rounded-[14px] shadow-inner  border-[#484449] border flex flex-col gap-[1.5px] relative top-2">
+      <div
+        className={`${isLight ? "bg-[#9a72ff1b] border-[#9a72ff1b]" : "bg-[#383439] border-[#484449] "} p-2 rounded-[14px] shadow-inner  border flex flex-col gap-[1.5px] relative top-2`}
+      >
         {keyRows.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-[1.5px] justify-center w-full">
+          <div
+            key={rowIndex}
+            className="flex gap-[1.5px] justify-center w-full"
+          >
             {row.map((key) => {
               const pressed = isPressed(key.code);
+              const isFKey = /^F([1-9]|1[0-2])$/.test(key.code);
               return (
                 <div
                   key={key.code}
                   className={`keycap key-${key.color} ${pressed ? "pressed" : ""}`}
                   style={{ width: key.width }}
                 >
-                  <div className={`keycap-label align-${key.align}`}>
+                  <div
+                    className={`keycap-label align-${key.align} ${isFKey ? "fkey-label" : ""}`}
+                  >
                     {key.icon && (
                       <span className="keycap-icon">{key.icon}</span>
                     )}
                     {key.label && (
-                      <span className={key.icon ? "text-[8.5px] opacity-90 mt-[1px]" : ""}>
+                      <span
+                        className={
+                          key.icon ? "text-[8.5px] opacity-90 mt-[1px]" : ""
+                        }
+                      >
                         {key.label}
                       </span>
                     )}

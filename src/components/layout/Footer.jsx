@@ -14,8 +14,8 @@ export default function Footer({ isLight }) {
         rel="noopener noreferrer"
         className={`font-medium transition-colors ${
           isLight
-            ? "text-zinc-700 hover:text-[#e26928]"
-            : "text-zinc-400 hover:text-[#e26928]"
+            ? "text-zinc-700 hover:text-[#9b72ff]"
+            : "text-zinc-400 hover:text-[#9b72ff]"
         }`}
       >
         Bilal Malik
@@ -27,8 +27,8 @@ export default function Footer({ isLight }) {
         rel="noopener noreferrer"
         className={`font-medium transition-colors ${
           isLight
-            ? "text-zinc-700 hover:text-[#e26928]"
-            : "text-zinc-400 hover:text-[#e26928]"
+            ? "text-zinc-700 hover:text-[#9b72ff]"
+            : "text-zinc-400 hover:text-[#9b72ff]"
         }`}
       >
         GitHub

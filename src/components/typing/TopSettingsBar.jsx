@@ -27,6 +27,8 @@ export default function TopSettingsBar({
     callback();
   };
 
+  const isRightPillHidden = testType === "infinite" || testType === "quotes";
+
   return (
     <div
       className={`flex flex-wrap items-center justify-center gap-3 relative bottom-6 transition-opacity duration-300 ${
@@ -35,9 +37,9 @@ export default function TopSettingsBar({
           : "opacity-100"
       }`}
     >
-      {/* --- Pill 1: Modifiers --- */}
+      {/* pill - 01 - left */}
       <div
-        className={`flex gap-4 items-center rounded-[15px] px-5 py-2.5 text-[10px] ${
+        className={`flex gap-3 items-center rounded-[15px] px-4 py-[6px] text-[11px] font-medium h-[36px] ${
           isLight
             ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
             : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
@@ -47,86 +49,91 @@ export default function TopSettingsBar({
           onClick={(e) =>
             handleBlurClick(e, () => setHasPunctuation(!hasPunctuation))
           }
-          className={`${
+          className={`transition-all duration-150 active:scale-90 select-none cursor-pointer ${
             hasPunctuation
-              ? "text-[#e26928]"
+              ? "text-[#CEBCFC]"
               : isLight
                 ? "hover:text-zinc-900"
                 : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
+          }`}
         >
           @ punctuation
         </button>
         <button
           onClick={(e) => handleBlurClick(e, () => setHasNumbers(!hasNumbers))}
-          className={`${
+          className={`transition-all duration-150 active:scale-90 select-none cursor-pointer ${
             hasNumbers
-              ? "text-[#e26928]"
+              ? "text-[#9b72ff]"
               : isLight
                 ? "hover:text-zinc-900"
                 : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
+          }`}
         >
           # numbers
         </button>
         <button
           onClick={(e) => handleBlurClick(e, () => setHasSymbols(!hasSymbols))}
-          className={`${
+          className={`transition-all duration-150 active:scale-90 select-none cursor-pointer ${
             hasSymbols
-              ? "text-[#e26928]"
+              ? "text-[#9b72ff]"
               : isLight
                 ? "hover:text-zinc-900"
                 : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
+          }`}
         >
           & symbols
         </button>
 
         <div
-          className={`w-px h-4 mx-1 ${isLight ? "bg-zinc-200" : "bg-zinc-800"}`}
-        ></div>
+          className={`w-px h-4 ${isLight ? "bg-zinc-200" : "bg-zinc-800"}`}
+        />
 
-        <button
-          onClick={(e) => handleBlurClick(e, () => setDifficulty("easy"))}
-          className={`${
-            difficulty === "easy"
-              ? "text-[#e26928]"
-              : isLight
-                ? "hover:text-zinc-900"
-                : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
-        >
-          easy
-        </button>
-        <button
-          onClick={(e) => handleBlurClick(e, () => setDifficulty("hard"))}
-          className={`${
-            difficulty === "hard"
-              ? "text-[#e26928]"
-              : isLight
-                ? "hover:text-zinc-900"
-                : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
-        >
-          hard
-        </button>
-        <button
-          onClick={(e) => handleBlurClick(e, () => setDifficulty("extra_hard"))}
-          className={`${
-            difficulty === "extra_hard"
-              ? "text-[#e26928]"
-              : isLight
-                ? "hover:text-zinc-900"
-                : "hover:text-zinc-300"
-          } transition-colors cursor-pointer`}
-        >
-          extra hard
-        </button>
+        {/* Grouped difficulty buttons to decrease their gap */}
+        <div className="flex gap-1 items-center">
+          <button
+            onClick={(e) => handleBlurClick(e, () => setDifficulty("easy"))}
+            className={`inline-flex items-center px-2.5 py-[6px] rounded-[10px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              difficulty === "easy"
+                ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
+                : isLight
+                  ? "hover:text-zinc-900"
+                  : "hover:text-zinc-300"
+            }`}
+          >
+            easy
+          </button>
+          <button
+            onClick={(e) => handleBlurClick(e, () => setDifficulty("hard"))}
+            className={`inline-flex items-center px-2.5 py-[6px] rounded-[10px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              difficulty === "hard"
+                ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
+                : isLight
+                  ? "hover:text-zinc-900"
+                  : "hover:text-zinc-300"
+            }`}
+          >
+            hard
+          </button>
+          <button
+            onClick={(e) =>
+              handleBlurClick(e, () => setDifficulty("extra_hard"))
+            }
+            className={`inline-flex items-center px-2.5 py-[6px] rounded-[10px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              difficulty === "extra_hard"
+                ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
+                : isLight
+                  ? "hover:text-zinc-900"
+                  : "hover:text-zinc-300"
+            }`}
+          >
+            extra hard
+          </button>
+        </div>
       </div>
 
-      {/* --- Pill 2: Mode Selectors --- */}
+      {/* pill - 02 - center */}
       <div
-        className={`flex gap-1 items-center rounded-[15px] px-1.5 py-1 text-[10px] ${
+        className={`flex gap-1 items-center rounded-[15px] px-1 py-[6px] text-[11px] font-medium h-[36px] ${
           isLight
             ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
             : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
@@ -142,13 +149,13 @@ export default function TopSettingsBar({
           <button
             key={m.type}
             onClick={(e) => handleBlurClick(e, () => setTestType(m.type))}
-            className={`inline-flex items-center gap-1 px-2.5 py-[6px] rounded-[10px] transition-all duration-200 ${
+            className={`inline-flex items-center gap-1 px-2.5 py-[6px] relative bottom-[0.5px] rounded-[12px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
               testType === m.type
-                ? "bg-[#e26928] text-white shadow-sm"
+                ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                 : isLight
                   ? "text-zinc-600 hover:text-zinc-900"
                   : "text-zinc-400 hover:text-zinc-300"
-            } cursor-pointer`}
+            }`}
           >
             {m.icon}
             {m.label}
@@ -156,26 +163,31 @@ export default function TopSettingsBar({
         ))}
       </div>
 
-      {/* --- Pill 3: Dynamic Config Limits --- */}
+      {/* pill - 03 - right */}
+      {/* Removed w-[170px] to allow natural content width */}
       <div
-        className={`flex gap-2 items-center rounded-[15px] px-1.5 py-1 text-[10px] ${
+        className={`flex items-center justify-center gap-1.5 rounded-[15px] px-1 py-1 text-[11px] font-medium h-[36px] transition-all duration-200 ${
+          isRightPillHidden
+            ? "invisible opacity-0 pointer-events-none"
+            : "opacity-100"
+        } ${
           isLight
             ? "bg-zinc-100 border border-zinc-200 text-zinc-600 shadow-sm"
             : "bg-[#18181b] border border-zinc-800/50 text-zinc-400 shadow-lg"
         }`}
       >
         {testType === "time" &&
-          [5, 10, 15, 30, 60, 120].map((t) => (
+          [15, 30, 60, 120].map((t) => (
             <button
               key={t}
               onClick={(e) => handleBlurClick(e, () => setSelectedTime(t))}
-              className={`inline-flex items-center gap-3 px-2 py-[6px] rounded-[8px] transition-all duration-200 ${
+              className={`inline-flex items-center px-2 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 selectedTime === t
-                  ? "bg-[#e26928] text-white shadow-sm"
+                  ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight
                     ? "text-zinc-600 hover:text-zinc-900"
                     : "text-zinc-400 hover:text-zinc-300"
-              } cursor-pointer`}
+              }`}
             >
               {t}s
             </button>
@@ -186,13 +198,13 @@ export default function TopSettingsBar({
             <button
               key={w}
               onClick={(e) => handleBlurClick(e, () => setWordCount(w))}
-              className={`inline-flex items-center gap-3 px-2 py-[6px] rounded-[8px] transition-all duration-200 ${
+              className={`inline-flex items-center px-2.5 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 wordCount === w
-                  ? "bg-[#e26928] text-white shadow-sm"
+                  ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight
                     ? "text-zinc-600 hover:text-zinc-900"
                     : "text-zinc-400 hover:text-zinc-300"
-              } cursor-pointer`}
+              }`}
             >
               {w}
             </button>
@@ -205,21 +217,17 @@ export default function TopSettingsBar({
               onClick={(e) =>
                 handleBlurClick(e, () => setStoryLength(s.toLowerCase()))
               }
-              className={`inline-flex items-center gap-3 px-4 py-[6px] rounded-[8px] transition-all duration-200 ${
+              className={`inline-flex items-center px-3 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 storyLength === s.toLowerCase()
-                  ? "bg-[#e26928] text-white shadow-sm"
+                  ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight
                     ? "text-zinc-600 hover:text-zinc-900"
                     : "text-zinc-400 hover:text-zinc-300"
-              } cursor-pointer`}
+              }`}
             >
               {s}
             </button>
           ))}
-
-        {(testType === "infinite" || testType === "quotes") && (
-          <span className="text-zinc-400 px-2">—</span>
-        )}
       </div>
     </div>
   );

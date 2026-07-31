@@ -32,7 +32,7 @@ export default function ResultActions({
         className={`flex items-center gap-1.5 transition-colors px-3.5 py-1.5 rounded-full border ${
           isLight
             ? "bg-zinc-900 hover:bg-black text-white border-none"
-            : "bg-zinc-900/50 hover:text-[#e26928] text-zinc-400 border-zinc-800"
+            : "bg-zinc-900/50 hover:text-[#9b72ff] text-zinc-400 border-zinc-800"
         }`}
         title="Try the exact same text again"
       >
@@ -72,8 +72,8 @@ export default function ResultActions({
                 onClick={() => handleDownload(format)}
                 className={`px-3 py-1.5 text-left transition-colors ${
                   isLight
-                    ? "hover:bg-zinc-100 hover:text-[#e26928]"
-                    : "hover:bg-zinc-800/60 hover:text-[#e26928]"
+                    ? "hover:bg-zinc-100 hover:text-[#9b72ff]"
+                    : "hover:bg-zinc-800/60 hover:text-[#9b72ff]"
                 }`}
               >
                 {format.toUpperCase()} format
@@ -93,8 +93,8 @@ export default function ResultActions({
                 onClick={() => handleDownload(format)}
                 className={`px-3 py-1.5 text-left transition-colors ${
                   isLight
-                    ? "hover:bg-zinc-100 hover:text-[#e26928]"
-                    : "hover:bg-zinc-800/60 hover:text-[#e26928]"
+                    ? "hover:bg-zinc-100 hover:text-[#9b72ff]"
+                    : "hover:bg-zinc-800/60 hover:text-[#9b72ff]"
                 }`}
               >
                 {format.toUpperCase()} {format === "svg" ? "vector" : "image"}
@@ -132,7 +132,7 @@ export default function ResultActions({
               className={`font-semibold text-xs mb-2.5 pb-2 border-b ${isLight ? "border-zinc-200 text-zinc-900" : "border-zinc-800 text-zinc-200"} flex items-center justify-between`}
             >
               <span>Calculation Formulas</span>
-              <span className="text-[10px] text-[#e26928]">Keythm Metrics</span>
+              <span className="text-[10px] text-[#9b72ff]">Keythm Metrics</span>
             </div>
             <div className="space-y-2.5 text-[11px] text-zinc-500">
               <div>

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import Keyboard from "./components/ui/Keyboard";
 import ResultScreen from "./components/Result/ResultScreen";
-import SettingsModal from "./components/modals/SettingsModal";
 
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
@@ -19,8 +18,8 @@ export default function App() {
 
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [showKeyboard, setShowKeyboard] = React.useState(true);
-  const [soundEnabled, setSoundEnabled] = React.useState(false);
-  const [soundVolume, setSoundVolume] = React.useState(0.08);
+  const [soundEnabled, setSoundEnabled] = React.useState(true); // Default sound on
+  const [soundVolume, setSoundVolume] = React.useState(0.8); // Default 80% volume
   const [showLiveStats, setShowLiveStats] = React.useState(true);
   const [showNextWord, setShowNextWord] = React.useState(true);
 
@@ -178,7 +177,7 @@ export default function App() {
   return (
     <div
       className={`min-h-screen ${
-        isLight ? "bg-white text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
+        isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
       } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
       ref={refs.containerRef}
     >
@@ -187,8 +186,19 @@ export default function App() {
         totalKeystrokes={state.totalKeystrokes}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
+        showSettingsModal={showSettingsModal}
         setShowSettingsModal={setShowSettingsModal}
         isLight={isLight}
+        theme={theme}
+        setTheme={setTheme}
+        showKeyboard={showKeyboard}
+        setShowKeyboard={setShowKeyboard}
+        soundVolume={soundVolume}
+        setSoundVolume={setSoundVolume}
+        showLiveStats={showLiveStats}
+        setShowLiveStats={setShowLiveStats}
+        showNextWord={showNextWord}
+        setShowNextWord={setShowNextWord}
       />
 
       <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
@@ -260,6 +270,7 @@ export default function App() {
                 <Keyboard
                   soundEnabled={soundEnabled}
                   soundVolume={soundVolume}
+                  isLight={isLight}
                 />
               </div>
             )}
@@ -288,24 +299,6 @@ export default function App() {
       </main>
 
       {state.appState !== "finished" && <Footer isLight={isLight} />}
-
-      <SettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-        isLight={isLight}
-        theme={theme}
-        setTheme={setTheme}
-        showKeyboard={showKeyboard}
-        setShowKeyboard={setShowKeyboard}
-        soundEnabled={soundEnabled}
-        setSoundEnabled={setSoundEnabled}
-        soundVolume={soundVolume}
-        setSoundVolume={setSoundVolume}
-        showLiveStats={showLiveStats}
-        setShowLiveStats={setShowLiveStats}
-        showNextWord={showNextWord}
-        setShowNextWord={setShowNextWord}
-      />
     </div>
   );
 }
