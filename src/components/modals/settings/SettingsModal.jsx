@@ -1,5 +1,5 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, RotateCcw } from "lucide-react";
 import SettingToggle from "./SettingToggle";
 import ThemeSelector from "./ThemeSelector";
 import SoundSection from "./SoundSection";
@@ -12,20 +12,17 @@ export default function SettingsModal({
   isLight,
   theme,
   setTheme,
-  showKeyboard,
-  setShowKeyboard,
-  soundEnabled,
-  setSoundEnabled,
-  soundVolume,
-  setSoundVolume,
-  showLiveStats,
-  setShowLiveStats,
-  showNextWord,
-  setShowNextWord,
   settings,
   updateSetting,
+  resetSettings, // NEW
 }) {
   if (!isOpen) return null;
+
+  const handleReset = () => {
+    if (window.confirm("Reset all settings to defaults?")) {
+      resetSettings();
+    }
+  };
 
   return (
     <>
@@ -69,8 +66,8 @@ export default function SettingsModal({
             <SettingToggle
               icon="Keyboard"
               label="Show Keyboard"
-              enabled={showKeyboard}
-              setEnabled={setShowKeyboard}
+              enabled={settings.showKeyboard}
+              setEnabled={(v) => updateSetting("showKeyboard", v)}
               isLight={isLight}
             />
 
@@ -83,28 +80,24 @@ export default function SettingsModal({
             />
 
             <SoundSection
-              soundEnabled={soundEnabled}
-              setSoundEnabled={setSoundEnabled}
-              soundVolume={soundVolume}
-              setSoundVolume={setSoundVolume}
-              soundPack={settings.soundPack}
-              setSoundPack={(v) => updateSetting("soundPack", v)}
+              settings={settings}
+              updateSetting={updateSetting}
               isLight={isLight}
             />
 
             <SettingToggle
               icon="Activity"
               label="Live Stats (WPM/Acc)"
-              enabled={showLiveStats}
-              setEnabled={setShowLiveStats}
+              enabled={settings.showLiveStats}
+              setEnabled={(v) => updateSetting("showLiveStats", v)}
               isLight={isLight}
             />
 
             <SettingToggle
               icon="AlignLeft"
               label="Show Next Words"
-              enabled={showNextWord}
-              setEnabled={setShowNextWord}
+              enabled={settings.showNextWord}
+              setEnabled={(v) => updateSetting("showNextWord", v)}
               isLight={isLight}
             />
           </div>
@@ -202,7 +195,16 @@ export default function SettingsModal({
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
+        {/* Footer with buttons */}
+        <div className="mt-4 flex items-center justify-between">
+          {/* NEW: Reset button */}
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-[8px] border border-red-400/50 text-red-400 hover:bg-red-400/10 text-xs font-medium transition-colors cursor-pointer"
+          >
+            <RotateCcw size={14} /> Reset to Defaults
+          </button>
+
           <button
             onClick={onClose}
             className="px-4 py-1.5 bg-[#9b72ff] hover:bg-[#9b72ff]/80 text-white text-xs font-medium rounded-[8px] transition-colors shadow-sm cursor-pointer"

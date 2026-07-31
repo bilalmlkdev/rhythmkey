@@ -11,7 +11,7 @@ export default function ResultDetailsBar({
 }) {
   return (
     <div
-      className={`flex gap-6 text-[11px] font-medium text-zinc-500 mt-5 mb-4 animate-in fade-in slide-in-from-bottom-5 duration-700`}
+      className={`flex gap-6 text-[11px] font-medium text-zinc-500 mt-5 mb-4 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-500 fill-mode-both`}
     >
       <div>
         CHARACTERS{" "}

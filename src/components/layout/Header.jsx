@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Volume2,
@@ -7,34 +7,54 @@ import {
   Github,
   BarChart2,
   Info,
-  Share2, // add this
+  Share2,
 } from "lucide-react";
 import SettingsModal from "../modals/settings/SettingsModal";
 
 export default function Header({
   restartTest,
   totalKeystrokes,
-  soundEnabled,
-  setSoundEnabled,
   showSettingsModal,
   setShowSettingsModal,
   isLight,
   theme,
   setTheme,
-  showKeyboard,
-  setShowKeyboard,
-  soundVolume,
-  setSoundVolume,
-  showLiveStats,
-  setShowLiveStats,
-  showNextWord,
-  setShowNextWord,
-  settings,
-  updateSetting,
-  onShare, // new prop
+  settings, // CHANGED – receive unified settings
+  updateSetting, // CHANGED – receive updateSetting
+  onShare,
+  resetSettings, // NEW
 }) {
+  const [showNotification, setShowNotification] = useState(false);
+
+  const handleShareClick = (e) => {
+    e.currentTarget.blur();
+    if (typeof onShare === "function") {
+      onShare();
+    }
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
+  };
+
   return (
     <header className="flex items-center justify-between px-8 pt-5 max-w-[1084px] w-full mx-auto relative">
+      {/* Share Notification Panel */}
+      <div
+        className={`absolute left-8 -bottom-10 z-50 flex items-center gap-2 px-3.5 py-2 rounded-lg shadow-xl text-xs font-medium transition-all duration-300 ease-out transform ${
+          showNotification
+            ? "opacity-100 translate-x-0 pointer-events-auto"
+            : "opacity-0 -translate-x-6 pointer-events-none"
+        } ${
+          isLight
+            ? "bg-zinc-900 text-white shadow-zinc-500/10"
+            : "bg-[#1c1c1f] text-zinc-200 border border-zinc-800/80 shadow-black/40"
+        }`}
+      >
+        <Share2 size={13} className="text-[#9b72ff]" />
+        <span>URL copied to clipboard!</span>
+      </div>
+
       <div
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => restartTest(false)}
@@ -58,56 +78,46 @@ export default function Header({
         </span>
       </div>
       <div className="flex items-center gap-2">
-        {/* Link to Stats Page */}
         <Link
           to="/stats"
-          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+          className="flex items-center gap-2 px-2 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
           <BarChart2 size={14} /> Stats{" "}
-          <span
-            className={`py-0.5 px-1.5 rounded-[5px] text-[10px] ${
-              isLight
-                ? "bg-zinc-200 text-zinc-600"
-                : "bg-[#2b2b2f] text-zinc-300"
-            }`}
-          >
-            ⌘S
-          </span>
         </Link>
 
-        {/* About Button */}
         <Link
           to="/about"
-          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+          className="flex items-center gap-2 px-2 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
-          <Info size={14} /> About
+         About
         </Link>
-        {/* Share Button (NEW) */}
+
         <button
-          onClick={(e) => {
-            e.currentTarget.blur();
-            onShare();
-          }}
-          className="flex items-center gap-2 px-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+          onClick={handleShareClick}
+          className="flex items-center gap-2 pl-2 pr-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
-          <Share2 size={14} /> Share
+         Copy Link
         </button>
 
-        {/* Audio Button */}
+        {/* Audio Button – using settings */}
         <button
           onClick={(e) => {
             e.currentTarget.blur();
-            setSoundEnabled(!soundEnabled);
+            updateSetting("soundEnabled", !settings.soundEnabled);
           }}
           className={`relative overflow-hidden flex items-center gap-2 px-3.5 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${
             isLight
               ? "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
               : "bg-[#1c1c1f] hover:bg-[#252529] text-zinc-300"
-          } ${soundEnabled ? "opacity-100" : "opacity-70"}`}
+          } ${settings.soundEnabled ? "opacity-100" : "opacity-70"}`}
         >
-          {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-          {soundEnabled ? "Audio On" : "Audio Off"}
-          {!soundEnabled && (
+          {settings.soundEnabled ? (
+            <Volume2 size={14} />
+          ) : (
+            <VolumeX size={14} />
+          )}
+          {settings.soundEnabled ? "Audio On" : "Audio Off"}
+          {!settings.soundEnabled && (
             <span className="absolute inset-x-0 top-1/2 h-[1.5px] bg-red-500/80 -rotate-12 pointer-events-none" />
           )}
         </button>
@@ -125,36 +135,27 @@ export default function Header({
           }`}
         >
           <Settings size={14} /> Settings{" "}
-          <span
+          {/* <span
             className={`py-0.5 px-1.5 rounded-[5px] text-[10px] ${
               isLight
                 ? "bg-zinc-200 text-zinc-600"
                 : "bg-[#2b2b2f] text-zinc-300"
             }`}
           >
-            ⌘K
-          </span>
+
+          </span> */}
         </button>
 
-        {/* Settings Modal */}
+        {/* Settings Modal – pass settings and updateSetting */}
         <SettingsModal
           isOpen={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}
           isLight={isLight}
           theme={theme}
           setTheme={setTheme}
-          showKeyboard={showKeyboard}
-          setShowKeyboard={setShowKeyboard}
-          soundEnabled={soundEnabled}
-          setSoundEnabled={setSoundEnabled}
-          soundVolume={soundVolume}
-          setSoundVolume={setSoundVolume}
-          showLiveStats={showLiveStats}
-          setShowLiveStats={setShowLiveStats}
-          showNextWord={showNextWord}
-          setShowNextWord={setShowNextWord}
           settings={settings}
           updateSetting={updateSetting}
+          resetSettings={resetSettings}
         />
 
         {/* GitHub Button */}

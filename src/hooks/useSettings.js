@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
 
-export function useSettings() {
-  const defaultSettings = {
-    idleTimeout: 5,
-    practiceMode: false,
-    cursorStyle: "block", // "block", "line", "underline"
-    fontSize: 23,
-    mistakeHighlight: "underline", // "underline", "background", "off"
-    soundPack: "click", // "click", "mechanical", "typewriter"
-    language: "en",
-    autoFocus: true,
-    showKeyPressAnimation: true,
-    restartConfirmation: false,
-    keyboardLayout: "qwerty", // "qwerty", "azerty", "dvorak"
-  };
+const defaultSettings = {
+  idleTimeout: 5,
+  practiceMode: false,
+  cursorStyle: "block",
+  fontSize: 23,
+  mistakeHighlight: "underline",
+  soundPack: "click",
+  language: "en",
+  autoFocus: true,
+  showKeyPressAnimation: true,
+  restartConfirmation: false,
+  keyboardLayout: "qwerty",
+  soundEnabled: true,
+  soundVolume: 0.8,
+  showKeyboard: true,
+  showLiveStats: true,
+  showNextWord: true,
+};
 
+export function useSettings() {
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem("RhythmKey_settings");
     if (saved) {
@@ -28,12 +33,6 @@ export function useSettings() {
     return defaultSettings;
   });
 
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [soundVolume, setSoundVolume] = useState(0.8);
-  const [showKeyboard, setShowKeyboard] = useState(true);
-  const [showLiveStats, setShowLiveStats] = useState(true);
-  const [showNextWord, setShowNextWord] = useState(true);
-
   useEffect(() => {
     localStorage.setItem("RhythmKey_settings", JSON.stringify(settings));
   }, [settings]);
@@ -42,18 +41,10 @@ export function useSettings() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  return {
-    settings,
-    updateSetting,
-    soundEnabled,
-    setSoundEnabled,
-    soundVolume,
-    setSoundVolume,
-    showKeyboard,
-    setShowKeyboard,
-    showLiveStats,
-    setShowLiveStats,
-    showNextWord,
-    setShowNextWord,
+  // NEW: reset all settings to default
+  const resetSettings = () => {
+    setSettings(defaultSettings);
   };
+
+  return { settings, updateSetting, resetSettings };
 }

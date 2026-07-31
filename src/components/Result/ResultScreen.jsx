@@ -3,6 +3,8 @@ import ResultChart from "./ResultChart";
 import ResultDetailsBar from "./ResultDetailsBar";
 import ResultTopStats from "./ResultTopStats";
 import ResultActions from "./ResultActions";
+import { useResultGraph } from "../../hooks/useResultGraph";
+import { useDownloadHandlers } from "../../hooks/useDownloadHandlers";
 
 export default function ResultScreen({
   wpm,
@@ -42,106 +44,33 @@ export default function ResultScreen({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // --- Dynamic Graph Calculation ---
-  const validHistory = history.filter((h) => h.time > 0);
-  const chartHeight = 140;
-  const chartWidth = 900;
+  // Graph data
+  const {
+    validHistory,
+    chartHeight,
+    chartWidth,
+    maxTime,
+    maxWpm,
+    minWpm,
+    wpmPoints,
+    accPoints,
+  } = useResultGraph(history, wpm);
 
-  const maxTime = Math.max(...validHistory.map((d) => d.time), 1);
-  const maxWpm = Math.max(...validHistory.map((d) => d.wpm), wpm + 10, 40);
-  const minWpm = 0;
-
-  const wpmPoints = validHistory
-    .map((d, i) => {
-      const x = (d.time / maxTime) * chartWidth;
-      const y = chartHeight - ((d.wpm - minWpm) / (maxWpm - minWpm)) * chartHeight;
-      return `${i === 0 ? "M" : "L"} ${x},${y}`;
-    })
-    .join(" ");
-
-  const accPoints = validHistory
-    .map((d, i) => {
-      const x = (d.time / maxTime) * chartWidth;
-      const accScaled = Math.max(d.accuracy, 50);
-      const y = chartHeight - ((accScaled - 50) / 50) * chartHeight;
-      return `${i === 0 ? "M" : "L"} ${x},${y}`;
-    })
-    .join(" ");
-
-  // --- Export / Download Handlers ---
-  const handleDownload = (format) => {
-    setShowDownloadMenu(false);
-
-    if (format === "json") {
-      const dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(
-          JSON.stringify(
-            { wpm, accuracy, correctChars, incorrectChars, totalChars, corrections, history },
-            null,
-            2
-          )
-        );
-      const a = document.createElement("a");
-      a.href = dataStr;
-      a.download = "RhythmKey_stats.json";
-      a.click();
-      a.remove();
-    } else if (format === "csv") {
-      let csvContent =
-        "data:text/csv;charset=utf-8,Time(s),WPM,Accuracy(%)\n" +
-        history.map((e) => `${e.time},${e.wpm},${e.accuracy}`).join("\n");
-      const a = document.createElement("a");
-      a.href = encodeURI(csvContent);
-      a.download = "RhythmKey_stats.csv";
-      a.click();
-      a.remove();
-    } else if (format === "markdown") {
-      let mdContent =
-        `# RhythmKey Typing Test Results\n\n- **WPM**: ${wpm}\n- **Accuracy**: ${accuracy}%\n- **Characters**: ${correctChars}/${incorrectChars}/${totalChars}\n- **Corrections**: ${corrections}\n\n## History Log\n| Time (s) | WPM | Accuracy (%) |\n|---|---|---|\n` +
-        history.map((e) => `| ${e.time} | ${e.wpm} | ${e.accuracy} |`).join("\n");
-      const blob = new Blob([mdContent], { type: "text/markdown;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "RhythmKey_stats.md";
-      a.click();
-      a.remove();
-    } else if (format === "svg" && svgRef.current) {
-      const serializer = new XMLSerializer();
-      let source = serializer.serializeToString(svgRef.current);
-      if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
-        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-      }
-      const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "RhythmKey_graph.svg";
-      a.click();
-      a.remove();
-    } else if ((format === "png" || format === "jpg") && svgRef.current) {
-      const serializer = new XMLSerializer();
-      const source = serializer.serializeToString(svgRef.current);
-      const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
-      const blobURL = URL.createObjectURL(blob);
-      const image = new Image();
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = chartWidth;
-        canvas.height = chartHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.fillStyle = isLight ? "#ffffff" : "#111113";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0);
-
-        const a = document.createElement("a");
-        a.href = canvas.toDataURL(format === "png" ? "image/png" : "image/jpeg", 1.0);
-        a.download = `RhythmKey_graph.${format}`;
-        a.click();
-        a.remove();
-      };
-      image.src = blobURL;
-    }
-  };
+  // Download handlers
+  const { handleDownload } = useDownloadHandlers({
+    wpm,
+    accuracy,
+    correctChars,
+    incorrectChars,
+    totalChars,
+    corrections,
+    history,
+    chartWidth,
+    chartHeight,
+    svgRef,
+    isLight,
+    setShowDownloadMenu,
+  });
 
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-center py-2 select-none overflow-hidden max-w-5xl mx-auto">

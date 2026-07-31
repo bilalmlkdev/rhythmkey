@@ -11,9 +11,9 @@ export default function ResultTopStats({
   const isPersonalBest = wpm >= 80;
 
   return (
-    <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-3 duration-300">
+    <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
       <div className="flex items-center justify-center gap-16 mb-2">
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 animate-in fade-in zoom-in-95 duration-500 delay-75 fill-mode-both">
           <div className="text-[180px] font-bold text-[#9b72ff] leading-none tracking-tighter">
             {wpm}
           </div>
@@ -24,7 +24,7 @@ export default function ResultTopStats({
           </span>
         </div>
 
-        <div className="flex items-center flex-col gap-2">
+        <div className="flex items-center flex-col gap-2 animate-in fade-in zoom-in-95 duration-500 delay-150 fill-mode-both">
           <div
             className={`text-[180px] font-bold ${isLight ? "text-zinc-900" : "text-[#d4d4d8]"} leading-none tracking-tighter relative`}
           >
@@ -42,7 +42,7 @@ export default function ResultTopStats({
       </div>
 
       {isPersonalBest ? (
-        <div className="bg-[#9b72ff]/10 text-[#9b72ff] px-3 py-0.5 rounded-full text-[11px] font-medium mb-3 border border-[#9b72ff]/20 flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-200">
+        <div className="bg-[#9b72ff]/10 text-[#9b72ff] px-3 py-0.5 rounded-full text-[11px] font-medium mb-3 border border-[#9b72ff]/20 flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-300 delay-300 fill-mode-both">
           🏆 new personal best
         </div>
       ) : (
@@ -50,7 +50,7 @@ export default function ResultTopStats({
       )}
 
       <div
-        className={`flex items-center gap-8 text-center mb-3 ${isLight ? "bg-zinc-100! border-zinc-200" : "bg-zinc-900/40 border-zinc-800/60"} px-6 py-2.5 rounded-2xl border`}
+        className={`flex items-center gap-8 text-center mb-3 ${isLight ? "bg-zinc-100! border-zinc-200" : "bg-zinc-900/40 border-zinc-800/60"} px-6 py-2.5 rounded-2xl border animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200 fill-mode-both`}
       >
         <div className="flex flex-col items-center">
           <div

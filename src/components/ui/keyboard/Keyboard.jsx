@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import clickSound from "../../../sounds/click.wav";
+import clickSound from "../../../sounds/click.mp3";
 import { baseRows, layoutMaps } from "./keyboardLayout";
 import KeyRow from "./KeyRow";
 import KeyboardStyles from "./KeyboardStyles";
@@ -13,9 +13,8 @@ export default function Keyboard({
 }) {
   const [activeKeys, setActiveKeys] = useState(new Set());
   const audioCtxRef = useRef(null);
-  const audioBufferRef = useRef(null);
+  const audioBufferRef = useRef(null); // Load audio
 
-  // Load audio
   useEffect(() => {
     if (!soundEnabled || !audioSrc) return;
 
@@ -87,9 +86,8 @@ export default function Keyboard({
     };
   }, [soundEnabled, soundVolume]);
 
-  const isPressed = (code) => activeKeys.has(code);
+  const isPressed = (code) => activeKeys.has(code); // Apply layout mapping to base rows
 
-  // Apply layout mapping to base rows
   const getMappedLabel = (key) => {
     const map = layoutMaps[layout] || {};
     if (map[key.code]) {
@@ -110,18 +108,21 @@ export default function Keyboard({
 
   return (
     <>
-      <KeyboardStyles />
+      <KeyboardStyles />{" "}
       <div
         className={`${
           isLight
             ? "bg-[#9a72ff1b] border-[#000000]/30"
             : "bg-[#383439] border-[#FFFFFF]/30"
-        } p-2 rounded-[14px] shadow-inner border-2 flex flex-col gap-[1.5px] relative top-2`}
+        } p-2 rounded-[14px] shadow-inner border-2 flex flex-col gap-[1.5px] relative top-3`}
       >
+        {" "}
         {keyRows.map((row, rowIndex) => (
           <KeyRow key={rowIndex} row={row} isPressed={isPressed} />
         ))}
+        {" "}
       </div>
+
     </>
   );
 }

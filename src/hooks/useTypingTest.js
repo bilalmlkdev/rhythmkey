@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { generateText } from "../utils/textGenerator";
 
 export function useTypingTest({
@@ -6,7 +6,7 @@ export function useTypingTest({
   practiceMode = false,
   autoFocus = true,
   isPaused = false,
-  initialConfig = {}, // new
+  initialConfig = {},
 } = {}) {
   const [hasPunctuation, setHasPunctuation] = useState(
     initialConfig.punctuation ?? false,
@@ -50,7 +50,7 @@ export function useTypingTest({
   }, [userInput, mistakes, startTime]);
 
   const [totalKeystrokes, setTotalKeystrokes] = useState(() => {
-    const saved = localStorage.getItem("RhythmKey_totalKeystrokes"); // CHANGE
+    const saved = localStorage.getItem("RhythmKey_totalKeystrokes");
     return saved ? parseInt(saved, 10) : 0;
   });
 
@@ -60,10 +60,12 @@ export function useTypingTest({
   const idleTimeoutRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
-  // Custom text support
-  const [customText, setCustomText] = useState("");
+  // NEW – custom text loaded from localStorage
+  const [customText, setCustomText] = useState(() => {
+    const saved = localStorage.getItem("RhythmKey_customText");
+    return saved || "";
+  });
   const [isCustomTextReady, setIsCustomTextReady] = useState(false);
-
 
   useEffect(() => {
     localStorage.setItem(
@@ -71,6 +73,11 @@ export function useTypingTest({
       totalKeystrokes.toString(),
     );
   }, [totalKeystrokes]);
+
+  // NEW – save customText whenever it changes
+  useEffect(() => {
+    localStorage.setItem("RhythmKey_customText", customText);
+  }, [customText]);
 
   const getNewText = useCallback(
     (countOverride = null) => {
@@ -86,7 +93,7 @@ export function useTypingTest({
         hasSymbols,
         hasPunctuation,
         countOverride,
-        language: "en", // we could pass language from settings
+        language: "en",
       });
     },
     [
@@ -145,7 +152,7 @@ export function useTypingTest({
     restartTest,
   ]);
 
-  // Custom text: when testType changes to custom, we need to set the text
+  // Custom text
   useEffect(() => {
     if (testType === "custom" && customText) {
       setCurrentText(customText);
@@ -181,7 +188,7 @@ export function useTypingTest({
         timerIntervalRef.current = null;
       }
     };
-  }, [appState, testType, isPaused]); // Added isPaused dependency
+  }, [appState, testType, isPaused]);
 
   // Graph history – respects pause
   useEffect(() => {
@@ -211,7 +218,7 @@ export function useTypingTest({
       }, 1000);
     }
     return () => clearInterval(graphInterval);
-  }, [appState, isPaused]); // Added isPaused
+  }, [appState, isPaused]);
 
   // Infinite mode text generation
   useEffect(() => {
@@ -224,18 +231,22 @@ export function useTypingTest({
     }
   }, [userInput, testType, appState, currentText.length, getNewText]);
 
-  // Line offset calculation
+  // Line offset calculation (unchanged)
+  const lineHeight = 40;
+  const charWidth = 14;
+  const containerWidth = 1024;
+  const charsPerLine = Math.floor(containerWidth / charWidth);
+
   useEffect(() => {
-    if (activeWordRef.current && innerContainerRef.current) {
-      const top = activeWordRef.current.offsetTop;
-      const lineHeight = 40;
-      const currentLine = Math.floor(top / lineHeight);
-      // Keep active line at the second line (index 1) to show 3 lines above/below
-      const targetLine = 1;
-      const newOffset = Math.max(0, (currentLine - targetLine) * lineHeight);
-      setLineOffset(newOffset);
+    if (userInput.length === 0) {
+      setLineOffset(0);
+      return;
     }
-  }, [userInput]);
+    const currentLine = Math.floor(userInput.length / charsPerLine);
+    const targetLine = 1;
+    const newOffset = Math.max(0, (currentLine - targetLine) * lineHeight);
+    setLineOffset(newOffset);
+  }, [userInput, charsPerLine, lineHeight]);
 
   // Idle timer
   const resetIdleTimer = useCallback(() => {
@@ -270,6 +281,28 @@ export function useTypingTest({
     window.addEventListener("mousedown", handleGlobalClick);
     return () => window.removeEventListener("mousedown", handleGlobalClick);
   }, [appState, resetIdleTimer]);
+
+  const actions = useMemo(
+    () => ({
+      restartTest,
+      setUserInput,
+      setMistakes,
+      setBackspaceCount,
+      setStartTime,
+      setEndTime,
+      setHistory,
+      setLineOffset,
+      setTotalKeystrokes,
+      setIsTypingActive,
+      typingTimeoutRef,
+      idleTimeoutRef,
+      timerIntervalRef,
+      resetIdleTimer,
+      setCustomText,
+      setIsCustomTextReady,
+    }),
+    [restartTest, resetIdleTimer],
+  );
 
   return {
     config: {
@@ -313,23 +346,6 @@ export function useTypingTest({
       innerContainerRef,
       activeWordRef,
     },
-    actions: {
-      restartTest,
-      setUserInput,
-      setMistakes,
-      setBackspaceCount,
-      setStartTime,
-      setEndTime,
-      setHistory,
-      setLineOffset,
-      setTotalKeystrokes,
-      setIsTypingActive,
-      typingTimeoutRef,
-      idleTimeoutRef,
-      timerIntervalRef,
-      resetIdleTimer,
-      setCustomText,
-      setIsCustomTextReady,
-    },
+    actions,
   };
 }

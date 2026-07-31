@@ -55,7 +55,7 @@ export default function RestartPrompt({
   // Always render, but control visibility via opacity
   return (
     <div
-      className={`flex flex-col items-center gap-3 mb-4 transition-opacity duration-300 ${
+      className={`flex flex-col items-center gap-3 mb-2 transition-opacity duration-300 ${
         appState === "typing" && isTypingActive && !isPaused
           ? "opacity-0 pointer-events-none"
           : "opacity-100"

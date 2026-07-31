@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { MousePointer2 } from "lucide-react";
 
 export default function TypingArea({
@@ -16,16 +16,68 @@ export default function TypingArea({
   cursorStyle,
   fontSize,
 }) {
-  const getCursorStyle = () => {
+  const [cursorPos, setCursorPos] = useState({ left: 0, top: 0 });
+
+  // Use useLayoutEffect for synchronous position update before paint
+  useLayoutEffect(() => {
+    if (!innerContainerRef.current) return;
+
+    const targetSpan = innerContainerRef.current.querySelector(
+      `[data-index="${userInput.length}"]`,
+    );
+
+    if (targetSpan) {
+      setCursorPos({
+        left: targetSpan.offsetLeft,
+        top: targetSpan.offsetTop,
+      });
+    } else {
+      // Fallback to the previous character's end position
+      const prevSpan = innerContainerRef.current.querySelector(
+        `[data-index="${userInput.length - 1}"]`,
+      );
+      if (prevSpan) {
+        setCursorPos({
+          left: prevSpan.offsetLeft + prevSpan.offsetWidth,
+          top: prevSpan.offsetTop,
+        });
+      }
+    }
+  }, [userInput, fontSize, lineOffset, wordsList, innerContainerRef]);
+
+  const getSmoothCursorProps = () => {
+    const base =
+      "absolute pointer-events-none bg-[#9b72ff] will-change-transform backface-hidden animate-pulse duration-0.5";
+    const top = cursorPos.top + 3;
+    const left = cursorPos.left;
+    const height = fontSize;
+    const charWidth = fontSize * 0.6;
+
+    // Fast, smooth easing without bounce
+    const transition = "transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
     switch (cursorStyle) {
-      case "block":
-        return "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]";
-      case "line":
-        return "border-b-2 border-[#9b72ff] animate-pulse";
       case "underline":
-        return "border-b-2 border-[#9b72ff] animate-pulse";
+        return {
+          className: `${base}`,
+          style: {
+            transform: `translate3d(${left}px, ${top + height - 2}px, 0)`,
+            width: "0.5px",
+            height: "2px",
+            transition,
+          },
+        };
+      case "line":
       default:
-        return "border-l-2 border-[#9b72ff] animate-pulse -ml-[2px]";
+        return {
+          className: `${base}`,
+          style: {
+            transform: `translate3d(${left}px, ${top}px, 0)`,
+            width: "0.5px",
+            height: `${height}px`,
+            transition,
+          },
+        };
     }
   };
 
@@ -34,38 +86,27 @@ export default function TypingArea({
     if (typedChar === char) {
       return isLight ? "text-zinc-900 font-medium" : "text-[#d4d4d8]";
     } else {
-      // Mistake
-      switch (mistakeHighlight) {
-        case "underline":
-          return "text-[#9b72ff] border-b-2 border-[#9b72ff]";
-        case "background":
-          return "bg-red-500/20 text-[#9b72ff]";
-        case "off":
-          return "text-[#9b72ff]";
-        default:
-          return "text-[#9b72ff] border-b-2 border-[#9b72ff]";
-      }
+      return "text-red-500";
     }
   };
+
+  const cursorProps = getSmoothCursorProps();
 
   return (
     <div
       key={textKey}
-      className="relative w-full max-w-5xl h-[120px] overflow-hidden mb-2 select-none left-5" // Increased height to 160px for 4 lines
+      className="relative font-grotesk w-full max-w-5xl h-[120px] overflow-hidden mb-5 select-none left-5"
       style={{
         fontSize: `${fontSize}px`,
         lineHeight: "40px",
-        letterSpacing: "0.05em",
+        letterSpacing: "0.03em",
       }}
     >
-      {/* Overlay for unfocused state - covers only the text area */}
       {appState === "unfocused" && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-lg transition-opacity duration-300">
+        <div className="absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-300">
           <div
             className={`flex items-center gap-1.5 text-sm tracking-wide font-normal cursor-pointer ${
-              isLight
-                ? "bg-white/50 text-zinc-700"
-                : "bg-zinc-900/80 text-zinc-300"
+              isLight ? "text-black/80" : "text-zinc-300"
             }`}
           >
             <MousePointer2 size={16} /> Click or press any key to focus
@@ -77,9 +118,11 @@ export default function TypingArea({
         ref={innerContainerRef}
         className={`${
           appState === "unfocused" ? "opacity-30" : ""
-        } transition-transform duration-300 ease-out font-mono flex flex-wrap`}
+        } transition-transform duration-300 ease-out flex flex-wrap relative`}
         style={{ transform: `translateY(-${lineOffset}px)` }}
       >
+        {appState !== "unfocused" && <div {...cursorProps} />}
+
         {wordsList.map((wObj, wordIdx) => {
           const { word, start, end } = wObj;
           const isCurrentWord =
@@ -98,16 +141,14 @@ export default function TypingArea({
             <span
               key={wordIdx}
               ref={isCurrentWord ? activeWordRef : null}
-              className={`inline-block whitespace-nowrap mr-[0.5em] ${wordOpacityClass} ${
-                isWordError ? "border-b-2 border-[#9b72ff]" : ""
+              className={`inline-block whitespace-nowrap font-grotesk mr-[0.4em] ${wordOpacityClass} ${
+                isWordError ? "border-b-2 border-red-500" : ""
               }`}
             >
               {word.split("").map((char, charIdx) => {
                 const globalIdx = start + charIdx;
                 const typedChar = userInput[globalIdx];
                 const isTyped = globalIdx < userInput.length;
-                const isCursor =
-                  globalIdx === userInput.length && appState !== "unfocused";
 
                 let colorClass = isLight ? "text-zinc-400" : "text-[#5e5e5e]";
                 if (isTyped) {
@@ -122,9 +163,8 @@ export default function TypingArea({
                 return (
                   <span
                     key={charIdx}
-                    className={`${colorClass} ${
-                      isCursor ? getCursorStyle() : ""
-                    }`}
+                    data-index={globalIdx}
+                    className={`${colorClass}`}
                   >
                     {char}
                   </span>
@@ -132,7 +172,14 @@ export default function TypingArea({
               })}
               {isCurrentWord && userInput.length > end && (
                 <span className="text-[#9b72ff] bg-red-900/20 underline">
-                  {userInput.slice(end)}
+                  {userInput
+                    .slice(end)
+                    .split("")
+                    .map((extraChar, extraIdx) => (
+                      <span key={extraIdx} data-index={end + extraIdx + 1}>
+                        {extraChar}
+                      </span>
+                    ))}
                 </span>
               )}
             </span>

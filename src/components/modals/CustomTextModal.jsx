@@ -53,13 +53,13 @@ export default function CustomTextModal({ isOpen, onClose, onStart, isLight }) {
 
   return (
     <>
-      {/* Backdrop – now dimmed but still allows keyboard visibility */}
+      {/* Backdrop*/}
       <div
         className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
 
-      {/* Modal – positioned in upper area, leaving bottom for keyboard */}
+      {/* Modal*/}
       <div
         className={`fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl max-h-[70vh] rounded-2xl border p-6 shadow-2xl flex flex-col ${
           isLight

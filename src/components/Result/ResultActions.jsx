@@ -14,7 +14,7 @@ export default function ResultActions({
   isLight,
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-zinc-500 relative animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-zinc-500 relative animate-in fade-in slide-in-from-bottom-3 duration-500 delay-700 fill-mode-both">
       <button
         onClick={onNextTest}
         className={`flex items-center gap-1.5 transition-colors ${
@@ -61,7 +61,7 @@ export default function ResultActions({
               isLight
                 ? "bg-white border-zinc-200 text-zinc-800"
                 : "bg-[#18181b] border-zinc-800 text-zinc-300"
-            } border rounded-xl shadow-2xl py-1.5 z-50 text-[11px] flex flex-col animate-in fade-in zoom-in-95 duration-150`}
+            } border rounded-xl shadow-2xl py-1.5 z-50 text-[11px] flex flex-col animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-150 fill-mode-both`}
           >
             <div className="px-3 py-1 font-semibold text-zinc-500 text-[10px] uppercase tracking-wider">
               Data Formats
@@ -126,13 +126,15 @@ export default function ResultActions({
               isLight
                 ? "bg-white border-zinc-200 text-zinc-800"
                 : "bg-[#18181b] border-zinc-800 text-zinc-300"
-            } border rounded-xl shadow-2xl p-3.5 z-50 text-left animate-in fade-in zoom-in-95 duration-150`}
+            } border rounded-xl shadow-2xl p-3.5 z-50 text-left animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-150 fill-mode-both`}
           >
             <div
               className={`font-semibold text-xs mb-2.5 pb-2 border-b ${isLight ? "border-zinc-200 text-zinc-900" : "border-zinc-800 text-zinc-200"} flex items-center justify-between`}
             >
               <span>Calculation Formulas</span>
-              <span className="text-[10px] text-[#9b72ff]">RhythmKey Metrics</span>
+              <span className="text-[10px] text-[#9b72ff]">
+                RhythmKey Metrics
+              </span>
             </div>
             <div className="space-y-2.5 text-[11px] text-zinc-500">
               <div>

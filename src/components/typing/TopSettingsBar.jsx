@@ -152,7 +152,7 @@ export default function TopSettingsBar({
             onClick={(e) => {
               handleBlurClick(e, () => setTestType(m.type));
             }}
-            className={`inline-flex items-center gap-1 px-2.5 py-[6px] relative bottom-[0.5px] rounded-[12px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+            className={`inline-flex items-center gap-1 px-2.5 py-[6px] relative bottom-[0.5px] rounded-[10px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
               testType === m.type
                 ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                 : isLight
@@ -183,7 +183,7 @@ export default function TopSettingsBar({
             <button
               key={t}
               onClick={(e) => handleBlurClick(e, () => setSelectedTime(t))}
-              className={`inline-flex items-center px-2 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              className={`inline-flex items-center px-2 py-[6px] rounded-[10px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 selectedTime === t
                   ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight
@@ -200,7 +200,7 @@ export default function TopSettingsBar({
             <button
               key={w}
               onClick={(e) => handleBlurClick(e, () => setWordCount(w))}
-              className={`inline-flex items-center px-2.5 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              className={`inline-flex items-center px-2.5 py-[6px] rounded-[10px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 wordCount === w
                   ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight
@@ -219,7 +219,7 @@ export default function TopSettingsBar({
               onClick={(e) =>
                 handleBlurClick(e, () => setStoryLength(s.toLowerCase()))
               }
-              className={`inline-flex items-center px-3 py-[6px] rounded-[12px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
+              className={`inline-flex items-center px-3 py-[6px] rounded-[10px] relative bottom-[0.5px] transition-all duration-150 active:scale-95 select-none cursor-pointer ${
                 storyLength === s.toLowerCase()
                   ? "bg-[#9a72ff1b] text-[#9b72ff] shadow-sm"
                   : isLight

@@ -63,7 +63,7 @@ export default function ResultChart({
   const activePoint = hoveredIndex !== null ? validHistory[hoveredIndex] : null;
 
   return (
-    <div className="w-full max-w-4xl relative flex flex-col mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full max-w-4xl relative flex flex-col mb-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
       <div className="flex items-center justify-between px-12 mb-2 text-[10px] font-medium">
         <div className="text-zinc-500 uppercase tracking-wider">
           Performance Timeline
@@ -160,7 +160,13 @@ export default function ResultChart({
             ))}
 
             {validHistory.length > 0 && (
-              <path d={generateAreaPath()} fill="url(#wpmGradient)" />
+              <path
+                d={generateAreaPath()}
+                fill="url(#wpmGradient)"
+                style={{
+                  animation: "chartFadeIn 0.6s ease-out 0.4s both",
+                }}
+              />
             )}
 
             {validHistory.length > 0 && (
@@ -172,6 +178,12 @@ export default function ResultChart({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeDasharray="4 4"
+                pathLength="1"
+                style={{
+                  strokeDasharray: "1",
+                  strokeDashoffset: "1",
+                  animation: "chartDraw 0.9s ease-out 0.35s forwards",
+                }}
               />
             )}
 
@@ -184,6 +196,12 @@ export default function ResultChart({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="drop-shadow-sm"
+                pathLength="1"
+                style={{
+                  strokeDasharray: "1",
+                  strokeDashoffset: "1",
+                  animation: "chartDraw 0.9s ease-out 0.35s forwards",
+                }}
               />
             )}
 
@@ -216,6 +234,9 @@ export default function ResultChart({
                   stroke="#9b72ff"
                   strokeWidth="2"
                   className="transition-all duration-75"
+                  style={{
+                    animation: `chartFadeIn 0.4s ease-out ${0.5 + i * 0.02}s both`,
+                  }}
                 />
               );
             })}
@@ -228,6 +249,22 @@ export default function ResultChart({
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes chartDraw {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+        @keyframes chartFadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

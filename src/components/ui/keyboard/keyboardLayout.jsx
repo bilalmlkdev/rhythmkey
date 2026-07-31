@@ -1,7 +1,21 @@
 import {
-  SunDim, Sun, LayoutGrid, Search, Mic, Moon, Rewind, Play, FastForward,
-  VolumeX, Volume1, Volume2, Hash, Lightbulb, ChevronUp, ChevronDown,
-  ChevronLeft, ChevronRight,
+  SunDim,
+  Sun,
+  LayoutGrid,
+  Search,
+  Mic,
+  Moon,
+  Rewind,
+  Play,
+  FastForward,
+  VolumeX,
+  Volume1,
+  Volume2,
+  Hash,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 // Layout maps for different keyboard layouts
@@ -64,7 +78,7 @@ export const layoutMaps = {
 
 // Base key rows (QWERTY) with the requested layout changes
 export const baseRows = [
-  // Row 0: Esc, F1–F12, Print Screen (replaces Delete), Delete (with Lightbulb icon, replaces Insert)
+  // Row 0: Esc, F1–F12, Print Screen (replaces Delete), Delete (no icon)
   [
     {
       label: "esc",
@@ -185,10 +199,9 @@ export const baseRows = [
       color: "dark-red",
       align: "tl",
     },
-    // Far right: Delete with Lightbulb icon (was Insert with Lightbulb)
+    // Far right: Delete (no icon)
     {
       label: "del",
-      icon: <Lightbulb size={10} />,
       code: "Delete",
       width: "45px",
       color: "dark-red",
@@ -295,7 +308,7 @@ export const baseRows = [
       color: "dark-red",
       align: "tl",
     },
-    // PageUp → Home
+    // Home (was PageUp) – unchanged
     {
       label: "home",
       code: "Home",
@@ -304,7 +317,7 @@ export const baseRows = [
       align: "tl",
     },
   ],
-  // Row 2: tab, letters, brackets, backslash, and PageUp (was PageDown)
+  // Row 2: tab, letters, brackets, backslash, and PageUp (was PageDown) – now "pg up"
   [
     {
       label: "tab",
@@ -344,16 +357,16 @@ export const baseRows = [
       color: "white",
       align: "tl",
     },
-    // PageDown → PageUp
+    // PageUp (was PageDown) – now "pg up"
     {
-      label: "page up",
+      label: "pg up",
       code: "PageUp",
       width: "40px",
       color: "dark-red",
       align: "tl",
     },
   ],
-  // Row 3: caps, letters, enter, and PageDown (was Home)
+  // Row 3: caps, letters, enter, and PageDown (was Home) – now "pg dn"
   [
     {
       label: "caps lock",
@@ -392,9 +405,9 @@ export const baseRows = [
       color: "bright-red",
       align: "tl",
     },
-    // Home → PageDown
+    // PageDown (was Home) – now "pg dn"
     {
-      label: "page down",
+      label: "pg dn",
       code: "PageDown",
       width: "40px",
       color: "dark-red",
