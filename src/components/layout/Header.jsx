@@ -151,7 +151,7 @@ export default function Header({
 
         {/* GitHub Button */}
         <a
-          href="https://github.com/byllzz/rhythmkey.git"
+          href="https://github.com/bilalmlkdev/rhythmkey.git"
           target="_blank"
           rel="noopener noreferrer"
           className={`flex items-center gap-2 px-4.5 py-[6px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer ${

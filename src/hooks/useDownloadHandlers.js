@@ -68,7 +68,7 @@ export function useDownloadHandlers({
         const serializer = new XMLSerializer();
         let source = serializer.serializeToString(svgRef.current);
         if (
-          !source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)
+          !source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)
         ) {
           source = source.replace(
             /^<svg/,

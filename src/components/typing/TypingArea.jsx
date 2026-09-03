@@ -62,7 +62,7 @@ export default function TypingArea({
           className: `${base}`,
           style: {
             transform: `translate3d(${left}px, ${top + height - 2}px, 0)`,
-            width: "0.5px",
+            width: `${charWidth}px`,
             height: "2px",
             transition,
           },
@@ -85,8 +85,16 @@ export default function TypingArea({
     if (!isTyped) return isLight ? "text-zinc-400" : "text-[#5e5e5e]";
     if (typedChar === char) {
       return isLight ? "text-zinc-900 font-medium" : "text-[#d4d4d8]";
-    } else {
-      return "text-red-500";
+    }
+    // Wrong character — style depends on the user's Mistake Highlight setting
+    switch (mistakeHighlight) {
+      case "background":
+        return "text-red-500 bg-red-500/15 rounded-[2px]";
+      case "off":
+        return "text-red-500/70";
+      case "underline":
+      default:
+        return "text-red-500 underline decoration-red-500 underline-offset-2";
     }
   };
 

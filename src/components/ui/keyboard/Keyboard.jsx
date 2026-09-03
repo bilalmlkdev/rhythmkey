@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import clickSound from "../../../sounds/click.mp3";
 import { baseRows, layoutMaps } from "./keyboardLayout";
 import KeyRow from "./KeyRow";
@@ -39,7 +39,7 @@ export default function Keyboard({
     }
   }, [audioSrc, soundEnabled]);
 
-  const playKeySound = () => {
+  const playKeySound = useCallback(() => {
     if (!soundEnabled || !audioCtxRef.current || !audioBufferRef.current)
       return;
 
@@ -64,7 +64,7 @@ export default function Keyboard({
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [soundEnabled, soundVolume]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -84,7 +84,7 @@ export default function Keyboard({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [soundEnabled, soundVolume]);
+  }, [soundEnabled, soundVolume, playKeySound]);
 
   const isPressed = (code) => activeKeys.has(code); // Apply layout mapping to base rows
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useTheme } from "./hooks/useTheme";
 import StatsPage from "./pages/StatsPage";
 import AboutPage from "./pages/AboutPage";
@@ -7,7 +7,6 @@ import NotFoundPage from "./pages/NotFoundPage";
 import MainPage from "./pages/MainPage";
 
 export default function App() {
-  const location = useLocation();
   const { isLight, theme, setTheme } = useTheme();
 
   return (

@@ -51,7 +51,7 @@ export default function StatsPage({ isLight }) {
 
         {/* Summary Cards */}
         <div
-          className={`grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 ${
+          className={`grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8 ${
             isLight ? "text-zinc-800" : "text-zinc-200"
           }`}
         >
@@ -104,6 +104,20 @@ export default function StatsPage({ isLight }) {
               Avg Acc
             </div>
             <div className="text-3xl font-bold">{averageAcc}%</div>
+          </div>
+          <div
+            className={`p-4 rounded-xl border ${
+              isLight
+                ? "border-zinc-200 bg-zinc-50"
+                : "border-zinc-800 bg-zinc-900/50"
+            }`}
+          >
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+              Best Acc
+            </div>
+            <div className="text-3xl font-bold text-green-500">
+              {bestAcc}%
+            </div>
           </div>
         </div>
 

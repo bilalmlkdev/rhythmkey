@@ -80,16 +80,16 @@ export default function AboutPage({ isLight }) {
         >
           Built and maintained by{" "}
           <a
-            href="https://github.com/byllzz"
+            href="https://github.com/bilalmlkdev"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#9b72ff]  hover:underline"
           >
-            byllzz
+            bilalmlkdev
           </a>{" "}
           /{" "}
           <a
-            href="https://github.com/byllzz/rhythmkey.git"
+            href="https://github.com/bilalmlkdev/rhythmkey.git"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#9b72ff]  hover:underline"
@@ -134,7 +134,7 @@ export default function AboutPage({ isLight }) {
             <span>
               Bug reports:{" "}
               <a
-                href="https://github.com/byllzz/rhythmkey/issues"
+                href="https://github.com/bilalmlkdev/rhythmkey/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#9b72ff]  hover:underline"
@@ -162,7 +162,7 @@ export default function AboutPage({ isLight }) {
           >
             <FiGithub className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <a
-              href="https://github.com/byllzz/rhythmkey.git"
+              href="https://github.com/bilalmlkdev/rhythmkey.git"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#9b72ff]  hover:underline"
@@ -177,7 +177,7 @@ export default function AboutPage({ isLight }) {
           >
             <FiSend className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <a
-              href="https://t.me/byllzz"
+              href="https://t.me/bilalmlkdev"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#9b72ff]  hover:underline"

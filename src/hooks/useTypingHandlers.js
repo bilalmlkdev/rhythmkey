@@ -144,6 +144,12 @@ export function useTypingHandlers({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
+    // NOTE: `state` (the whole object) is intentionally NOT listed here —
+    // only the specific state.* slices the handler actually reads. Adding
+    // the full `state` object would re-subscribe this keydown/keyup
+    // listener on every keystroke (state.userInput changes constantly),
+    // which is a real perf regression, not a fix. The exhaustive-deps
+    // warning this produces is expected and safe to leave.
   }, [
     state.appState,
     state.userInput,

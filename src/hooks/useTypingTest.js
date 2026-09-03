@@ -3,7 +3,6 @@ import { generateText } from "../utils/textGenerator";
 
 export function useTypingTest({
   idleTimeout = 5,
-  practiceMode = false,
   autoFocus = true,
   isPaused = false,
   initialConfig = {},
@@ -139,7 +138,12 @@ export function useTypingTest({
     [testType, selectedTime, getNewText],
   );
 
+  // Regenerate the test whenever the user changes a test-configuration
+  // option (word count, difficulty, time, etc). This is reacting to
+  // external config changes, not deriving state from other state — the
+  // lint rule can't distinguish that from the risky pattern.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     restartTest(false);
   }, [
     testType,
@@ -154,8 +158,11 @@ export function useTypingTest({
   ]);
 
   // Custom text
+  // Syncs currentText to the user-provided customText whenever either
+  // changes — legitimate external sync, not derivable during render.
   useEffect(() => {
     if (testType === "custom" && customText) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentText(customText);
       setTextKey((prev) => prev + 1);
     }
@@ -222,17 +229,24 @@ export function useTypingTest({
   }, [appState, isPaused]);
 
   // Infinite mode text generation
+  // Extends currentText as the user approaches the end of it — reacts to
+  // userInput (an external, user-driven value) and calls the impure
+  // getNewText(), so it can't be computed directly during render.
   useEffect(() => {
     if (testType === "infinite" && appState === "typing") {
       if (userInput.length > currentText.length - 100) {
         const chunk = getNewText(50);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentText((prev) => prev + " " + chunk);
         setTextKey((prev) => prev + 1);
       }
     }
   }, [userInput, testType, appState, currentText.length, getNewText]);
 
-  // Line offset calculation 
+  // Line offset calculation — follows userInput to scroll the typing
+  // area as the user types past the visible line. Intentionally lags
+  // behind input by one render, which is the correct scroll-follow
+  // behavior; not derivable synchronously during render.
   const lineHeight = 40;
   const charWidth = 14;
   const containerWidth = 1024;
@@ -240,6 +254,7 @@ export function useTypingTest({
 
   useEffect(() => {
     if (userInput.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLineOffset(0);
       return;
     }

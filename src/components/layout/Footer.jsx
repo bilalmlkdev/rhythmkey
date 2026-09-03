@@ -22,7 +22,7 @@ export default function Footer({ isLight }) {
       </a>
       . The source code is available on{" "}
       <a
-        href="https://github.com/byllzz/rhythmkey.git"
+        href="https://github.com/bilalmlkdev/rhythmkey.git"
         target="_blank"
         rel="noopener noreferrer"
         className={`font-medium transition-colors ${

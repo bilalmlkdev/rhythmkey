@@ -1,27 +1,25 @@
-![RhythmKey Dashboard](./src/assets/preview.png)
+<div align="center">
 
-<h1 align="center">RhythmKey</h1>
+  <a href="https://rhythmKey.vercel.app/">
+    <img src="https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/favicon.svg" alt="JS Practice Projects" width="100%" height="120">
+  </a>
 
-*<p align="center"> A sleek, open-source typing test application that combines performance tracking, customizable settings, and a distraction-free interface to help you type faster and more accurately. </p>*
+# RhythmKey
+
+A sleek, open-source typing test application that combines performance tracking, <br> customizable settings, and a distraction-free interface to help you type faster and more accurately.
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Site-black?style=for-the-badge)](https://rhythmKey.vercel.app)
+[![GitHub Stars](https://img.shields.io/github/stars/bilalmlkdev/rhythmKey?style=for-the-badge&logo=github&color=yellow)](https://github.com/bilalmlkdev/rhythmKey.git)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
+
+</div>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Status-Complete-9B72FF?style=flat" />
-<img src="https://img.shields.io/badge/Built%20with-React%20%2B%20Vite-9B72FF?style=flat" />
-<img src="https://img.shields.io/badge/Styling-Tailwind%20CSS-9B72FF?style=flat" />
-<img src="https://img.shields.io/badge/Language-JavaScript%2096%25-9B72FF?style=flat&logo=javascript&logoColor=white" />
-<img src="https://img.shields.io/badge/License-MIT-9B72FF?style=flat" />
-<img src="https://img.shields.io/badge/Deployed%20on-Vercel-9B72FF?style=flat&logo=vercel&logoColor=white" />
-<img src="https://img.shields.io/badge/Typing%20Engine-Custom-9B72FF?style=flat&logo=keyboard&logoColor=white" />
+  <i>Created by <a href="https://bilalmlkdev.vercel.app" target="_blank">Bilal Malik</a></i><br>
+  <i>Follow on Github <a href="https://github.com/bilalmlkdev" target="_blank">bilalmlkdev</a></i>
 </p>
 
-<p align="center">
-  <a href="https://rhythmkey.vercel.app/"><b style="color:#9B72FF">Live Demo</b></a> &nbsp;•&nbsp;
-  <a href="https://github.com/byllzz/rhythmkey/issues/new?labels=bug&template=bug-report---.md"><b style="color:#9B72FF">Report Bug</b></a> &nbsp;•&nbsp;
-  <a href="https://github.com/byllzz/rhythmkey/issues/new?labels=enhancement&template=feature-request---.md"><b style="color:#9B72FF">Request Feature</b></a>
-</p>
-
-<br>
-
+[![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/preview.png)](https://rhythmKey.vercel.app/)
 
 # About RhythmKey
 
@@ -116,18 +114,12 @@ Unlike traditional typing tests, RhythmKey offers **multiple test modes**, **liv
 <img src="https://go-skill-icons.vercel.app/api/icons?i=reactrouter" height="48" />
 </p>
 
-# Getting Started
 
-## Requirements
-
-- npm or Yarn
-- Modern browser (Chrome, Firefox, Edge, Safari)
-
-## Installation
+# Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/byllzz/rhythmkey.git
+git clone https://github.com/bilalmlkdev/rhythmkey.git
 
 # Enter directory
 cd rhythmkey
@@ -150,42 +142,6 @@ If you like RhythmKey:
 - Contribute
 
 Every contribution helps make RhythmKey better.
-
-# Contributors
-
-A huge thank you to everyone who has contributed to RhythmKey!
-
-<a href="https://github.com/byllzz/rhythmkey/graphs/contributors">
-  <img
-    src="https://contrib.rocks/image?repo=byllzz/rhythmkey"
-    alt="Project Contributors"
-  />
-</a>
-
-<p align="right">
-<a href="#rhythmkey">⬆ Back to Top</a>
-</p>
-
-
-## Author
-
-<img src="https://github.com/byllzz.png" width="80" height="80" alt="Bilal Malik Profile" />
-
-### Bilal Malik (byllzz)
-<p align="left">
-
-[![GitHub](https://img.shields.io/badge/GitHub-byllzz-9B72FF?style=flat&logo=github&logoColor=white)](https://github.com/byllzz)
-[![X](https://img.shields.io/badge/Tweet-@bilalmlkdev-9B72FF?style=flat&logo=x&logoColor=white)](https://x.com/bilalmlkdev)
-[![Portfolio](https://img.shields.io/badge/Portfolio-bilalmlkdev.vercel.app-9B72FF?style=flat&logo=vercel&logoColor=white)](https://bilalmlkdev.vercel.app)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bilal%20Malik-9B72FF?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bilalmlkdev/)
-[![Email](https://img.shields.io/badge/Email-bilalmlkdev@gmail.com-9B72FF?style=flat&logo=gmail&logoColor=white)](mailto:bilalmlkdev@gmail.com)
-
-
-</p>
-
-<p align="left">
-If you enjoyed this project, consider giving it a ⭐ on GitHub!
-</p>
 
 # License (MIT)
 

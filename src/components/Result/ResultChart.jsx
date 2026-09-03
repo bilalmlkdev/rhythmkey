@@ -49,7 +49,7 @@ export default function ResultChart({
 
     let path = `M ${firstX},${chartHeight} `;
     path += validHistory
-      .map((d, i) => {
+      .map((d) => {
         const x = (d.time / maxTime) * chartWidth;
         const y =
           chartHeight - ((d.wpm - minWpm) / (maxWpm - minWpm)) * chartHeight;

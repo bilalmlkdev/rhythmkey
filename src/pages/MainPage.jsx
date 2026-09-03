@@ -52,24 +52,28 @@ export default function MainPage({ isLight, theme, setTheme }) {
 
   const { config, state, refs, actions } = useTypingTest({
     idleTimeout: settings.idleTimeout,
-    practiceMode: settings.practiceMode,
-    cursorStyle: settings.cursorStyle,
-    fontSize: settings.fontSize,
-    mistakeHighlight: settings.mistakeHighlight,
-    soundPack: settings.soundPack,
-    language: settings.language,
     autoFocus: settings.autoFocus,
     isPaused,
     initialConfig,
   });
 
   const { saveResult } = useStats();
-  const tabPressedRef = useRef(false);
   const previousTestTypeRef = useRef("time");
   const customTextSubmittedRef = useRef(false);
 
+  // Ticking "now" for live WPM/accuracy while a test is in progress.
+  // Reading Date.now() directly during render is an impure call that can
+  // produce unstable results across re-renders — so we keep it in state,
+  // updated on an interval instead.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (state.appState !== "typing") return;
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, [state.appState]);
+
   // Memoised WPM and accuracy
-  const activeEndTime = state.endTime || Date.now();
+  const activeEndTime = state.endTime || now;
   const timeElapsed = state.startTime
     ? (activeEndTime - state.startTime) / 60000
     : 1 / 60;
@@ -294,6 +298,9 @@ export default function MainPage({ isLight, theme, setTheme }) {
       className={`min-h-screen ${
         isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
       } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
+      // `refs` is a plain object bundling several ref objects returned by
+      // useTypingTest — this is a property lookup, not a .current read.
+      // eslint-disable-next-line react-hooks/refs
       ref={refs.containerRef}
     >
       <Header
@@ -354,11 +361,15 @@ export default function MainPage({ isLight, theme, setTheme }) {
               textKey={state.textKey}
               appState={state.appState}
               isLight={isLight}
+              // plain object property lookup on refs, not a .current read
+              // eslint-disable-next-line react-hooks/refs
               innerContainerRef={refs.innerContainerRef}
               lineOffset={state.lineOffset}
               wordsList={wordsList}
               userInput={state.userInput}
               showNextWord={settings.showNextWord} //  from settings
+              // same false positive as innerContainerRef above
+              // eslint-disable-next-line react-hooks/refs
               activeWordRef={refs.activeWordRef}
               currentIdx={currentIdx}
               mistakeHighlight={settings.mistakeHighlight}
