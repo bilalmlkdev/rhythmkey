@@ -1,7 +1,7 @@
 <div align="center">
 
   <a href="https://rhythmKey.vercel.app/">
-    <img src="https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/favicon.svg" alt="JS Practice Projects" width="100%" height="120">
+    <img src="https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/favicon.svg" alt="RhythmKey Logo" width="100%" height="120">
   </a>
 
 # RhythmKey
