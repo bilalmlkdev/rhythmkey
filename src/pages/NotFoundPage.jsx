@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "../components/layout/PageTransition";
 import { FiArrowLeft } from "react-icons/fi";
 
 export default function NotFoundPage({ isLight }) {
@@ -15,12 +15,12 @@ export default function NotFoundPage({ isLight }) {
         <p className={`${isLight ? "text-gray-600" : "text-gray-400"} mb-8`}>
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <Link
+        <TransitionLink
           to="/"
           className="inline-flex items-center gap-2 px-6 py-3 bg-[#9b72ff] text-white rounded-full hover:bg-[#9b72ff]/80 transition-colors"
         >
           <FiArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+        </TransitionLink>
       </div>
     </div>
   );

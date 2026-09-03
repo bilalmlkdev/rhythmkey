@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 
 function getSystemTheme() {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: light)").matches
     ? "light"
     : "dark";
 }
 
 export function useTheme() {
-  // Load theme from localStorage or default to "dark"
+  // Load theme from localStorage or default to "light"
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("RhythmKey_theme");
-    return saved || "dark";
+    return saved || "light";
   });
 
   // Resolve immediately from the current system preference instead of
-  // defaulting to "dark" and correcting it in an effect afterward — this
+  // defaulting to "dark" and correcting it in an effect afterward - this
   // avoids a state update during the initial render/effect cycle.
   const [resolvedTheme, setResolvedTheme] = useState(() =>
     theme === "system" ? getSystemTheme() : theme,
@@ -27,7 +27,7 @@ export function useTheme() {
 
     if (theme === "system") {
       const media = window.matchMedia("(prefers-color-scheme: light)");
-      // Subscribing to an external system's changes — this is the
+      // Subscribing to an external system's changes - this is the
       // documented-correct use of setState inside an effect. The initial
       // value is already correct from useState's initializer above; this
       // re-sync only matters if `theme` switches to "system" after mount.

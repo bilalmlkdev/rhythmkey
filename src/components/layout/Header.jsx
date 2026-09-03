@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "./PageTransition";
 import {
   Volume2,
   VolumeX,
@@ -8,6 +8,7 @@ import {
   BarChart2,
   Info,
   Share2,
+  RotateCcw,
 } from "lucide-react";
 import SettingsModal from "../modals/settings/SettingsModal";
 
@@ -19,8 +20,8 @@ export default function Header({
   isLight,
   theme,
   setTheme,
-  settings, //  receive unified settings
-  updateSetting, //  receive updateSetting
+  settings,
+  updateSetting,
   onShare,
   resetSettings,
 }) {
@@ -55,10 +56,7 @@ export default function Header({
         <span>URL copied to clipboard!</span>
       </div>
 
-      <div
-        className="flex items-center gap-2 cursor-pointer"
-        onClick={() => restartTest(false)}
-      >
+      <TransitionLink to="/" className="flex items-center gap-2">
         <span className="text-[#9b72ff] text-xl font-bold tracking-tighter">
           RhythmKey
         </span>
@@ -68,7 +66,7 @@ export default function Header({
           <div className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm"></div>
           <div className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm opacity-50"></div>
         </div>
-      </div>
+      </TransitionLink>
       <div className="hidden md:block relative text-xs text-[#9b72ff]">
         {totalKeystrokes.toLocaleString()}{" "}
         <span
@@ -78,28 +76,38 @@ export default function Header({
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <Link
+        <button
+          onClick={(e) => {
+            e.currentTarget.blur();
+            restartTest(false);
+          }}
+          title="Restart test"
+          className="flex items-center gap-2 px-2 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
+        >
+          <RotateCcw size={14} /> Restart
+        </button>
+
+        <TransitionLink
           to="/stats"
           className="flex items-center gap-2 px-2 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
           <BarChart2 size={14} /> Stats{" "}
-        </Link>
+        </TransitionLink>
 
-        <Link
+        <TransitionLink
           to="/about"
           className="flex items-center gap-2 px-2 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
-         About
-        </Link>
+          About
+        </TransitionLink>
 
         <button
           onClick={handleShareClick}
           className="flex items-center gap-2 pl-2 pr-3 py-[7px] rounded-full transition-all active:scale-95 text-[13px] tracking-tight font-medium cursor-pointer"
         >
-         Copy Link
+          Copy Link
         </button>
 
-        {/* Audio Button – using settings */}
         <button
           onClick={(e) => {
             e.currentTarget.blur();
@@ -122,7 +130,6 @@ export default function Header({
           )}
         </button>
 
-        {/* Settings Button */}
         <button
           onClick={(e) => {
             e.currentTarget.blur();
@@ -137,7 +144,6 @@ export default function Header({
           <Settings size={14} /> Settings{" "}
         </button>
 
-        {/* Settings Modal */}
         <SettingsModal
           isOpen={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}
@@ -149,7 +155,6 @@ export default function Header({
           resetSettings={resetSettings}
         />
 
-        {/* GitHub Button */}
         <a
           href="https://github.com/bilalmlkdev/rhythmkey.git"
           target="_blank"

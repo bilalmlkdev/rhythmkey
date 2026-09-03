@@ -21,6 +21,7 @@ A sleek, open-source typing test application that combines performance tracking,
 
 [![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/preview.png)](https://rhythmKey.vercel.app/)
 
+
 # About RhythmKey
 
 Welcome to **RhythmKey** - a modern, open-source typing test application built to deliver a smooth, customizable, and motivating typing experience directly in your browser.

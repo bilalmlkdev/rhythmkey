@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   FiArrowLeft,
   FiMail,
@@ -6,9 +5,10 @@ import {
   FiGithub,
   FiSend,
 } from "react-icons/fi";
+import { useSmartBack } from "../hooks/useSmartBack";
 
 export default function AboutPage({ isLight }) {
-  const navigate = useNavigate();
+  const goBack = useSmartBack("/");
 
   return (
     <div
@@ -19,14 +19,14 @@ export default function AboutPage({ isLight }) {
       <div className="w-full max-w-3xl flex flex-col">
         {/* Back button */}
         <button
-          onClick={() => navigate("/")}
+          onClick={goBack}
           className={`self-start flex items-center gap-2 text-sm ${
             isLight
               ? "text-gray-600 hover:text-gray-900"
               : "text-gray-400 hover:text-white"
           } mb-6 transition-colors`}
         >
-          <FiArrowLeft className="w-4 h-4" /> Back to Editor
+          <FiArrowLeft className="w-4 h-4" /> Back
         </button>
 
         {/* About Section */}
@@ -60,7 +60,7 @@ export default function AboutPage({ isLight }) {
         >
           RhythmKey is designed to be lightweight and fully client‑side,
           leveraging modern web technologies for a smooth typing experience. All
-          your data stays locally in your browser—no account needed, no
+          your data stays locally in your browser-no account needed, no
           tracking, and complete privacy.
         </p>
 

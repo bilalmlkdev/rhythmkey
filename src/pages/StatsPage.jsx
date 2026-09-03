@@ -1,10 +1,11 @@
 import React from "react";
 import { useStats } from "../hooks/useStats";
-import { Link } from "react-router-dom";
 import { ArrowLeft, BarChart2, Trash2 } from "lucide-react";
+import { useSmartBack } from "../hooks/useSmartBack";
 
 export default function StatsPage({ isLight }) {
   const { stats, clearStats } = useStats();
+  const goBack = useSmartBack("/");
 
   const averageWpm =
     stats.length > 0
@@ -27,14 +28,14 @@ export default function StatsPage({ isLight }) {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Link
-              to="/"
+            <button
+              onClick={goBack}
               className={`p-2 rounded-lg transition-colors ${
                 isLight ? "hover:bg-zinc-100" : "hover:bg-zinc-800"
               }`}
             >
               <ArrowLeft size={20} />
-            </Link>
+            </button>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <BarChart2 className="text-[#9b72ff]" /> Stats History
             </h1>
@@ -115,9 +116,7 @@ export default function StatsPage({ isLight }) {
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               Best Acc
             </div>
-            <div className="text-3xl font-bold text-green-500">
-              {bestAcc}%
-            </div>
+            <div className="text-3xl font-bold text-green-500">{bestAcc}%</div>
           </div>
         </div>
 

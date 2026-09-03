@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = "rhythmkey-v1";
+const CACHE_NAME = "rhythmkey-v2";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
@@ -38,7 +38,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch event 
+// Fetch event
 self.addEventListener("fetch", (event) => {
   // Skip cross-origin requests (like external fonts or icons)
   if (!event.request.url.startsWith(self.location.origin)) {

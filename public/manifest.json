@@ -2,7 +2,7 @@
   "name": "RhythmKey",
   "short_name": "RhythmKey",
   "description": "A sleek typing test application with live stats and customizable settings.",
-  "start_url": "/",
+  "start_url": "/app/taketypingtest",
   "display": "standalone",
   "background_color": "#111113",
   "theme_color": "#9b72ff",

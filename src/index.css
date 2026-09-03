@@ -1,14 +1,54 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  --font-grotesk : "Space Grotesk", sans-serif;
+  --font-grotesk: "Space Grotesk", sans-serif;
 }
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulseScale {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+}
+
 html::-webkit-scrollbar {
- display : none
+  display: none
 }
+
 @layer base {
   html {
     @apply scroll-smooth;
@@ -23,4 +63,3 @@ html::-webkit-scrollbar {
   }
 
 }
-
