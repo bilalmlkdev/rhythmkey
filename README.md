@@ -21,102 +21,97 @@ A sleek, open-source typing test application that combines performance tracking,
 
 [![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/preview.png)](https://rhythmKey.vercel.app/)
 
+## What is RhythmKey
 
-# About RhythmKey
+Most typing tests want you to make an account before they'll show you a single word. RhythmKey doesn't. Open the site, hit start, and you're typing within a second - no sign-up, no onboarding flow, nothing syncing to a server you didn't ask for. Every test, every stat, and every setting you touch lives right in your browser.
 
-Welcome to **RhythmKey** - a modern, open-source typing test application built to deliver a smooth, customizable, and motivating typing experience directly in your browser.
+Underneath that simplicity is a typing engine that actually pays attention. RhythmKey tracks every keystroke as it lands, flags mistakes the moment they happen instead of only at the end, and turns each finished run into a real breakdown - not just a single WPM number, but your raw speed, your consistency, exactly where you slowed down, and where you made mistakes.
 
-Unlike traditional typing tests, RhythmKey offers **multiple test modes**, **live statistics**, and a **fully adjustable interface** that adapts to your preferences. Whether you're a beginner looking to build muscle memory or a pro aiming for speed, RhythmKey provides the tools you need to track your progress and push your limits.
+It's built for two kinds of people: someone building muscle memory from scratch, and someone who already types fast and wants to know precisely where the next few WPM are hiding.
 
-## Why RhythmKey?
+## How a test actually works
 
-| Feature | Highlights |
-|---------|------------|
-| **Typing Modes** | **Time** (15/30/60/120s) • **Words** (10/25/50/100) • **Stories** (S/M/L) • **Quotes** • **Infinite** • **Custom** |
-| **Live Tracking** | Real-time **WPM**, **Accuracy**, and progress indicator |
-| **Typing Experience** | Space Grotesk • Smooth cursor • Error highlighting • Next-word preview |
-| **Customization** | Themes (Dark/Light/System) • Keyboard Layouts (QWERTY/AZERTY/DVORAK) • Sound Packs • Cursor Styles • Font Size • Live Stats • And more |
-| **Detailed Results** | WPM • Accuracy • Raw WPM • Consistency • Mistakes • Backspaces • Performance Graph • Export (JSON, CSV, MD, PNG, JPG, SVG) |
-| **Persistent Data** | Automatically saves settings, statistics, custom text, and keystrokes using `localStorage` |
+A run starts with picking a mode. You can type against the clock (15, 30, 60, or 120 seconds), aim for a fixed word count (10, 25, 50, or 100 words), work through a short story, type a quote, run in infinite mode with no end point, or drop in your own text entirely. On top of any mode, you can toggle punctuation, numbers, and symbols on or off, and pick a difficulty from easy to extra hard.
 
-# RhythmKey Features
+Once you start typing, the interface gets out of your way. The cursor moves with a smooth spring animation instead of snapping, mistakes get underlined immediately in red so you can see the pattern in your errors as it forms, and if you want it, RhythmKey will preview the next word before you reach it. Live WPM, accuracy, and your remaining time or word count sit quietly in view the whole time, updating in real time without breaking your rhythm.
 
-## Complete Feature List
+When the test ends, you land on a full results screen: WPM, accuracy, raw WPM (your speed before accuracy is factored in), a consistency score, your mistake and backspace counts, and a performance graph showing your pace across the entire run. If you want to keep it, you can export the result as JSON, CSV, Markdown, PNG, JPG, or SVG.
 
-| # | Feature | Description |
-|---|---------|-------------|
-| 01 | **Multiple Typing Modes** | Time, Words, Stories, Quotes, Infinite, Custom |
-| 02 | **Live WPM & Accuracy** | Real-time typing statistics |
-| 03 | **Smooth Cursor Animation** | Spring-like cursor movement |
-| 04 | **Word-Level Error Highlighting** | Red underline + incorrect character highlighting |
-| 05 | **Space Grotesk Font** | Modern readable typeface |
-| 06 | **Show Next Word** | Optional next-word preview |
-| 07 | **On-Screen Keyboard** | Supports QWERTY, AZERTY, and DVORAK |
-| 08 | **Sound Effects** | Click, Mechanical, Typewriter |
-| 09 | **Practice Mode** | Prevents incorrect keystrokes |
-| 10 | **Themes** | Dark, Light, System |
-| 11 | **Custom Settings** | Cursor, font size, timeout, auto-focus, and more |
-| 12 | **Results Screen** | Graphs, statistics, exports |
-| 13 | **Statistics Page** | History, averages, best scores |
-| 14 | **Persistent Storage** | Saves settings and history in localStorage |
-| 15 | **Custom Text Mode** | Paste or upload your own text |
-| 16 | **Share URLs** | Share current typing configuration |
-| 17 | **Keyboard Shortcuts** | Productivity shortcuts |
-| 18 | **About Page** | Developer information and credits |
+## Making it feel like yours
 
-# Usage
+RhythmKey ships with real customization instead of a single default you're stuck with. Switch between dark, light, or system theme. Pick a keyboard layout - QWERTY, AZERTY, or Dvorak - reflected live on an on-screen keyboard as you type. Choose a sound pack (click, mechanical, or typewriter) so the test sounds the way you want it to. Adjust cursor style, font size, whether live stats are visible while you type, and how long the app waits before treating you as idle.
 
-| Feature | Details |
-|---------|---------|
-| **Typing Modes** | Time (15/30/60/120s) • Words (10/25/50/100) • Stories (S/M/L) • Quotes •  Infinite •  Custom |
-| **Text Options** | Toggle **Punctuation**, **Numbers**, **Symbols** • Difficulty: **Easy / Hard / Extra Hard** |
-| **Live Stats** | WPM • Accuracy • Remaining Time/Words • Progress Indicator • Error Highlighting |
-| **Results** | WPM • Accuracy • Raw WPM • Consistency • Mistakes • Backspaces • Performance Graph |
-| **Downloads** | JSON • CSV • Markdown • PNG • JPG • SVG |
-| **Settings** | Theme • Keyboard • Sounds • Cursor • Font Size • Live Stats • Next Word • Language • Idle Timeout • Auto Focus |
-| **Statistics** | Total Tests • Avg WPM • Best WPM • Avg Accuracy • History |
-| **Custom Text** | Paste Text • Upload `.txt`, `.md`, `.csv`, `.json` • Preview • Trim |
-| **Share** | Copy the current test configuration URL |
-| **Shortcuts** | `Ctrl+K` Settings • `Ctrl+S` Stats • `Tab+Space` Pause • `Tab+Enter` Restart |
+There's also a practice mode that simply won't let an incorrect keystroke through, which is useful if you're deliberately building accuracy rather than chasing speed. Every setting you touch is saved automatically, so the app remembers your setup the next time you open it - no account required.
 
-# Architecture & Folder Structure
+## Bring your own text
 
-| File | Description |
-|------|-------------|
-| `index.html` | Main entry point |
-| `src/` | Application source code |
-| `src/pages/` | Main, Stats, About, NotFound |
-| `src/components/` | Reusable UI components |
-| `src/hooks/` | Custom React hooks |
-| `src/utils/` | Helper utilities |
-| `src/sounds/` | Sounds Used in Keyboard |
-| `src/data/` | Word lists, stories, quotes |
-| `public/` | Static assets |
-| `package.json` | Dependencies and scripts |
+If none of the built-in modes fit what you want to practice, Custom Text mode lets you paste anything directly into the app, or upload a `.txt`, `.md`, `.csv`, or `.json` file. You get a preview before committing, and the text is trimmed automatically so a run doesn't end awkwardly mid-sentence.
 
+## Tracking progress over time
 
+Every completed test gets logged to a dedicated Statistics page, so a single run isn't the only thing that matters. You can see your total tests taken, your average and best WPM, your average accuracy, and a history of past runs - enough to actually tell whether you're improving, not just how one attempt went.
 
-# Built With
+## Getting around faster
 
-<details open>
-<summary><strong> RhythmKey is built using the following technologies</strong></summary>
+RhythmKey has a small set of keyboard shortcuts for people who'd rather not reach for the mouse mid-session: `Ctrl+K` opens settings, `Ctrl+S` opens stats, `Tab+Space` pauses the current test, and `Tab+Enter` restarts it. You can also share your exact current configuration - mode, difficulty, toggles and all - as a URL, so sending someone "try this exact test" is one link instead of a list of instructions.
 
-- **React** - UI library
-- **Vite** - Fast development & build tool
-- **Tailwind CSS** - Utility-first CSS framework
-- **React Router** - Client-side routing
-- **Lucide React** - Modern icon library
-- **React Icons** - Additional icon collection
+## Design philosophy
 
-</details>
+RhythmKey is built around a simple rule: nothing should get between you and the next keystroke. That rule shaped most of the decisions in the app. There's no forced account creation, because an account adds a step between opening the tab and typing your first word. There's no server round-trip for saving a result, because `localStorage` is instant and doesn't need a network connection to work. And there's no single "correct" way to configure the test, because a beginner building muscle memory and someone chasing a personal-best WPM want genuinely different tools.
 
-<p align="left">
-  <img src="https://skillicons.dev/icons?i=react,vite,tailwind,js,git" />
-<img src="https://go-skill-icons.vercel.app/api/icons?i=reactrouter" height="48" />
-</p>
+The interface itself follows the same idea. Stats are visible but not loud. The cursor moves naturally instead of jumping. Error feedback is immediate rather than saved for a summary screen you have to wait for. None of it is decorative - every piece of the UI is there because it answers a question you'd otherwise have to ask yourself mid-test: *how am I doing right now?*
 
+## Frequently asked questions
 
-# Installation
+**Does RhythmKey require an account or internet connection to use?**
+No. Everything - your settings, your history, your custom text - is stored locally in your browser. You can use it offline after the first load.
+
+**Where does my typing history go?**
+Nowhere but your own browser's `localStorage`. RhythmKey has no backend and no database, so there's nothing to sync and nothing that leaves your device.
+
+**Can I clear my saved history and start fresh?**
+Yes, clearing your browser's site data for RhythmKey resets everything - stats, settings, and saved custom text - back to defaults.
+
+**Will my results carry over if I switch browsers or devices?**
+No, since storage is local to the browser you're using. If you need a result elsewhere, export it first using one of the supported formats.
+
+**Is RhythmKey free to use?**
+Yes, entirely. It's open-source under the MIT license, so you're also free to self-host it or modify it for your own use.
+
+**Does RhythmKey work on mobile?**
+The core experience is built and tuned for a physical keyboard, since that's what a typing test is fundamentally testing. It will load and run on mobile browsers, but you'll get the most accurate experience on a desktop or laptop.
+
+**Can I use RhythmKey without JavaScript enabled?**
+No. It's a client-side React application, so JavaScript is required for the app to run at all.
+
+## Inside the codebase
+
+```
+index.html          Entry point
+src/
+ ├─ pages/           Main, Stats, About, NotFound
+ ├─ components/      Reusable UI building blocks
+ ├─ hooks/           Custom React hooks (typing logic, stats, settings, theme)
+ ├─ utils/           Helper functions
+ ├─ sounds/          Keyboard sound packs
+ └─ data/            Word lists, stories, and quotes
+public/              Static assets
+package.json         Dependencies and scripts
+```
+
+The typing logic itself is split across a handful of focused hooks rather than one large component - `useTypingTest` drives the core test state, `useStats` and `useResultGraph` handle tracking and the performance chart, and `useSettings` and `useTheme` manage everything persisted to `localStorage`. If you're reading the source to see how it's put together, that's the place to start.
+
+## A note on accessibility
+
+Because RhythmKey is a keyboard-driven tool by nature, keyboard accessibility was treated as a core requirement rather than an afterthought. Every interactive control - mode selection, settings, the shortcuts panel - can be reached without a mouse. Error states use both color and underlining rather than color alone, so mistakes are distinguishable for people with color vision differences. Theme support (including a system-matching option) is there partly for the same reason: contrast preferences aren't one-size-fits-all.
+
+If you run into something that isn't accessible the way it should be, that's treated as a bug, not a feature request - open an issue and it'll be looked at.
+
+## Browser support
+
+RhythmKey is built and tested against modern evergreen browsers - Chrome, Firefox, Edge, and Safari, on their recent versions. It relies on standard, well-supported browser APIs (`localStorage`, Web Audio for sound packs) rather than anything experimental, so if your browser is reasonably up to date, it should work without issue.
+
+## Running it locally
 
 ```bash
 # Clone repository
@@ -132,19 +127,43 @@ npm install
 npm run dev
 ```
 
-# Show Your Support
+No environment variables, no backend to spin up, and no API keys to configure - it runs entirely client-side, so `npm run dev` is genuinely the whole setup.
 
-If you like RhythmKey:
+## What's next
+
+RhythmKey is actively maintained, and a few things are on the radar for future updates:
+
+- Additional language word lists beyond the ones currently bundled
+- More sound pack options for the keyboard
+- Deeper analytics on the Statistics page, like per-key accuracy heatmaps
+- Additional export formats based on what people actually ask for
+
+None of this is a fixed roadmap with dates attached - it's simply the direction the project is heading, and it can shift based on what turns out to matter most to people actually using it.
+
+## Contributing
+
+RhythmKey is open-source, and contributions are genuinely welcome, not just tolerated. If you want to work on something:
+
+1. Fork the repository and clone your fork locally
+2. Create a new branch for the change you're making
+3. Make your changes and test them against `npm run dev`
+4. Open a pull request with a clear description of what changed and why
+
+Small fixes - a typo, a broken link, a minor styling issue - are just as welcome as larger features. If you're planning something bigger, like a new typing mode, opening an issue first to discuss the approach is a good idea before putting in the work.
+
+## Show your support
+
+If RhythmKey has been useful to you:
 
 - Star the repository
-- Fork the project
-- Report issues
-- Suggest improvements
-- Contribute
+- Fork the project and make it your own
+- Report anything broken
+- Suggest a mode or feature it's missing
+- Open a pull request
 
-Every contribution helps make RhythmKey better.
+Every bit of that helps keep RhythmKey moving forward.
 
-# License (MIT)
+## License (MIT)
 
 This project is licensed under the **MIT License**.
 
@@ -170,4 +189,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
