@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import Keyboard from "../components/ui/keyboard/Keyboard";
+import Keyboard from "../components/ui/Keyboard";
+import KeyboardThemeSwitcher from "../components/ui/KeyboardThemeSwitcher";
 import ResultScreen from "../components/Result/ResultScreen";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
@@ -17,6 +18,7 @@ import { useTypingHandlers } from "../hooks/useTypingHandlers";
 
 // wrong sound import
 import wrongSound from "../sounds/wrong.mp3";
+import keyboardClickSound from "../sounds/click.mp3";
 
 export default function MainPage({ isLight, theme, setTheme }) {
   const navigate = useNavigate();
@@ -311,7 +313,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
         isLight={isLight}
         theme={theme}
         setTheme={setTheme}
-       // passing settings and updateSetting
+        // passing settings and updateSetting
         settings={settings}
         updateSetting={updateSetting}
         onShare={shareUrl}
@@ -404,12 +406,40 @@ export default function MainPage({ isLight, theme, setTheme }) {
                     : "opacity-100"
                 }`}
               >
-                <Keyboard
-                  soundEnabled={settings.soundEnabled}
-                  soundVolume={settings.soundVolume}
+                <div
+                  className={`${
+                    isLight
+                      ? "bg-[#9a72ff1b] border-[#000000]/30"
+                      : "bg-[#383439] border-[#FFFFFF]/30"
+                  } p-2 rounded-[14px] shadow-inner border-2 inline-flex relative top-3`}
+                >
+                  <Keyboard
+                    theme={settings.keyboardTheme}
+                    layout={settings.keyboardLayout}
+                    enableSound={settings.soundEnabled}
+                    enableHaptics={settings.keyboardHaptics}
+                    soundUrl={keyboardClickSound}
+                  />
+                </div>
+                <KeyboardThemeSwitcher
+                  value={settings.keyboardTheme}
+                  onChange={(theme) => updateSetting("keyboardTheme", theme)}
                   isLight={isLight}
-                  layout={settings.keyboardLayout}
                 />
+                <div className="flex justify-center relative top-5">
+                  <a
+                    href="https://keebkit.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`text-[11px] transition-colors ${
+                      isLight
+                        ? "text-zinc-400 hover:text-[#9b72ff]"
+                        : "text-zinc-600 hover:text-[#9b72ff]"
+                    }`}
+                  >
+                    Like this keyboard? Get the component on keebkit ↗
+                  </a>
+                </div>
               </div>
             )}
           </div>

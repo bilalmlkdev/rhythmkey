@@ -14,9 +14,11 @@ import {
   Keyboard,
   Languages,
   MousePointer2,
+  Palette,
   Play,
   Type,
   Volume2,
+  Vibrate,
   Settings,
 } from "lucide-react";
 
@@ -29,9 +31,11 @@ export const ICONS = {
   Keyboard,
   Languages,
   MousePointer2,
+  Palette,
   Play,
   Type,
   Volume2,
+  Vibrate,
   Settings,
 };
 

@@ -156,6 +156,30 @@ export default function SettingsModal({
             />
 
             <SelectSetting
+              icon="Palette"
+              label="Keyboard Theme"
+              value={settings.keyboardTheme}
+              onChange={(v) => updateSetting("keyboardTheme", v)}
+              options={[
+                { value: "classic", label: "Classic" },
+                { value: "mint", label: "Mint" },
+                { value: "royal", label: "Royal" },
+                { value: "dolch", label: "Dolch" },
+                { value: "sand", label: "Sand" },
+                { value: "scarlet", label: "Scarlet" },
+              ]}
+              isLight={isLight}
+            />
+
+            <SettingToggle
+              icon="Vibrate"
+              label="Keyboard Haptics"
+              enabled={settings.keyboardHaptics}
+              setEnabled={(v) => updateSetting("keyboardHaptics", v)}
+              isLight={isLight}
+            />
+
+            <SelectSetting
               icon="Languages"
               label="Language"
               value={settings.language}

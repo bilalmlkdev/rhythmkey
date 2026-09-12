@@ -12,6 +12,8 @@ const defaultSettings = {
   showKeyPressAnimation: true,
   restartConfirmation: false,
   keyboardLayout: "qwerty",
+  keyboardTheme: "classic",
+  keyboardHaptics: true,
   soundEnabled: true,
   soundVolume: 0.8,
   showKeyboard: true,
