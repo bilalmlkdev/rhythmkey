@@ -1,5 +1,5 @@
 import React from "react";
-import * as Icons from "lucide-react";
+import { getSettingIcon } from "../../../utils/settingsIcons";
 
 export default function ButtonGroupSetting({
   icon,
@@ -10,13 +10,17 @@ export default function ButtonGroupSetting({
   formatLabel,
   isLight,
 }) {
-  const IconComponent = Icons[icon] || Icons.Settings;
+  const IconComponent = getSettingIcon(icon);
   return (
     <div className="flex items-center justify-between">
       <span
         className={`flex items-center gap-2 ${isLight ? "text-zinc-600" : "text-zinc-300"}`}
       >
-        <IconComponent size={15} className={`${isLight ? "text-black" : "text-white"}`} /> {label}
+        <IconComponent
+          size={15}
+          className={`${isLight ? "text-black" : "text-white"}`}
+        />{" "}
+        {label}
       </span>
       <div
         className={`flex rounded-lg p-1 border gap-0.5 ${

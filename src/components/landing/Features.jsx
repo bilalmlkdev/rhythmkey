@@ -6,10 +6,7 @@ export default function Features({ isLight }) {
   const borderCol = borderColor(isLight);
 
   return (
-    <div
-      id="features"
-      className={`border-l border-r mx-6.5 border-t ${borderCol}`}
-    >
+    <div id="features" className={`border-l border-r mx-6.5 border-t ${borderCol}`}>
       <div className="pt-12 pb-4 px-6">
         <span className="text-[11px] font-semibold tracking-widest uppercase text-[#9b72ff]">
           Why RhythmKey
@@ -38,9 +35,7 @@ export default function Features({ isLight }) {
                 <Icon size={17} className="text-[#9b72ff]" />
               </div>
               <h3 className="text-[15px] font-semibold">{f.title}</h3>
-              <p
-                className={`mt-1.5 text-[13px] leading-relaxed ${isLight ? "text-zinc-600" : "text-zinc-400"}`}
-              >
+              <p className={`mt-1.5 text-[13px] leading-relaxed ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
                 {f.desc}
               </p>
             </div>

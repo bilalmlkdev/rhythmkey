@@ -1,5 +1,5 @@
 import React from "react";
-import * as Icons from "lucide-react";
+import { getSettingIcon } from "../../../utils/settingsIcons";
 
 export default function SettingToggle({
   icon,
@@ -8,13 +8,16 @@ export default function SettingToggle({
   setEnabled,
   isLight,
 }) {
-  const IconComponent = Icons[icon] || Icons.Settings;
+  const IconComponent = getSettingIcon(icon);
   return (
     <div className="flex items-center justify-between">
       <span
         className={`flex items-center gap-2 ${isLight ? "text-zinc-600" : "text-zinc-300"}`}
       >
-        <IconComponent size={15} className={`${isLight ? "text-black" : "text-white"}`} />
+        <IconComponent
+          size={15}
+          className={`${isLight ? "text-black" : "text-white"}`}
+        />
         {label}
       </span>
       <button

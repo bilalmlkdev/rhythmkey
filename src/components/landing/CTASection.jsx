@@ -7,9 +7,7 @@ export default function CTASection({ isLight }) {
   const borderCol = borderColor(isLight);
 
   return (
-    <div
-      className={`border-l border-r mx-6.5 border-t relative overflow-hidden ${borderCol}`}
-    >
+    <div className={`border-l border-r mx-6.5 border-t relative overflow-hidden ${borderCol}`}>
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -25,24 +23,17 @@ export default function CTASection({ isLight }) {
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight max-w-md">
           Find your rhythm, one keystroke at a time
         </h2>
-        <p
-          className={`mt-2 text-sm max-w-sm ${isLight ? "text-zinc-600" : "text-zinc-400"}`}
-        >
+        <p className={`mt-2 text-sm max-w-sm ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
           No sign-up, no setup. Your next personal best is one test away.
         </p>
         <TransitionLink
           to="/app/taketypingtest"
           className={`group mt-6 flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all active:scale-95 ${
-            isLight
-              ? "bg-zinc-900 text-white hover:bg-black"
-              : "bg-white text-black hover:bg-white/90"
+            isLight ? "bg-zinc-900 text-white hover:bg-black" : "bg-white text-black hover:bg-white/90"
           }`}
         >
           Start Typing
-          <ArrowRight
-            size={14}
-            className="transition-transform duration-200 group-hover:translate-x-0.5"
-          />
+          <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
         </TransitionLink>
       </div>
     </div>

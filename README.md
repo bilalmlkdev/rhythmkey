@@ -20,6 +20,7 @@ A sleek, open-source typing test application that combines performance tracking,
 </p>
 
 [![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/preview.png)](https://rhythmKey.vercel.app/)
+[![RhythmKey App](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/previewApp.png)](https://rhythmKey.vercel.app/)
 
 ## What is RhythmKey
 
@@ -106,6 +107,25 @@ The typing logic itself is split across a handful of focused hooks rather than o
 Because RhythmKey is a keyboard-driven tool by nature, keyboard accessibility was treated as a core requirement rather than an afterthought. Every interactive control - mode selection, settings, the shortcuts panel - can be reached without a mouse. Error states use both color and underlining rather than color alone, so mistakes are distinguishable for people with color vision differences. Theme support (including a system-matching option) is there partly for the same reason: contrast preferences aren't one-size-fits-all.
 
 If you run into something that isn't accessible the way it should be, that's treated as a bug, not a feature request - open an issue and it'll be looked at.
+
+## Built with
+
+<details open>
+<summary><strong> RhythmKey is built using the following technologies</strong></summary>
+
+- **React** - UI library
+- **Vite** - Fast development & build tool
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Router** - Client-side routing
+- **Lucide React** - Modern icon library
+- **React Icons** - Additional icon collection
+
+</details>
+
+<p align="left">
+  <img src="https://skillicons.dev/icons?i=react,vite,tailwind,js,git" />
+<img src="https://go-skill-icons.vercel.app/api/icons?i=reactrouter" height="48" />
+</p>
 
 ## Browser support
 

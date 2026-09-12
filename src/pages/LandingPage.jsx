@@ -1,3 +1,4 @@
+import React from "react";
 import Header from "../components/landing/Header";
 import Hero from "../components/landing/Hero";
 import Features from "../components/landing/Features";
@@ -17,9 +18,7 @@ export default function LandingPage({ isLight, theme, setTheme }) {
     >
       <Header isLight={isLight} theme={theme} setTheme={setTheme} />
 
-      <section
-        className={`max-w-[1100px] mx-auto text-center border-l border-r flex flex-col ${borderCol}`}
-      >
+      <section className={`max-w-[1100px] mx-auto text-center border-l border-r flex flex-col ${borderCol}`}>
         <Hero isLight={isLight} />
         <Features isLight={isLight} />
         <HowItWorks isLight={isLight} />

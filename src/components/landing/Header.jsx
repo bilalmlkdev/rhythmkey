@@ -38,22 +38,13 @@ export default function Header({ isLight, theme, setTheme }) {
               isLight ? "text-zinc-600" : "text-zinc-400"
             }`}
           >
-            <a
-              href="#features"
-              className="hover:text-[#9b72ff] transition-colors"
-            >
+            <a href="#features" className="hover:text-[#9b72ff] transition-colors">
               Features
             </a>
-            <TransitionLink
-              to="/about"
-              className="hover:text-[#9b72ff] transition-colors"
-            >
+            <TransitionLink to="/about" className="hover:text-[#9b72ff] transition-colors">
               Details
             </TransitionLink>
-            <TransitionLink
-              to="/stats"
-              className="hover:text-[#9b72ff] transition-colors"
-            >
+            <TransitionLink to="/stats" className="hover:text-[#9b72ff] transition-colors">
               Track Your's Stats
             </TransitionLink>
           </nav>
@@ -63,9 +54,7 @@ export default function Header({ isLight, theme, setTheme }) {
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={`px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${
-                isLight
-                  ? "text-zinc-600 bg-zinc-100"
-                  : "text-zinc-400 bg-white/5"
+                isLight ? "text-zinc-600 bg-zinc-100" : "text-zinc-400 bg-white/5"
               }`}
             >
               {currentThemeLabel} Mode
@@ -73,9 +62,7 @@ export default function Header({ isLight, theme, setTheme }) {
             {dropdownOpen && (
               <div
                 className={`absolute right-0 mt-1 w-32 rounded-lg shadow-lg border backdrop-blur-sm z-50 overflow-hidden ${
-                  isLight
-                    ? "bg-white border-zinc-200"
-                    : "bg-[#1c1c1f] border-white/10"
+                  isLight ? "bg-white border-zinc-200" : "bg-[#1c1c1f] border-white/10"
                 }`}
               >
                 {["Light", "Dark", "System"].map((label) => {
@@ -108,9 +95,7 @@ export default function Header({ isLight, theme, setTheme }) {
           <TransitionLink
             to="/app/taketypingtest"
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-all active:scale-95 ${
-              isLight
-                ? "bg-zinc-900 text-white hover:bg-black"
-                : "bg-white text-black hover:bg-white/90"
+              isLight ? "bg-zinc-900 text-white hover:bg-black" : "bg-white text-black hover:bg-white/90"
             }`}
           >
             Start Typing

@@ -1,5 +1,5 @@
 import React from "react";
-import * as Icons from "lucide-react";
+import { getSettingIcon } from "../../../utils/settingsIcons";
 
 export default function SelectSetting({
   icon,
@@ -9,7 +9,7 @@ export default function SelectSetting({
   options,
   isLight,
 }) {
-  const IconComponent = Icons[icon] || Icons.Settings;
+  const IconComponent = getSettingIcon(icon);
   return (
     <div className="flex items-center justify-between">
       <span

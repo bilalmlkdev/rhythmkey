@@ -47,9 +47,7 @@ export default function ResultsTicker({ isLight }) {
                 <span className="text-xs font-normal opacity-70 ml-1">wpm</span>
               </div>
               <span className="opacity-30 text-lg">/</span>
-              <div
-                className={`text-sm font-medium ${isLight ? "text-zinc-500" : "text-zinc-400"}`}
-              >
+              <div className={`text-sm font-medium ${isLight ? "text-zinc-500" : "text-zinc-400"}`}>
                 {r.acc}% acc
               </div>
             </div>
