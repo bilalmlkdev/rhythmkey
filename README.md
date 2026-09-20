@@ -19,8 +19,8 @@ A sleek, open-source typing test application that combines performance tracking,
   <i>Follow on Github <a href="https://github.com/bilalmlkdev" target="_blank">bilalmlkdev</a></i>
 </p>
 
-[![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/previewDark.png)](https://rhythmKey.vercel.app/)
-[![RhythmKey App](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/previewAppDark.png)](https://rhythmKey.vercel.app/)
+[![RhythmKey Dashboard](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/previewDark.webp)](https://rhythmKey.vercel.app/)
+[![RhythmKey App](https://raw.githubusercontent.com/bilalmlkdev/rhythmKey/main/src/assets/previewAppDark.webp)](https://rhythmKey.vercel.app/)
 
 ## What is RhythmKey
 
