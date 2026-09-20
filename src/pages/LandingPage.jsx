@@ -7,7 +7,7 @@ import CTASection from "../components/landing/CTASection";
 import Footer from "../components/landing/Footer";
 import { borderColor } from "../components/landing/utils";
 
-export default function LandingPage({ isLight, theme, setTheme }) {
+export default function LandingPage({ isLight, setTheme }) {
   const borderCol = borderColor(isLight);
 
   return (
@@ -16,7 +16,7 @@ export default function LandingPage({ isLight, theme, setTheme }) {
         isLight ? "bg-white text-zinc-900" : "bg-[#0b0b0d] text-zinc-100"
       }`}
     >
-      <Header isLight={isLight} theme={theme} setTheme={setTheme} />
+      <Header isLight={isLight} setTheme={setTheme} />
 
       <section className={`max-w-[1100px] mx-auto text-center border-l border-r flex flex-col ${borderCol}`}>
         <Hero isLight={isLight} />

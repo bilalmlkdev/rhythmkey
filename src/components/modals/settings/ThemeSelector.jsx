@@ -16,7 +16,7 @@ export default function ThemeSelector({ theme, setTheme, isLight }) {
             : "bg-zinc-800 border-zinc-700"
         }`}
       >
-        {["dark", "light", "system"].map((t) => (
+        {["dark", "light"].map((t) => (
           <button
             key={t}
             onClick={() => setTheme(t)}

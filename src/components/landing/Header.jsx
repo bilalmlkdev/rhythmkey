@@ -1,24 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { TransitionLink } from "../layout/PageTransition";
 import { borderColor } from "./utils";
+import { Sun, Moon } from "lucide-react";
 
-export default function Header({ isLight, theme, setTheme }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+export default function Header({ isLight, setTheme }) {
   const borderCol = borderColor(isLight);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const currentThemeLabel =
-    theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System";
 
   return (
     <header className={`border-b-[0.5px] w-full ${borderCol}`}>
@@ -50,48 +36,15 @@ export default function Header({ isLight, theme, setTheme }) {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className={`px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${
-                isLight ? "text-zinc-600 bg-zinc-100" : "text-zinc-400 bg-white/5"
-              }`}
-            >
-              {currentThemeLabel} Mode
-            </button>
-            {dropdownOpen && (
-              <div
-                className={`absolute right-0 mt-1 w-32 rounded-lg shadow-lg border backdrop-blur-sm z-50 overflow-hidden ${
-                  isLight ? "bg-white border-zinc-200" : "bg-[#1c1c1f] border-white/10"
-                }`}
-              >
-                {["Light", "Dark", "System"].map((label) => {
-                  const value = label.toLowerCase();
-                  const isActive = theme === value;
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => {
-                        setTheme(value);
-                        setDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs transition-colors ${
-                        isActive
-                          ? isLight
-                            ? "bg-zinc-100 text-zinc-900 font-medium"
-                            : "bg-white/10 text-white font-medium"
-                          : isLight
-                            ? "text-zinc-600 hover:bg-zinc-50"
-                            : "text-zinc-400 hover:bg-white/5"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setTheme(isLight ? "dark" : "light")}
+            className={`p-2 rounded-lg transition-colors ${
+              isLight ? "text-zinc-600 bg-zinc-100 hover:bg-zinc-200" : "text-zinc-400 bg-white/5 hover:bg-white/10"
+            }`}
+            title={isLight ? "Switch to dark mode" : "Switch to light mode"}
+          >
+            {isLight ? <Moon size={15} /> : <Sun size={15} />}
+          </button>
           <TransitionLink
             to="/app/taketypingtest"
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-all active:scale-95 ${
