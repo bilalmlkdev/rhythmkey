@@ -78,3 +78,36 @@ export const STEPS = [
     desc: "Get your WPM, accuracy, and a full graph of your run the moment you finish.",
   },
 ];
+
+export const CONSOLE_TABS = [
+  {
+    label: "Modes",
+    header: ["Mode", "Test", "Status"],
+    rows: [
+      { a: "Time", aSub: "beat the clock", b: "30s, 60s, 120s", status: "Ready" },
+      { a: "Words", aSub: "fixed length", b: "10 to 200 words", status: "Ready" },
+      { a: "Quotes", aSub: "real sentences", b: "Punctuation included", status: "Ready" },
+      { a: "Stories", aSub: "long-form focus", b: "Short, medium, long", status: "Ready" },
+    ],
+  },
+  {
+    label: "Shortcuts",
+    header: ["Keys", "Action", "Status"],
+    rows: [
+      { a: "Ctrl + K", aSub: "anywhere", b: "Open settings", status: "Available" },
+      { a: "Ctrl + S", aSub: "anywhere", b: "Open your stats", status: "Available" },
+      { a: "Tab + Space", aSub: "during a test", b: "Pause the test", status: "Available" },
+      { a: "Tab + Enter", aSub: "during a test", b: "Restart the test", status: "Available" },
+    ],
+  },
+  {
+    label: "Languages",
+    header: ["Language", "Word list", "Status"],
+    rows: [
+      { a: "English", aSub: "default", b: "Full word bank", status: "Included" },
+      { a: "Espanol", aSub: "Spanish", b: "Spanish word bank", status: "Included" },
+      { a: "Francais", aSub: "French", b: "French word bank", status: "Included" },
+      { a: "Deutsch", aSub: "German", b: "German word bank", status: "Included" },
+    ],
+  },
+];

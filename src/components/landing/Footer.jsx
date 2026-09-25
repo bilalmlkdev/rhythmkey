@@ -1,43 +1,48 @@
 import React from "react";
-import { Github, Twitter, Mail, Keyboard } from "lucide-react";
+import { TransitionLink } from "../layout/PageTransition";
 import { borderColor } from "./utils";
 
 export default function Footer({ isLight }) {
   const borderCol = borderColor(isLight);
 
   return (
-    <footer className={`border-l border-r mx-6.5 border-t ${borderCol}`}>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-6">
-        <div className="flex items-center gap-2">
-          <Keyboard size={15} className="text-[#9b72ff]" />
-          <span className="text-xs text-zinc-500">
-            © {new Date().getFullYear()} RhythmKey, All rights reserved.
+    <footer className={`border-t mt-auto ${borderCol}`}>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5">
+        <TransitionLink to="/" className="flex items-center gap-2" aria-label="RhythmKey home">
+          <span className="text-[#9b72ff] text-sm font-bold tracking-tighter">
+            RhythmKey
           </span>
-        </div>
-        <div className="flex items-center gap-4">
+          <span className="grid grid-cols-2 gap-0.5">
+            <span className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm"></span>
+            <span className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm"></span>
+            <span className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm"></span>
+            <span className="w-1.5 h-1.5 bg-[#9b72ff] rounded-sm opacity-50"></span>
+          </span>
+        </TransitionLink>
+
+        <nav className={`flex items-center gap-5 text-xs font-medium ${isLight ? "text-zinc-500" : "text-zinc-400"}`}>
+          <a href="#features" className="hover:text-[#9b72ff] transition-colors">
+            Features
+          </a>
+          <TransitionLink to="/about" className="hover:text-[#9b72ff] transition-colors">
+            Details
+          </TransitionLink>
+          <TransitionLink to="/stats" className="hover:text-[#9b72ff] transition-colors">
+            Stats
+          </TransitionLink>
           <a
-            href="https://github.com/bilalmlkdev"
+            href="https://github.com/bilalmlkdev/rhythmkey.git"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs flex items-center gap-1.5 hover:text-[#9b72ff] transition-colors text-zinc-500"
+            className="hover:text-[#9b72ff] transition-colors"
           >
-            <Github size={14} /> GitHub
+            GitHub
           </a>
-          <a
-            href="https://twitter.com/bilalmlkdev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs flex items-center gap-1.5 hover:text-[#9b72ff] transition-colors text-zinc-500"
-          >
-            <Twitter size={14} /> Twitter
-          </a>
-          <a
-            href="mailto:bilalmlkdev@gmail.com"
-            className="text-xs flex items-center gap-1.5 hover:text-[#9b72ff] transition-colors text-zinc-500"
-          >
-            <Mail size={14} /> Contact
-          </a>
-        </div>
+        </nav>
+
+        <span className={`text-xs ${isLight ? "text-zinc-400" : "text-zinc-500"}`}>
+          &copy; {new Date().getFullYear()} RhythmKey
+        </span>
       </div>
     </footer>
   );

@@ -16,15 +16,16 @@ export default function LandingPage({ isLight, setTheme }) {
         isLight ? "bg-white text-zinc-900" : "bg-[#0b0b0d] text-zinc-100"
       }`}
     >
-      <Header isLight={isLight} setTheme={setTheme} />
-
-      <section className={`max-w-[1100px] mx-auto text-center border-l border-r flex flex-col ${borderCol}`}>
+      <div
+        className={`max-w-[1100px] mx-auto min-h-screen flex flex-col border-l border-r ${borderCol}`}
+      >
+        <Header isLight={isLight} setTheme={setTheme} />
         <Hero isLight={isLight} />
         <Features isLight={isLight} />
         <HowItWorks isLight={isLight} />
         <CTASection isLight={isLight} />
         <Footer isLight={isLight} />
-      </section>
+      </div>
     </div>
   );
 }
