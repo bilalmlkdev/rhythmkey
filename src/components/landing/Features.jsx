@@ -20,7 +20,7 @@ function bannerStyle(isLight) {
       radial-gradient(ellipse at 78% 28%, rgba(155, 114, 255, 0.28) 0%, transparent 55%),
       radial-gradient(ellipse at 55% 95%, rgba(107, 77, 224, 0.35) 0%, transparent 55%),
       linear-gradient(120deg, #17141f 0%, #14121c 45%, #12141f 100%)`,
-    backgroundSize: "14px 14px, auto, auto, auto, auto",
+    backgroundSize: "14px 14px, auto, auRhythmKey tracks your speed, highlights your mistakes, and adapts to how you type. Live stats. Custom tests. Zero clutter.to, auto, auto",
   };
 }
 
@@ -66,7 +66,7 @@ export default function Features({ isLight }) {
   const customTests = FEATURES[1];
 
   return (
-    <section id="features" className="px-6 sm:px-10 pt-12 pb-4">
+    <section id="features" className="px-6 sm:px-10 pt-5 pb-4">
       <div className="relative">
         <div
           className="rounded-2xl h-[220px] sm:h-[280px] w-full"

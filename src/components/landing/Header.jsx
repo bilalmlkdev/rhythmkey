@@ -1,6 +1,5 @@
 import React from "react";
 import { TransitionLink } from "../layout/PageTransition";
-import { borderColor } from "./utils";
 import { Sun, Moon } from "lucide-react";
 
 function LogoMark() {
@@ -20,10 +19,8 @@ function LogoMark() {
 }
 
 export default function Header({ isLight, setTheme }) {
-  const borderCol = borderColor(isLight);
-
   return (
-    <header className={`border-b-[0.5px] w-full ${borderCol}`}>
+    <header className="w-full">
       <div className="relative flex items-center justify-between px-6 py-3.5">
         <nav
           className={`hidden md:flex items-center gap-6 text-[13px] font-medium ${

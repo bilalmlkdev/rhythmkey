@@ -203,7 +203,7 @@ function SessionCard({ isLight }) {
 
 export default function HowItWorks({ isLight }) {
   return (
-    <section className="px-6 sm:px-10 py-16">
+    <section className="px-6 sm:px-10 pt-20 sm:pt-30 pb-16">
       <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 items-start">
         <div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight leading-[1.05]">

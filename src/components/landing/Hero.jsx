@@ -1,14 +1,11 @@
 import React from "react";
 import { TransitionLink } from "../layout/PageTransition";
 import { ArrowUpRight } from "lucide-react";
-import { borderColor } from "./utils";
 
 export default function Hero({ isLight }) {
-  const borderCol = borderColor(isLight);
-
   return (
     <section
-      className={`flex flex-col items-center text-center px-6 pt-20 pb-16 sm:pt-24 sm:pb-20 border-b ${borderCol}`}
+      className="flex flex-col items-center text-center px-6 pt-20 pb-16 sm:pt-24 sm:pb-20"
     >
       <h1 className="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.04]">
         Find your rhythm,

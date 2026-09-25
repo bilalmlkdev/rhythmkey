@@ -1,13 +1,10 @@
 import React from "react";
 import { TransitionLink } from "../layout/PageTransition";
-import { borderColor } from "./utils";
 
 export default function CTASection({ isLight }) {
-  const borderCol = borderColor(isLight);
-
   return (
     <section
-      className={`flex flex-col items-center text-center px-6 py-20 border-t ${borderCol}`}
+      className="flex flex-col items-center text-center px-6 py-20"
     >
       <h2 className="text-3xl sm:text-4xl font-bold tracking-tight leading-[1.1]">
         Your next personal best

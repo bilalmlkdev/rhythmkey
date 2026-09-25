@@ -1,12 +1,9 @@
 import React from "react";
 import { TransitionLink } from "../layout/PageTransition";
-import { borderColor } from "./utils";
 
 export default function Footer({ isLight }) {
-  const borderCol = borderColor(isLight);
-
   return (
-    <footer className={`border-t mt-auto ${borderCol}`}>
+    <footer className="mt-auto">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5">
         <TransitionLink to="/" className="flex items-center gap-2" aria-label="RhythmKey home">
           <span className="text-[#9b72ff] text-sm font-bold tracking-tighter">
