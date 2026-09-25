@@ -1,34 +1,80 @@
-import React, { useCallback, useContext, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { TransitionNavContext } from "./transitionNav";
+import { ROUTE_PRELOADS } from "../../routeChunks";
 
 export function PageTransitionProvider({ isLight, children }) {
   const navigate = useNavigate();
   const [phase, setPhase] = useState("idle"); // idle | covering | revealing
-  const pendingTo = useRef(null);
+  // React Router runs navigations inside a React transition, so React
+  // keeps rendering the OLD route until the destination chunk has
+  // committed. Starting the reveal before that swap happens makes the
+  // landing page flash through the loader on first-time (slow) chunk
+  // loads, so the cover only fades once isNavPending goes false.
+  const [isNavPending, startNavTransition] = useTransition();
+  // Bumped right after every navigation attempt so the reveal effect
+  // re-evaluates even when the destination chunk was already cached and
+  // isNavPending never had a chance to be observed as true.
+  const [navTick, setNavTick] = useState(0);
+  const wantReveal = useRef(false);
+  const safetyTimer = useRef(null);
 
   const COVER_MS = 260; // time for overlay to become fully opaque
   const REVEAL_MS = 420; // time for overlay to fade back out
 
+  const reveal = useCallback(() => {
+    wantReveal.current = false;
+    if (safetyTimer.current) {
+      clearTimeout(safetyTimer.current);
+      safetyTimer.current = null;
+    }
+    setPhase((p) => (p === "covering" ? "revealing" : p));
+    setTimeout(
+      () => setPhase((p) => (p === "revealing" ? "idle" : p)),
+      REVEAL_MS,
+    );
+  }, []);
+
+  // Reveal only after the destination route has actually committed
+  // behind the cover (i.e. the lazy chunk finished loading). The state
+  // update itself goes through a timeout so this effect never calls
+  // setState synchronously.
+  useEffect(() => {
+    if (!wantReveal.current || phase !== "covering" || isNavPending) return;
+    const t = setTimeout(reveal, 0);
+    return () => clearTimeout(t);
+  }, [isNavPending, phase, navTick, reveal]);
+
   const transitionTo = useCallback(
     (to) => {
       if (phase !== "idle") return; // ignore spam-clicks mid-transition
-      pendingTo.current = to;
       setPhase("covering");
 
-      // Wait for the cover animation to finish, THEN swap the route
-      // while the screen is fully covered, THEN start revealing.
+      // Warm the destination chunk while the cover animates, so slow
+      // first-time downloads usually finish before we even navigate.
+      const preload = ROUTE_PRELOADS[to];
+      if (preload) preload().catch(() => {});
+
       setTimeout(() => {
-        if (pendingTo.current === -1) {
-          navigate(-1);
-        } else {
-          navigate(pendingTo.current);
-        }
-        setPhase("revealing");
-        setTimeout(() => setPhase("idle"), REVEAL_MS);
+        wantReveal.current = true;
+        startNavTransition(() => {
+          if (to === -1) navigate(-1);
+          else navigate(to);
+        });
+        setNavTick((t) => t + 1);
+        // Only exists so a dead network can never trap the user behind
+        // a permanent cover if the chunk never arrives.
+        safetyTimer.current = setTimeout(() => reveal(), 10000);
       }, COVER_MS);
     },
-    [navigate, phase],
+    [phase, navigate, startNavTransition, reveal],
   );
 
   return (

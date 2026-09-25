@@ -49,5 +49,9 @@ First public release.
 
 ### Fixed
 
+- Route-transition loader no longer flashes the landing page before the
+  main app appears on first-time navigation (the cover now stays up until
+  the destination chunk has actually rendered, and warms the chunk in
+  parallel)
 - `__dirname` usage in `vite.config.js` under ES modules
 - Seed-based avatar state reset moved from an effect to a keyed remount

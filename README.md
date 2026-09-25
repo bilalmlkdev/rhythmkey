@@ -11,6 +11,7 @@ A sleek, open-source typing test application that combines performance tracking,
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Site-black?style=for-the-badge)](https://rhythmKey.vercel.app)
 [![GitHub Stars](https://img.shields.io/github/stars/bilalmlkdev/rhythmKey?style=for-the-badge&logo=github&color=yellow)](https://github.com/bilalmlkdev/rhythmKey.git)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
+[![CI](https://github.com/bilalmlkdev/rhythmkey/actions/workflows/ci.yml/badge.svg)](https://github.com/bilalmlkdev/rhythmkey/actions/workflows/ci.yml)
 
 </div>
 
@@ -170,6 +171,8 @@ RhythmKey is open-source, and contributions are genuinely welcome, not just tole
 4. Open a pull request with a clear description of what changed and why
 
 Small fixes - a typo, a broken link, a minor styling issue - are just as welcome as larger features. If you're planning something bigger, like a new typing mode, opening an issue first to discuss the approach is a good idea before putting in the work.
+
+Full setup and pull request guidelines live in [CONTRIBUTING.md](./CONTRIBUTING.md). Please read the [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing, and report security issues privately as described in [SECURITY.md](./SECURITY.md).
 
 ## Show your support
 

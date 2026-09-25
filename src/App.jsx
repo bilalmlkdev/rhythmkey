@@ -1,17 +1,25 @@
-import React, { lazy, Suspense } from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useTheme } from "./hooks/useTheme";
 import { PageTransitionProvider } from "./components/layout/PageTransition";
 import RouteLoader from "./components/layout/RouteLoader";
+import {
+  loadLanding,
+  loadMain,
+  loadStats,
+  loadAbout,
+  loadNotFound,
+} from "./routeChunks";
 
 // Each page is its own chunk now, so the initial load only ships the
 // landing page instead of the entire app (typing engine, stats charts,
-// export logic, etc. all load on demand when actually visited).
-const LandingPage = lazy(() => import("./pages/LandingPage"));
-const MainPage = lazy(() => import("./pages/MainPage"));
-const StatsPage = lazy(() => import("./pages/StatsPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+// export logic, etc. all load on demand when actually visited). The
+// loaders live in routeChunks.js so PageTransition can pre-warm them.
+const LandingPage = lazy(loadLanding);
+const MainPage = lazy(loadMain);
+const StatsPage = lazy(loadStats);
+const AboutPage = lazy(loadAbout);
+const NotFoundPage = lazy(loadNotFound);
 
 export default function App() {
   const { isLight, theme, setTheme } = useTheme();
