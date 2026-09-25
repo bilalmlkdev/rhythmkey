@@ -47,7 +47,7 @@ export default function Header({ isLight, setTheme }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTheme(isLight ? "dark" : "light")}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`p-2 rounded-xl transition-colors ${
               isLight
                 ? "text-zinc-600 bg-zinc-100 hover:bg-zinc-200"
                 : "text-zinc-400 bg-white/5 hover:bg-white/10"

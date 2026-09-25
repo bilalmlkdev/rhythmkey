@@ -1,4 +1,4 @@
-import { useTransitionNavigate } from "../components/layout/PageTransition";
+import { useTransitionNavigate } from "../components/layout/transitionNav";
 
 /**
  * Returns a function that navigates back in browser history

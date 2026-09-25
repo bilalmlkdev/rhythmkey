@@ -36,7 +36,7 @@ export default function ResultsTicker({ isLight }) {
             }`}
           >
             <div className="flex items-center justify-center gap-2">
-              <ResultAvatar seed={r.name} size={30} />
+              <ResultAvatar key={r.name} seed={r.name} size={30} />
               <div className="text-sm font-medium truncate text-center max-w-[110px]">
                 {r.name}
               </div>

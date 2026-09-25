@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 function getAvatarUrl(seed) {
   return `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(
@@ -19,12 +19,8 @@ export default function ResultAvatar({ seed, size = 22 }) {
   const [errored, setErrored] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Reset fade-in whenever the underlying result (seed) changes, so
-  // swapping to a new fake result crossfades instead of popping in.
-  useEffect(() => {
-    setLoaded(false);
-    setErrored(false);
-  }, [seed]);
+  // Seed changes remount this component (callers pass key={seed}), so
+  // loaded/errored start fresh on every swap and the fade-in replays.
 
   if (errored) {
     return (

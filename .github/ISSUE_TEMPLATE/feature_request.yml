@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an idea or improvement for RhythmKey
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature ideas are welcome. RhythmKey stays fully client-side with no accounts, so keep that in mind when proposing.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that RhythmKey does not support today?
+      placeholder: I want to see my per-key accuracy so I know which letters to practice.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What is your proposed solution?
+      description: Describe the feature and how you imagine it working.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other approaches you thought about, or other tools that do this.
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This idea works without accounts or a backend
+        - label: I am willing to help implement this

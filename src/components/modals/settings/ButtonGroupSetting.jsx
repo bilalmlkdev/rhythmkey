@@ -16,6 +16,7 @@ export default function ButtonGroupSetting({
       <span
         className={`flex items-center gap-2 ${isLight ? "text-zinc-600" : "text-zinc-300"}`}
       >
+        {/* eslint-disable-next-line react-hooks/static-components -- icon registry lookup returns a stable component reference */}
         <IconComponent
           size={15}
           className={`${isLight ? "text-black" : "text-white"}`}

@@ -1,13 +1,6 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-const TransitionNavContext = createContext(null);
+import { TransitionNavContext } from "./transitionNav";
 
 export function PageTransitionProvider({ isLight, children }) {
   const navigate = useNavigate();
@@ -70,14 +63,6 @@ export function PageTransitionProvider({ isLight, children }) {
       )}
     </TransitionNavContext.Provider>
   );
-}
-
-// For programmatic navigation (e.g. a "back" button) that isn't a
-// plain <Link> click. Pass -1 to go back in history, or a path string.
-export function useTransitionNavigate() {
-  const transitionTo = useContext(TransitionNavContext);
-  const navigate = useNavigate();
-  return transitionTo || navigate; // fallback if used outside the provider
 }
 
 // Drop-in replacement for react-router-dom's <Link> that plays the
