@@ -125,6 +125,11 @@ export function useTypingHandlers({
         actions.setUserInput((prev) => {
           if (prev.length > 0) {
             actions.setBackspaceCount((c) => c + 1);
+            const removedChar = prev[prev.length - 1];
+            const expectedChar = state.currentText[prev.length - 1];
+            if (removedChar !== expectedChar) {
+              actions.setMistakes((m) => Math.max(0, m - 1));
+            }
             return prev.slice(0, -1);
           }
           return prev;
