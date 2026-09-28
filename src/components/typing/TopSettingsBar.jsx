@@ -32,16 +32,12 @@ export default function TopSettingsBar({
 
   return (
     <div
-<<<<<<< HEAD
-      className={`flex flex-wrap items-center justify-center gap-3 transition-opacity duration-300 ${
-=======
       className={`flex flex-wrap items-center justify-center gap-3 mt-4 transition-opacity duration-300 ${
->>>>>>> 81d5cbed469cdf97a693cdb74d3a0f1ac2094ac8
         appState === "typing" && isTypingActive
           ? "opacity-0 pointer-events-none"
           : "opacity-100"
       }`}
-    >
+     >
       {/* pill - 01 - left */}
       <div
         className={`flex gap-3 items-center rounded-[15px] px-4 py-[6px] text-[11px] font-medium h-[36px] ${

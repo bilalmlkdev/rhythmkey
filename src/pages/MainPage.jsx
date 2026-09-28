@@ -425,26 +425,22 @@ export default function MainPage({ isLight, theme, setTheme }) {
                   onChange={(theme) => updateSetting("keyboardTheme", theme)}
                   isLight={isLight}
                 />
-<<<<<<< HEAD
-                <div className="flex justify-center mt-1">
-                  <a
-                    href="https://keebkit.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`text-[11px] transition-colors ${
-                      isLight
-                        ? "text-zinc-400 hover:text-[#9b72ff]"
-                        : "text-zinc-600 hover:text-[#9b72ff]"
-                    }`}
-                  >
-                    Like this keyboard? Get the component on keebkit ↗
-                  </a>
-                </div>
-=======
-
->>>>>>> 81d5cbed469cdf97a693cdb74d3a0f1ac2094ac8
-              </div>
-            )}
+<div className="flex justify-center mt-1">
+                   <a
+                     href="https://keebkit.vercel.app/"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className={`text-[11px] transition-colors ${
+                       isLight
+                         ? "text-zinc-400 hover:text-[#9b72ff]"
+                         : "text-zinc-600 hover:text-[#9b72ff]"
+                     }`}
+                   >
+                     Like this keyboard? Get the component on keebkit ↗
+                   </a>
+                 </div>
+               </div>
+             )}
             <footer
               className={`w-full text-center text-xs tracking-wide transition-colors duration-200 mt-1 ${
                 isLight ? "text-zinc-400" : "text-[#5e5e5e]"

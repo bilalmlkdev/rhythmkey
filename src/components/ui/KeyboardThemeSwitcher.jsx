@@ -12,11 +12,7 @@ const THEME_LABELS = {
 
 export default function KeyboardThemeSwitcher({ value, onChange, isLight }) {
   return (
-<<<<<<< HEAD
-    <div className="flex items-center justify-center mt-4 mb-2">
-=======
-    <div className="flex items-center justify-center mt-8 mb-4">
->>>>>>> 81d5cbed469cdf97a693cdb74d3a0f1ac2094ac8
+<div className="flex items-center justify-center mt-4 mb-2">
       <div
         className={`flex items-center gap-1 p-1 rounded-full border ${
           isLight ? "bg-zinc-100 border-zinc-200" : "bg-white/5 border-white/10"
