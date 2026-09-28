@@ -426,20 +426,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
                   onChange={(theme) => updateSetting("keyboardTheme", theme)}
                   isLight={isLight}
                 />
-                <div className="flex justify-center relative top-5">
-                  <a
-                    href="https://keebkit.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`text-[11px] transition-colors ${
-                      isLight
-                        ? "text-zinc-400 hover:text-[#9b72ff]"
-                        : "text-zinc-600 hover:text-[#9b72ff]"
-                    }`}
-                  >
-                    Like this keyboard? Get the component on keebkit ↗
-                  </a>
-                </div>
+
               </div>
             )}
           </div>
