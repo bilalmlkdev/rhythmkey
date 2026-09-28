@@ -425,6 +425,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
                   onChange={(theme) => updateSetting("keyboardTheme", theme)}
                   isLight={isLight}
                 />
+<<<<<<< HEAD
                 <div className="flex justify-center mt-1">
                   <a
                     href="https://keebkit.vercel.app/"
@@ -439,6 +440,9 @@ export default function MainPage({ isLight, theme, setTheme }) {
                     Like this keyboard? Get the component on keebkit ↗
                   </a>
                 </div>
+=======
+
+>>>>>>> 81d5cbed469cdf97a693cdb74d3a0f1ac2094ac8
               </div>
             )}
             <footer
