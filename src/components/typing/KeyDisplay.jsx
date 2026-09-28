@@ -1,8 +1,8 @@
 export default function KeyDisplay({ lastKey, isLight, showKeyboard }) {
   // If keyboard is shown, use bottom-[45%] (centered); otherwise use bottom-10 (closer to bottom)
   const positionClass = showKeyboard
-    ? "bottom-[45%] -translate-y-1/2"
-    : "bottom-30";
+    ? "bottom-[50%] -translate-y-1/2"
+    : "bottom-20";
 
   return (
     <div

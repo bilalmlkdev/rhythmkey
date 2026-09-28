@@ -48,13 +48,11 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Precache every hashed build asset automatically, so this list
-        // never goes stale across deploys the way a hand-written one did.
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2,mp3}"],
         navigateFallback: "/index.html",
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === self.location.origin,
+            urlPattern: ({ url }) => url.origin === self.location.origin && !url.pathname.endsWith('.js'),
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "rhythmkey-runtime",

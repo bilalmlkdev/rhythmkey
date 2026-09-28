@@ -32,7 +32,7 @@ export default function TopSettingsBar({
 
   return (
     <div
-      className={`flex flex-wrap items-center justify-center gap-3 relative bottom-6 transition-opacity duration-300 ${
+      className={`flex flex-wrap items-center justify-center gap-3 transition-opacity duration-300 ${
         appState === "typing" && isTypingActive
           ? "opacity-0 pointer-events-none"
           : "opacity-100"

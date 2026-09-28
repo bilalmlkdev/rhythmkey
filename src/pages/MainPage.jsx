@@ -4,7 +4,6 @@ import Keyboard from "../components/ui/Keyboard";
 import KeyboardThemeSwitcher from "../components/ui/KeyboardThemeSwitcher";
 import ResultScreen from "../components/Result/ResultScreen";
 import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
 import TopSettingsBar from "../components/typing/TopSettingsBar";
 import LiveStats from "../components/typing/LiveStats";
 import TypingArea from "../components/typing/TypingArea";
@@ -299,7 +298,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
     <div
       className={`min-h-screen ${
         isLight ? "bg-[#FFFFFF] text-zinc-800" : "bg-[#111113] text-[#5e5e5e]"
-      } font-grotesk flex flex-col justify-between selection:bg-orange-500/30 transition-colors duration-200`}
+      } font-grotesk flex flex-col items-center gap-4 selection:bg-orange-500/30 transition-colors duration-200`}
       // `refs` is a plain object bundling several ref objects returned by
       // useTypingTest — this is a property lookup, not a .current read.
       // eslint-disable-next-line react-hooks/refs
@@ -320,9 +319,9 @@ export default function MainPage({ isLight, theme, setTheme }) {
         resetSettings={resetSettings}
       />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[1200px] mx-auto px-8">
+<main className="flex flex-col items-center justify-start w-full max-w-[1200px] mx-auto px-8 gap-4 mt-4">
         {state.appState !== "finished" ? (
-          <div className="w-full flex flex-col items-center justify-center">
+          <div className="w-full flex flex-col items-center gap-2">
             <TopSettingsBar
               appState={state.appState}
               isTypingActive={state.isTypingActive}
@@ -346,7 +345,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
             />
 
             <LiveStats
-              showLiveStats={settings.showLiveStats} // from settings
+              showLiveStats={settings.showLiveStats}
               appState={state.appState}
               isLight={isLight}
               testType={config.testType}
@@ -366,10 +365,10 @@ export default function MainPage({ isLight, theme, setTheme }) {
               // plain object property lookup on refs, not a .current read
               // eslint-disable-next-line react-hooks/refs
               innerContainerRef={refs.innerContainerRef}
-              lineOffset={state.lineOffset}
+              // same false positive as innerContainerRef above
               wordsList={wordsList}
               userInput={state.userInput}
-              showNextWord={settings.showNextWord} //  from settings
+              showNextWord={settings.showNextWord}
               // same false positive as innerContainerRef above
               // eslint-disable-next-line react-hooks/refs
               activeWordRef={refs.activeWordRef}
@@ -386,7 +385,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
                   : ""
               }
               isLight={isLight}
-              showKeyboard={settings.showKeyboard} // NEW
+              showKeyboard={settings.showKeyboard}
             />
 
             <RestartPrompt
@@ -400,7 +399,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
 
             {settings.showKeyboard && ( //  from settings
               <div
-                className={`transition-opacity duration-300 mt-1 ${
+                className={`transition-opacity duration-300 mt-2 ${
                   state.appState === "typing" && state.isTypingActive
                     ? "opacity-40"
                     : "opacity-100"
@@ -411,7 +410,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
                     isLight
                       ? "bg-[#9a72ff1b] border-[#000000]/30"
                       : "bg-[#383439] border-[#FFFFFF]/30"
-                  } p-2 rounded-[14px] shadow-inner border-2 inline-flex relative top-3`}
+                  } p-2 rounded-[14px] shadow-inner border-2 inline-flex`}
                 >
                   <Keyboard
                     theme={settings.keyboardTheme}
@@ -426,7 +425,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
                   onChange={(theme) => updateSetting("keyboardTheme", theme)}
                   isLight={isLight}
                 />
-                <div className="flex justify-center relative top-5">
+                <div className="flex justify-center mt-1">
                   <a
                     href="https://keebkit.vercel.app/"
                     target="_blank"
@@ -442,6 +441,39 @@ export default function MainPage({ isLight, theme, setTheme }) {
                 </div>
               </div>
             )}
+            <footer
+              className={`w-full text-center text-xs tracking-wide transition-colors duration-200 mt-1 ${
+                isLight ? "text-zinc-400" : "text-[#5e5e5e]"
+              }`}
+            >
+              Built by{" "}
+              <a
+                href="https://bilalmlkdev.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`font-medium transition-colors ${
+                  isLight
+                    ? "text-zinc-700 hover:text-[#9b72ff]"
+                    : "text-zinc-400 hover:text-[#9b72ff]"
+                }`}
+              >
+                Bilal Malik
+              </a>
+              . The source code is available on{" "}
+              <a
+                href="https://github.com/bilalmlkdev/rhythmkey.git"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`font-medium transition-colors ${
+                  isLight
+                    ? "text-zinc-700 hover:text-[#9b72ff]"
+                    : "text-zinc-400 hover:text-[#9b72ff]"
+                }`}
+              >
+                GitHub
+              </a>
+              .
+            </footer>
           </div>
         ) : (
           <ResultScreen
@@ -466,7 +498,7 @@ export default function MainPage({ isLight, theme, setTheme }) {
         )}
       </main>
 
-      {state.appState !== "finished" && <Footer isLight={isLight} />}
+      
 
       <CustomTextModal
         isOpen={showCustomTextModal}
