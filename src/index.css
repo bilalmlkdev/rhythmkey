@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Titan+One&display=swap');
 
 @import "tailwindcss";
 
 @theme {
   --font-grotesk: "Space Grotesk", sans-serif;
+  --font-display: "Titan One", "Space Grotesk", sans-serif;
 }
 
 
@@ -42,6 +43,29 @@
   50% {
     transform: scale(0.85);
     opacity: 0.7;
+  }
+}
+
+@keyframes rkBlink {
+
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.rk-caret {
+  animation: rkBlink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-caret {
+    animation: none;
   }
 }
 

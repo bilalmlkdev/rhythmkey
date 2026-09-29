@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { TransitionLink } from "../layout/PageTransition";
 import { CONSOLE_TABS } from "./data";
-import { borderColor } from "./utils";
+import { ui } from "./utils";
+import Reveal from "./Reveal";
 
 const MODE_OPTIONS = [
   { value: "time", label: "Time" },
@@ -32,36 +33,33 @@ const LENGTH_OPTIONS = {
 };
 
 function TabsTable({ isLight }) {
-  const borderCol = borderColor(isLight);
+  const u = ui(isLight);
   const [active, setActive] = useState(0);
   const tab = CONSOLE_TABS[active];
 
   return (
-    <div className={`rounded-xl border overflow-hidden ${borderCol} ${isLight ? "bg-white" : "bg-[#111113]"}`}>
-      <div className={`flex items-center gap-5 px-4 pt-3 border-b ${borderCol}`}>
+    <div className={`rounded-xl border overflow-hidden ${u.line} ${u.panel}`}>
+      <div className={`flex items-center gap-5 px-4 pt-3 border-b ${u.line}`} role="tablist">
         {CONSOLE_TABS.map((t, i) => (
           <button
             key={t.label}
             type="button"
+            role="tab"
+            aria-selected={i === active}
             onClick={() => setActive(i)}
-            className={`relative pb-2.5 text-[13px] font-medium transition-colors ${
-              i === active
-                ? "text-[var(--rk-foreground)]"
-                : isLight
-                  ? "text-zinc-500 hover:text-zinc-800"
-                  : "text-zinc-500 hover:text-zinc-300"
+            className={`relative pb-2.5 text-[13px] font-medium transition-colors bg-transparent ${
+              i === active ? "" : `${u.faint} hover:text-current`
             }`}
-            style={{ "--rk-foreground": isLight ? "#18181b" : "#fafafa" }}
           >
             {t.label}
             {i === active && (
-              <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-[#9b72ff] rounded-full" />
+              <span className={`absolute left-0 right-0 -bottom-px h-0.5 rounded-full ${u.accentBg}`} />
             )}
           </button>
         ))}
       </div>
 
-      <div className={`grid grid-cols-[1.1fr_1fr_0.8fr] gap-2 px-4 py-2.5 border-b text-[11px] font-semibold uppercase tracking-wider ${borderCol} ${isLight ? "text-zinc-400" : "text-zinc-500"}`}>
+      <div className={`grid grid-cols-[1.1fr_1fr_0.8fr] gap-2 px-4 py-2.5 border-b ${u.line} ${u.label}`}>
         <span>{tab.header[0]}</span>
         <span>{tab.header[1]}</span>
         <span>{tab.header[2]}</span>
@@ -72,20 +70,16 @@ function TabsTable({ isLight }) {
           <div
             key={`${tab.label}-${i}`}
             className={`grid grid-cols-[1.1fr_1fr_0.8fr] gap-2 items-center px-4 py-3.5 ${
-              i !== tab.rows.length - 1 ? `border-b ${borderCol}` : ""
+              i !== tab.rows.length - 1 ? `border-b ${u.line}` : ""
             }`}
           >
             <div className="min-w-0">
               <div className="text-sm font-semibold truncate">{row.a}</div>
-              <div className={`text-[11px] truncate ${isLight ? "text-zinc-400" : "text-zinc-500"}`}>
-                {row.aSub}
-              </div>
+              <div className={`text-[11px] truncate ${u.faint}`}>{row.aSub}</div>
             </div>
-            <span className={`text-[13px] truncate ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
-              {row.b}
-            </span>
-            <span className={`flex items-center gap-1.5 text-[13px] ${isLight ? "text-zinc-700" : "text-zinc-300"}`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9b72ff] shrink-0" />
+            <span className={`text-[13px] truncate ${u.muted}`}>{row.b}</span>
+            <span className={`flex items-center gap-1.5 text-[12px] ${u.muted}`}>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${u.accentBg}`} />
               {row.status}
             </span>
           </div>
@@ -96,7 +90,7 @@ function TabsTable({ isLight }) {
 }
 
 function SessionCard({ isLight }) {
-  const borderCol = borderColor(isLight);
+  const u = ui(isLight);
   const [mode, setMode] = useState("time");
   const [length, setLength] = useState("30");
   const [extras, setExtras] = useState(false);
@@ -120,43 +114,31 @@ function SessionCard({ isLight }) {
   }
   const startHref = `/app/taketypingtest?${params.toString()}`;
 
-  const fieldClass = `w-full rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#9b72ff]/40 ${
-    isLight
-      ? "bg-white border-zinc-200 text-zinc-900"
-      : "bg-[#131315] border-white/10 text-zinc-100"
-  }`;
+  const fieldClass = `w-full rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#9b72ff]/40 ${u.field}`;
+  const labelClass = `text-xs font-medium block mb-1.5 ${u.muted}`;
 
   return (
-    <div className={`rounded-xl border p-6 ${borderCol} ${isLight ? "bg-white" : "bg-[#111113]"}`}>
-      <h3 className="text-base font-semibold tracking-tight">Start a session</h3>
-      <p className={`text-xs mt-1 ${isLight ? "text-zinc-500" : "text-zinc-400"}`}>
-        No account needed. Your stats stay in this browser.
-      </p>
+    <div className={`rounded-xl border p-6 ${u.line} ${u.panel}`}>
+      <p className={u.label}>Quick start</p>
+      <h3 className="mt-2 font-display font-normal tracking-normal text-xl">Start a session</h3>
+      <p className={`text-xs mt-1 ${u.faint}`}>No account needed. Your stats stay in this browser.</p>
 
       <div className="mt-5 space-y-4">
         <div>
-          <label className={`text-xs font-medium block mb-1.5 ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
-            Mode
-          </label>
-          <select value={mode} onChange={handleMode} className={fieldClass}>
+          <label htmlFor="rk-mode" className={labelClass}>Mode</label>
+          <select id="rk-mode" value={mode} onChange={handleMode} className={fieldClass}>
             {MODE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+              <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
         </div>
 
         {lengths.length > 0 && (
           <div>
-            <label className={`text-xs font-medium block mb-1.5 ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
-              Length
-            </label>
-            <select value={length} onChange={(e) => setLength(e.target.value)} className={fieldClass}>
+            <label htmlFor="rk-length" className={labelClass}>Length</label>
+            <select id="rk-length" value={length} onChange={(e) => setLength(e.target.value)} className={fieldClass}>
               {lengths.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
+                <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
@@ -169,30 +151,20 @@ function SessionCard({ isLight }) {
             onChange={(e) => setExtras(e.target.checked)}
             className="w-4 h-4 rounded accent-[#9b72ff]"
           />
-          <span className={`text-[13px] ${isLight ? "text-zinc-700" : "text-zinc-300"}`}>
-            Numbers and symbols
-          </span>
+          <span className={`text-[13px] ${u.muted}`}>Numbers and symbols</span>
         </label>
       </div>
 
-      <div className="mt-5 flex items-center gap-2.5">
+      <div className="mt-6 flex items-center gap-2.5">
         <TransitionLink
           to={startHref}
-          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 ${
-            isLight
-              ? "bg-zinc-900 text-white hover:bg-black"
-              : "bg-white text-black hover:bg-white/90"
-          }`}
+          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 ${u.btn}`}
         >
           Start test
         </TransitionLink>
         <TransitionLink
           to="/stats"
-          className={`px-4 py-2.5 rounded-full text-sm font-medium border transition-all active:scale-95 ${
-            isLight
-              ? "border-zinc-200 text-zinc-700 hover:bg-zinc-50"
-              : "border-white/15 text-zinc-300 hover:bg-white/5"
-          }`}
+          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 ${u.ghost}`}
         >
           View stats
         </TransitionLink>
@@ -202,26 +174,26 @@ function SessionCard({ isLight }) {
 }
 
 export default function HowItWorks({ isLight }) {
+  const u = ui(isLight);
   return (
-    <section className="px-6 sm:px-10 pt-20 sm:pt-30 pb-16">
-      <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 items-start">
-        <div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight leading-[1.05]">
-            Every mode on
-            <br />
-            one <span className="italic">keyboard</span>.
-          </h2>
-          <p className={`mt-4 text-sm max-w-[300px] leading-relaxed ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
-            Time, words, quotes, stories. Shortcuts that stay out of the way.
-            Four languages out of the box.
-          </p>
-          <div className="mt-8">
-            <TabsTable isLight={isLight} />
-          </div>
-        </div>
+    <section id="modes" className={`border-b ${u.line} px-4 sm:px-10 py-16 sm:py-24 scroll-mt-14`}>
+      <Reveal>
+        <p className={u.label}>Modes</p>
+        <h2 className="mt-4 font-display font-normal tracking-normal text-[1.9rem] sm:text-[2.9rem] leading-[1.12]">
+          Every mode on one{" "}
+          <span className={u.accent}>keyboard.</span>
+        </h2>
+        <p className={`mt-4 text-sm sm:text-base max-w-[460px] leading-relaxed ${u.muted}`}>
+          Time, words, quotes, stories. Shortcuts that stay out of the way. Four languages out of the box.
+        </p>
+      </Reveal>
 
-        <SessionCard isLight={isLight} />
-      </div>
+      <Reveal delay={100} className="mt-10 sm:mt-14">
+        <div className="grid lg:grid-cols-[1.15fr_1fr] gap-6 items-start">
+          <TabsTable isLight={isLight} />
+          <SessionCard isLight={isLight} />
+        </div>
+      </Reveal>
     </section>
   );
 }
