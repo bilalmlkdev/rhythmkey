@@ -13,7 +13,7 @@ export default function Hero({ isLight }) {
   return (
     <section className={`border-b ${u.line} px-4 sm:px-10 pt-14 sm:pt-25`}>
       <div className="flex flex-col items-center text-center">
-        <h1 className="font-display font-normal tracking-normal text-[2.3rem] sm:text-[4.4rem] leading-[1.08]">
+        <h1 className="font-display font-bold tracking-normal text-[2.3rem] sm:text-[4.4rem] leading-[1.08]">
           Find your rhythm,
           <br />
           beat your <span className={u.accent}>record</span>.
